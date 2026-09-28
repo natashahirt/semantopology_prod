@@ -8,8 +8,19 @@ import numpy as _np
 import torch
 import torch.nn.functional as F
 
-from neural_structural_optimization.model.utils import batched_topo_loss
 from neural_structural_optimization.physics import physics
+
+
+def _batched_topo_loss(x_np, envs):
+    """Load the model helper at call time.
+
+    A module-level import of ``model.utils`` executes ``model/__init__.py``,
+    which imports ``model_base``, which imports this module before
+    ``StructuralLoss`` exists. The hardfork avoided that with a sibling
+    import inside ``models/``.
+    """
+    from neural_structural_optimization.model.utils import batched_topo_loss
+    return batched_topo_loss(x_np, envs)
 
 
 class StructuralLoss(torch.autograd.Function):
@@ -35,7 +46,7 @@ class StructuralLoss(torch.autograd.Function):
         x_np = logits.detach().cpu().double().numpy()
 
         # Compute physics losses
-        losses_np = batched_topo_loss(x_np, [env])  # -> shape (batch,)
+        losses_np = _batched_topo_loss(x_np, [env])  # -> shape (batch,)
 
         # Return torch tensor
         return torch.as_tensor(
@@ -57,7 +68,7 @@ class StructuralLoss(torch.autograd.Function):
         import autograd  # type: ignore
         
         def scalar_objective(x_arr: np.ndarray) -> float:
-            l = batched_topo_loss(x_arr, [env])  # -> (batch,)
+            l = _batched_topo_loss(x_arr, [env])  # -> (batch,)
             go = grad_output.detach().cpu().to(torch.float64).numpy()
             return np.sum(l * go)
 
