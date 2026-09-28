@@ -21,8 +21,6 @@ import numpy as np
 import torch
 import xarray
 from tqdm import tqdm
-from pathlib import Path
-from PIL import Image
 
 from neural_structural_optimization import model as models
 from neural_structural_optimization.model import AdaptivePixelModel, PixelModel, CNNModel
@@ -1070,22 +1068,6 @@ class LBFGS_Optimizer(BaseOptimizer):
                 self.loss_terms.append(step_terms[0])
             self.tracker.add_step(loss_val, self.model().detach().cpu().numpy())
 
-            # Save a progress image every 10 iterations to script/test_results_pytorch/progress.png
-            if (step + 1) % 10 == 0:
-                try:
-                    with torch.no_grad():
-                        logits_now = self.model()
-                        design_prob = torch.sigmoid(logits_now)
-                        design_2d = design_prob.squeeze().detach().cpu().numpy()
-                        design_2d = np.clip(1.0 - design_2d, 0.0, 1.0)
-                        img = (design_2d * 255.0).astype(np.uint8)
-                        out_dir = Path("script/test_results_pytorch")
-                        out_dir.mkdir(parents=True, exist_ok=True)
-                        Image.fromarray(img, mode='L').save(out_dir / "progress.png")
-                except Exception:
-                    # Do not interrupt optimization if saving fails
-                    pass
-            
             if prev_loss is not None:
                 d = loss_val - prev_loss
                 rel = abs(d) / (abs(prev_loss) + 1e-12)
