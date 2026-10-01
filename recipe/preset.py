@@ -46,7 +46,7 @@ class DreamLayoutPreset:
 
     clip_model_name: str = 'ViT-B/32'
     clip_rn_model_name: str = 'RN50'
-    clip_prompt: str = 'unfurling fern fronds'
+    clip_prompt: str = 'fern fronds'
     num_augs: int = 32
     clip_resize_short_side: int = 512
     clip_alpha: float = 10.0
@@ -85,6 +85,13 @@ class DreamLayoutPreset:
     physical_clip_projection_beta_max: float = 8.0
     physical_clip_projection_sigma: float = 2.0
     physical_clip_projection_sigma_end: float = 0.5
+    tiled_scales: tuple = ()
+    sketch_path: str | None = None
+    sketch_init: bool = True
+    use_sketch_weight: bool = True
+    structure_kind: str = 'building'
+    beta: float | None = None
+    heavyside: bool = False
 
     def with_clip(self, clip_prompt: str) -> 'DreamLayoutPreset':
         stripped = clip_prompt.strip()

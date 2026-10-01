@@ -72,7 +72,7 @@ def git_revision() -> str:
 
 
 def structural_params(preset: DreamLayoutPreset) -> StructuralParams:
-    return StructuralParams(
+    kwargs = dict(
         problem_name=preset.problem_name,
         width=preset.width,
         height=preset.height,
@@ -80,9 +80,24 @@ def structural_params(preset: DreamLayoutPreset) -> StructuralParams:
         interval=preset.interval,
         filter_width=preset.filter_width,
     )
+    if preset.beta is not None:
+        kwargs['beta'] = preset.beta
+        kwargs['heavyside'] = True
+    elif preset.heavyside:
+        kwargs['heavyside'] = True
+    return StructuralParams(**kwargs)
 
 
 def build_clip_loss(preset: DreamLayoutPreset) -> CLIPLoss:
+    layout = None
+    scales = tuple(preset.tiled_scales)
+    if scales:
+        from guidance.clip_scales import layout_for_structure
+        layout = layout_for_structure(
+            preset.height, preset.width,
+            kind=preset.structure_kind,
+            interval=preset.interval,
+        )
     return CLIPLoss(
         clip_model_name=preset.clip_model_name,
         clip_rn_model_name=preset.clip_rn_model_name,
@@ -94,11 +109,19 @@ def build_clip_loss(preset: DreamLayoutPreset) -> CLIPLoss:
             num_augs=preset.num_augs,
         ),
         motif_scale_fracs=(),
+        tiled_scales=scales,
+        tile_layout=layout,
     )
 
 
-def build_model(preset: DreamLayoutPreset, clip_loss: CLIPLoss) -> AdaptivePixelModel:
-    """Coarse adaptive-pixel model with the Venice algebra enabled."""
+def build_model(
+    preset: DreamLayoutPreset,
+    clip_loss,
+    *,
+    venice_algebra: bool = True,
+    init: bool = True,
+) -> AdaptivePixelModel:
+    """Coarse adaptive-pixel model. Venice algebra is opt-in."""
     model = AdaptivePixelModel(
         structural_params=structural_params(preset),
         clip_loss=clip_loss,
@@ -106,21 +129,21 @@ def build_model(preset: DreamLayoutPreset, clip_loss: CLIPLoss) -> AdaptivePixel
         resize_num=preset.resize_num,
         resize_scale=preset.resize_scale,
     )
-    if model.args['penal'] != preset.penal:
-        raise ValueError(
-            f"physics penal is {model.args['penal']}, not the configured "
-            f'{preset.penal}')
-    model.enable_venice_compat_loss(VeniceLossAlgebra(
-        clip_alpha=preset.clip_alpha,
-        compliance_weight=preset.compliance_weight,
-    ))
-    init_weight_neutral(
-        model,
-        density=preset.density,
-        seed=preset.seed,
-        noise_amp=preset.init_noise_amp,
-        union_load_sites=preset.union_load_sites,
-    )
+    model.args['penal'] = float(preset.penal)
+    model.env.args['penal'] = float(preset.penal)
+    if venice_algebra:
+        model.enable_venice_compat_loss(VeniceLossAlgebra(
+            clip_alpha=preset.clip_alpha,
+            compliance_weight=preset.compliance_weight,
+        ))
+    if init:
+        init_weight_neutral(
+            model,
+            density=preset.density,
+            seed=preset.seed,
+            noise_amp=preset.init_noise_amp,
+            union_load_sites=preset.union_load_sites,
+        )
     return model
 
 

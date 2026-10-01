@@ -1,12 +1,13 @@
 # AGENTS.md — CAAD Futures 2027 experiment campaign
 
-You are picking up `semantopology_prod` on the MIT Engaging cluster. Your job is
-to run the full experiment campaign for the CAAD Futures 2027 paper and produce
-the analysis outputs. **Do not stop or hand back until the Definition of Done
-(bottom of this file) is met.** Do not ask the user questions mid-campaign: when
-a decision comes up, take the documented default, log it in `CAMPAIGN_LOG.md`,
-and keep going. Park only what genuinely needs a human, and list it in the final
-report.
+You are picking up `semantopology_prod` on the MIT Engaging cluster. The
+code, sketches, problems, flags, manifest generator, Slurm scripts, and
+analysis scripts are already in this repo. **Do not reimplement them.**
+Your job is to build the environment, submit the jobs, resubmit failures,
+run analysis, and write `REPORT.md`. **Do not stop or hand back until the
+Definition of Done (bottom of this file) is met.** Do not ask the user
+questions mid-campaign: when a decision comes up, take the documented
+default, log it in `CAMPAIGN_LOG.md`, and keep going.
 
 Full paper deadline: October 16, 2026 (AoE). All runs must be done by
 October 9, 2026.
@@ -16,136 +17,116 @@ October 9, 2026.
 Designer intent enters topology optimization through two channels, formal (a
 sketch is a spatial prior on where the fixed volume budget goes) and semantic (a
 CLIP text prompt). The strength of each channel is a continuous, tunable setting.
-A hybrid uses a CLIP "dream" as the formal prior, bridging the two channels.
-Unlike image generators, every design is shaped by the physics gradient. Each
-experiment below supports one claim. Do not add experiments that are not listed.
+A hybrid uses a CLIP "dream" as the formal prior, then **co-adapts** density and
+that occupancy map together during physics. Unlike image generators, every
+design is shaped by the physics gradient. Each experiment below supports one
+claim. Do not add experiments that are not listed.
 
 ## Hard rules
 
 1. **One platform for every reported run.** Every run, including baselines, uses
    the same partition, environment, and device: `--device cpu`. Never mix
-   devices.
+   devices. `slurm/campaign.sbatch` is already CPU-only.
 2. **Never unset `OMP_NUM_THREADS=1`.** `runtime.py` pins it. Without it, CHOLMOD
    segfaults intermittently, with no traceback.
 3. **CHOLMOD cannot be retried in-process.** After a CHOLMOD error, the next
-   solve in the same process segfaults. Every run is its own Slurm task or
-   process. Retry only by resubmitting.
+   solve in the same process segfaults. Every run is its own Slurm task.
+   Retry only by resubmitting (`python slurm/resubmit.py`).
 4. **Keep numpy below 2.0** (the HIPS `autograd` package requires it).
-5. **Do not change existing physics, loss algebra, or defaults.** Add new
-   problems, recipes, and flags alongside the existing ones. `pytest tests -q`
-   must stay green.
-6. **Do not commit `results/` or `logs/`** (they are gitignored). Commit code,
-   manifests, analysis scripts, and `CAMPAIGN_LOG.md`.
-7. **No force-pushes, no deleting results.** A rerun writes to a new attempt
-   directory.
+5. **Do not change existing physics, loss algebra, or defaults.** If a smoke
+   test shows a degenerate structure, fix only the new problem definition.
+   `pytest tests -q` must stay green.
+6. **Do not commit `results/` or `logs/`** (they are gitignored). Commit
+   analysis outputs, `CAMPAIGN_LOG.md`, and `REPORT.md`.
+7. **No force-pushes, no deleting results.** A rerun writes to a new
+   `attempt_<n>/`. Give up after 3 attempts.
 
-## Phase 0 — setup (finish before submitting any runs)
+## Phase 0 — cluster setup (no code to write)
 
 ### 0.1 Environment
 - Build a Linux conda env named `semantopology` with Python 3.11, torch 2.2.2
   (CPU build), numpy 1.26.x, scipy, and scikit-sparse (SuiteSparse/CHOLMOD),
   plus `requirements.txt`.
-- Pre-download the CLIP weights (`ViT-B/32`, `RN50`) to a shared cache on the
-  login node, and set the cache path in the sbatch script. Compute nodes may
-  have no internet access.
-- `pytest tests -q` must pass on a compute node (`srun`), not just the login node.
+- Pre-download CLIP weights (`ViT-B/32`, `RN50`) on the login node. Set
+  `CLIP_CACHE` / `TORCH_HOME` in `slurm/campaign.sbatch` (the commented
+  lines). Compute nodes may have no internet.
+- Uncomment the `module load` / `source activate` lines in
+  `slurm/campaign.sbatch` for this cluster.
+- `pytest tests -q` must pass on a compute node (`srun`), not just the login
+  node.
 
-### 0.2 Structural problems (add to `problem/problems.py`, with tests)
-Convention: array index `[x, y]`, with `y = 0` at the top. Loads are `-1/width`
-per node in Y on each loaded row.
-- `tall_building`: the existing `multistory_building` at 128×256, interval 64
-  (4 loaded floors). Alias only; do not change it.
-- `short_cantilever_building`: 300×150, loaded rows at y = 0, 50, 100 (three
-  storeys). Y-support on the bottom row for x in [0, 0.70·width] only; the right
-  30% overhangs. Constrain X along the left wall so the system is not singular.
-- `double_decker_bridge`: 448×72, pin (X and Y) at the bottom-left corner,
-  roller (Y) at the bottom-right corner. Distributed load on the top row
-  (y = 0) and the bottom row (y = 71). No point loads.
-- Each new problem gets a test that the stiffness system factors (no rank
-  deficiency) and that loads and supports sit where specified.
+### 0.2 What is already implemented
+- Problems: `tall_building` (alias of `multistory_building` 128×256,
+  interval 64), `short_cantilever_building` (300×150, loads at y=0,50,100,
+  Y-support on the left 70%, X-fix on the left wall; AdaptivePixel
+  `resize_num=1` because 150 is not divisible by 4),
+  `double_decker_bridge` (448×72, pin-roller, UDL on y=0 and y=71).
+- Sketches in `inputs/sketches/`. `col3_braced.png` has columns flush with
+  the domain edges. Do not regenerate.
+- `run.py` modes: `unguided`, `sketch`, `semantic`, `hybrid`, `dream_only`,
+  plus `--prompt-sketch`, `--clip-scales {g,m,e,gme}`, `--coadapt`,
+  `--blend-rho`, conventional knobs.
+- CLIP modules are one centered 64×64 tile per tall-building storey, two
+  centered 50×50 tiles per short-building storey, and full-depth square
+  panels for the bridge. Element crops remain square and sit inside each
+  module. This lives in `guidance/clip_scales.py`. RandomResizedCrop is
+  unchanged and is the default semantic/hybrid scorer; `--clip-scales`
+  replaces it for S1.
+- Output contract and folder layout: see below. `slurm/make_manifest.py`
+  writes `slurm/campaign.tsv`.
 
-### 0.3 Sketches (already in `inputs/sketches/`; do not regenerate or edit)
-Every sketch the campaign uses is committed in `inputs/sketches/`:
-- Hand-drawn corpus, copied from `semantopology_venice`:
-  `1.jpg 3.jpg 6.jpg 9.jpg 11.jpg 12.jpg`.
-- `col2.png`: two columns with floor lines (the original paper's
-  `dSketch_4_density_0.3_4_story.png`).
-- Generated by `inputs/sketches/make_sketches.py` at 512×1024 (4 px per
-  element of the 128×256 domain), black ink on white, line width 5 elements,
-  floor lines on the loaded rows (0, 1/4, 1/2 and 3/4 of the height):
-  - `col6_grid.png`: 6 evenly spaced columns plus floor lines.
-  - `col3.png`: 3 evenly spaced columns plus floor lines.
-  - `col3_braced.png`: `col3.png` plus one diagonal per bay per storey,
-    alternating direction.
-- Point the sketch loader at `inputs/sketches/`. Some sketch code still
-  mentions `script/resources/input_images/sketches`, which does not exist in
-  this repo.
-- Sketch preprocessing is the existing occupancy pipeline (invert, threshold
-  0.40). Do not change it.
+### 0.3 Folder layout (already the `run.py` contract)
 
-### 0.4 Recipes and flags (extend `run.py` / `recipe/`)
-`recipe/dream_layout.py` is the hybrid recipe. Add these, sharing its settings
-(`recipe/preset.py` `PAPER`) unless stated otherwise:
-- `--mode {unguided, sketch, semantic, hybrid, dream_only}`
-  - `unguided`: compliance only. No CLIP, no sketch, neutral initialization.
-  - `sketch`: sketch occupancy prior, CLIP off.
-  - `semantic`: CLIP on the projected physical density, no sketch, no dream.
-  - `hybrid`: the existing dream-layout path.
-  - `dream_only`: the dream stage only; save it, no physics.
-- `--sketch PATH`, `--sketch-init {on,off}`, `--sketch-weight {on,off}`,
-  `--sketch-weight-end FLOAT`.
-- `--prompt-sketch` for a sketch prior plus a CLIP prompt (designer sketch plus
-  text).
-- `--blend-rho FLOAT` (the semantic dial).
-- `--clip-scales` set to any of `g`, `m`, `e` (global, module, element), for
-  example `g,m,e`.
-  - Global: the whole elevation, letterboxed.
-  - Module: square crops tiled exactly on storeys (buildings) or on full-depth
-    panels (bridge). Not random positions.
-  - Element: a quarter of the module size.
-  - Implement the module tiling as new code with a test. Keep the existing
-    random-crop path unchanged.
-- `--coadapt {on,off}`.
-- Topology-optimization knobs for the conventional baseline: `--filter-width`,
-  `--penal`, `--beta-max`, `--resolution-scale`, `--seed`.
+```
+results/<experiment>/<structure>/<…tokens…>/attempt_<n>/
+  physical_density.npy
+  final.png  comparison.png  progress.gif
+  run.json
+  DONE                 # written last, only on success
+logs/<jobid>_<array>.out
+analysis/out/
+  evaluate/embeddings.npy
+  evaluate/similarities.json
+  tables/cross_prompt_matrix.csv
+  tables/compliance.csv
+  tables/vendi.csv
+  figures/
+```
 
-### 0.5 Output contract (every run, no exceptions)
-Write to `results/<run_id>/attempt_<n>/`:
-- `physical_density.npy`: final filtered, projected density at full resolution.
-- `final.png`, `comparison.png` (as now), `progress.gif`.
-- `run.json`: `run_id`, experiment ID, group (`baseline`, `formal`,
-  `semantic`, `hybrid`, `conventional`), structure, prompt, sketch, every CLI
-  argument, the git commit, `pip freeze` hash, hostname, Slurm job and array
-  IDs, start and end times, exit status, final compliance, achieved volume
-  fraction, mean density, gray fraction (share of elements with
-  0.1 < density < 0.9), compliance after thresholding at 0.5, connected
-  components, and wall-clock seconds.
-- `DONE`: an empty file written last, only after everything else succeeded.
+Tokens: `tall|short|bridge`, prompt slugs `fern_fronds|butterfly|skeletons|human_skull`,
+`sketch-12`, `g|m|e|gme`, `rho-0.50`, `wend-400`, `hybrid|dream_only|coadapt-off`,
+`lhs-00`.
 
-### 0.6 Slurm scaffolding (`slurm/`)
-- `slurm/campaign.tsv`: the manifest. One row per run: `run_id`, then the
-  `run.py` arguments. Generate it with a script (`slurm/make_manifest.py`) from
-  the experiment table below. Do not hand-edit it.
-- `slurm/campaign.sbatch`: one array task per manifest row, on a CPU
-  partition, 1 task, 4 CPUs, 16 GB, 6-hour limit, `%K` concurrency cap. The
-  task skips rows that already have `DONE`. It activates the env explicitly.
-- `slurm/resubmit.py`: scans for rows without `DONE`, resubmits only those
-  array indices, and gives up on a row after 3 failed attempts (logging it as
-  permanently failed in `CAMPAIGN_LOG.md`, with the log tail).
-- `slurm/status.py`: prints counts of done / running / failed / pending per
-  experiment.
+### 0.4 Submit
+```bash
+python slurm/make_manifest.py          # 109 rows; do not hand-edit the TSV
+# campaign.sbatch --array is 0-108%8; regenerate if the count changes
+sbatch slurm/campaign.sbatch
+```
+After the S1 gate passes:
+```bash
+python slurm/make_manifest.py --include-s1b   # appends rows 109-132
+sbatch --array=109-132%8 slurm/campaign.sbatch
+```
 
 ## Phase 1 — smoke tests (gate)
-Run one row from each of: unguided on each structure, sketch, semantic, hybrid,
-dream_only and the scale arms. Record the wall-clock time per mode in
-`CAMPAIGN_LOG.md`. Check visually that the three unguided baselines give
-sensible topology. If any structure gives a degenerate result (disconnected,
-all gray, solver error), fix the problem definition before Phase 2.
+Run, on a compute node, one row from each of: unguided on each structure,
+sketch, semantic, hybrid, dream_only, and one S1 scale arm. Easiest: submit
+those array indices from the TSV (B/*, one F3, one S3, H1 hybrid, H1
+dream_only, S1/tall/butterfly/m). Record wall-clock per mode in
+`CAMPAIGN_LOG.md`. Check that the three unguided `final.png` files are
+sensible topology. If a structure is degenerate (disconnected, all gray,
+solver error), fix that problem definition before Phase 2.
 
 ## Phase 2 — the campaign
 
 Unless stated otherwise: tall building, volume fraction 0.30, seed 12,
-`PAPER` settings, coupling fixed (CLIP on the projected physical density).
+`PAPER` settings, coupling = CLIP on the projected physical density.
+
+**Prompts.** Whenever a run has a CLIP prompt, use all three:
+`"fern fronds"`, `"butterfly"`, `"skeletons"`. Exceptions: formal (F) and
+conventional (B, D) have no prompt; `"human skull"` is S3 on tall only;
+the S1 **gate** is judged on butterfly `{m}`.
 
 | ID | Claim | Runs |
 |---|---|---|
@@ -153,65 +134,44 @@ Unless stated otherwise: tall building, volume fraction 0.30, seed 12,
 | F1 | Initialization and weight are both needed | sketches {12, 3} × {init only, weight only, both} = 6 |
 | F2 | The formal channel is a dial | sketch 12, weight end {200, 400, 800, 1200, 2000} = 5 |
 | F3 | Generality across drawings | `sketch` on {1, 3, 6, 9, 11, 12, col2, col3, col6_grid, col3_braced} = 10 |
-| S1 | Scale pilot (gate) | `semantic`, "butterfly", scales {g}, {m}, {e}, {g,m,e} = 4 |
-| S1b | Scale replication (only if S1 passes) | same 4 arms × {short, bridge} = 8 |
-| S2 | The semantic channel is a dial | `semantic`, "unfurling fern fronds", `blend_rho` {0, 0.25, 0.5, 0.75, 1.0} = 5 |
-| S3 | Physics mediates the prompt | `semantic` × {"unfurling fern fronds", "butterfly", "skeletons"} × {tall, short, bridge} = 9, plus "human skull" on tall = 1 |
-| H1 | The dream as a formal prior | {`hybrid`, `dream_only`} × the 3 prompts on tall = 6 |
-| H2 | Same prompt, different structures | `hybrid`, "unfurling fern fronds" × {short, bridge} = 2 |
-| H3 | Sketch plus prompt | `--prompt-sketch` with {12, col3_braced, col6_grid} × the 3 prompts = 9 |
-| H4 | Is co-adaptation needed? | `hybrid` with `--coadapt off` × {fern, butterfly} = 2 |
-| D | Conventional baseline | `unguided`, 24 Latin-hypercube samples over filter width [1.5, 4], penalization [3, 4], `beta` max [4, 16], resolution scale {0.5, 1}, seed [0, 1000]. Volume fraction fixed at 0.30 |
+| S1 | Scale pilot (gate) | `semantic` × 3 prompts × scales {g}, {m}, {e}, {g,m,e} on tall = 12 |
+| S1b | Scale replication (only if S1 passes) | same 4 arms × 3 prompts × {short, bridge} = 24, **appended** as rows 109–132 |
+| S2 | The semantic channel is a dial | `semantic` × 3 prompts × `blend_rho` {0, 0.25, 0.5, 0.75, 1.0} = 15 |
+| S3 | Physics mediates the prompt | `semantic` × 3 prompts × {tall, short, bridge} = 9, plus "human skull" on tall = 1 |
+| H1 | The dream as a formal prior | {`hybrid`, `dream_only`} × 3 prompts on tall = 6 |
+| H2 | Same prompts, different structures | `hybrid` × 3 prompts × {short, bridge} = 6 |
+| H3 | Sketch plus prompt | `--prompt-sketch` with {12, col3_braced, col6_grid} × 3 prompts = 9 |
+| H4 | Co-adaptation is load-bearing | `hybrid` `--coadapt off` × 3 prompts on tall = 3. Default hybrid stays **on**. |
+| D | Conventional baseline | `unguided`, 24 Latin-hypercube samples on tall |
+
+Without S1b: 109 runs. With S1b: 133.
 
 **S1 gate.** Write the criterion in `CAMPAIGN_LOG.md` *before* viewing the
 results: "the {m} arm shows one butterfly instance per storey in at least 3 of
-4 storeys". Judge it from `final.png`. Pass: queue S1b. Fail: skip S1b, and log
-"two-scale result: element vs global".
+4 storeys". Judge it from `results/S1/tall/butterfly/m/attempt_*/final.png`.
+Pass: queue S1b. Fail: skip S1b, and log "two-scale result: element vs global".
 
-**H4 decision.** If co-adaptation on vs off shows no visible difference in
-`final.png` and the compliance difference is under 3%, log "cut co-adaptation
-from the method". Do not rerun the rest of the campaign; just record it.
+**H4.** Co-adaptation is part of the hybrid method. Compare each
+`H4/.../coadapt-off` `final.png` to the matching `H1/.../hybrid` row. Do
+not drop co-adaptation from the method.
 
-Submit everything except S1b at once. Then loop: run `status.py`, run
-`resubmit.py`, and check the logs, until every row is `DONE` or permanently
-failed.
+Loop: `python slurm/status.py`, `python slurm/resubmit.py`, until every
+row is `DONE` or permanently failed (3 attempts, logged with a log tail).
 
-## Phase 3 — analysis (`analysis/`, commit the scripts and the figures)
-
-1. `analysis/evaluate.py`: one fixed CLIP evaluator (`ViT-B/32`,
-   deterministic crops: the whole image letterboxed plus a fixed 3×3 grid of
-   crops, no random augmentation). For every `DONE` run, compute and save the
-   image embedding, plus the similarity to each of the 4 prompts. Never reuse
-   training-time CLIP losses, because different runs used different scoring
-   functions.
-2. **Cross-prompt matrix:** rows are designs, grouped by prompt (including the
-   unguided baselines); columns are the 4 prompts. Report the mean per block,
-   and whether each design's own prompt scores highest. Save it as a heatmap
-   and a CSV.
-3. **Compliance table:** every run's compliance divided by its structure's
-   unguided baseline, plus gray fraction, compliance after thresholding, and
-   connected components.
-4. **Diversity** (tall building only):
-   - Groups: conventional (D), formal (F1–F3), semantic (S1–S3 on tall),
-     hybrid (H1, H3, H4).
-   - Binarize at 0.5, downsample to 32×64, and compute the Tanimoto kernel.
-   - Semantic kernel: cosine similarity of the evaluator embeddings.
-   - Quality \(q = C_{\text{unguided}} / C\).
-   - For each group, report the formal Vendi score, the semantic Vendi score
-     and the quality-weighted Vendi score, with equal n per group (n = the
-     smallest group, 1000 bootstrap subsamples, 95% confidence intervals).
-   - PCA fitted on the pooled downsampled designs, scatter colored by group and
-     shaded by \(q\).
-5. `analysis/figures.py`: contact sheets per experiment ID (`final.png` grid
-   with compliance ratios underneath), the two dial curves (F2: mass-on-occupancy
-   vs compliance ratio; S2: evaluator similarity vs compliance ratio), the scale
-   figure, and the prompt × structure grid.
+## Phase 3 — analysis
+```bash
+python analysis/evaluate.py
+python analysis/figures.py
+```
+Evaluator is a fixed `ViT-B/32` with a letterboxed full frame plus a 3×3
+grid of square crops (no random augmentation). Never reuse training-time
+CLIP losses. Outputs land under `analysis/out/`.
 
 ## Definition of Done (only then hand back)
 
 - Every manifest row is `DONE`, or permanently failed after 3 attempts with a
   logged reason.
-- The S1 gate and the H4 decision are logged.
+- The S1 gate and the H4 comparison are logged.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;
@@ -220,6 +180,5 @@ failed.
   - the key numbers from each table, with their conditions (structure,
     group, criterion);
   - parked items that need a human.
-- Code, manifests, analysis scripts, figures, `CAMPAIGN_LOG.md` and `REPORT.md`
-  are committed. `results/` stays uncommitted, but its location on the cluster
-  is stated in `REPORT.md`.
+- Analysis figures, `CAMPAIGN_LOG.md` and `REPORT.md` are committed.
+  `results/` stays uncommitted; state its cluster path in `REPORT.md`.

@@ -246,7 +246,7 @@ class Problem:
     # Vectorized resizing using nearest neighbor mapping
     orig_i = np.round(np.arange(new_width + 1) * self.width / new_width).astype(int).clip(0, self.width)
     orig_j = np.round(np.arange(new_height + 1) * self.height / new_height).astype(int).clip(0, self.height)
-    
+
     # Use meshgrid or advanced indexing to get the new arrays
     new_normals = self.normals[np.ix_(orig_i, orig_j)]
     new_forces = self.forces[np.ix_(orig_i, orig_j)] * area_ratio
@@ -740,6 +740,69 @@ def multistory_building(width=32, height=32, density=0.3, interval=16,
   problem.name = f"multistory_building_{width}x{height}"
   return problem
 
+
+def tall_building(width=128, height=256, density=0.3, interval=64,
+                  fix_right_wall=True):
+  """Alias of ``multistory_building`` at the paper tall-building grid.
+
+  Same BCs, loads, and interval convention. Exists so campaign manifests can
+  say ``tall_building`` without changing the Venice problem.
+  """
+  problem = multistory_building(
+      width, height, density, interval, fix_right_wall=fix_right_wall)
+  problem.name = f"tall_building_{width}x{height}"
+  return problem
+
+
+def short_cantilever_building(width=300, height=150, density=0.3, interval=50):
+  """Three-storey short building, ground support on the left 70% only.
+
+  Loaded rows at y = 0, ``interval``, ``2 * interval`` (top of the domain is
+  y = 0). Y-support on the bottom row for x in ``[0, 0.70 * width]``; the
+  right 30% overhangs. X is constrained along the left wall so the system
+  is not free to slide.
+
+  The default 300x150 grid is divisible by 2, not by 4, so AdaptivePixel
+  must use ``resize_num=1`` (one upsample) rather than the tall-building
+  default of 2.
+  """
+  normals = np.zeros((width + 1, height + 1, 2))
+  support_x = int(round(0.70 * width))
+  normals[:support_x + 1, -1, Y] = 1
+  normals[0, :, X] = 1
+
+  forces = np.zeros((width + 1, height + 1, 2))
+  load = -1.0 / width
+  for row in range(0, height, interval):
+    forces[:, row, Y] = load
+
+  problem = Problem(normals, forces, density)
+  problem.name = f"short_cantilever_building_{width}x{height}"
+  return problem
+
+
+def double_decker_bridge(width=448, height=72, density=0.3):
+  """Pin-roller span with uniform load on the top and lower decks.
+
+  Pin (X and Y) at the bottom-left corner, roller (Y) at the bottom-right
+  corner. Distributed load on node row y = 0 (top) and y = height - 1 (the
+  lower deck, just above the supported soffit). No point loads. The
+  supported bottom row itself is not loaded — those DOFs are fixed.
+  """
+  normals = np.zeros((width + 1, height + 1, 2))
+  normals[0, -1, X] = 1
+  normals[0, -1, Y] = 1
+  normals[-1, -1, Y] = 1
+
+  forces = np.zeros((width + 1, height + 1, 2))
+  load = -1.0 / width
+  forces[:, 0, Y] = load
+  forces[:, height - 1, Y] = load
+
+  problem = Problem(normals, forces, density)
+  problem.name = f"double_decker_bridge_{width}x{height}"
+  return problem
+
 # =============================================================================
 # StructuralParams dataclass for parameterized problem creation
 # =============================================================================
@@ -748,9 +811,9 @@ def multistory_building(width=32, height=32, density=0.3, interval=16,
 class StructuralParams:
     """
     Parameterized problem creation utility.
-    
-    Example use: 
-    
+
+    Example use:
+
     # Create problem parameters
     params = StructuralParams(
         problem_name="cantilever_beam_full",
@@ -763,19 +826,19 @@ class StructuralParams:
     # Get the problem and create a model
     problem = params.get_problem()
     """
-    
+
     # general
     problem_name: str = "cantilever_beam_full"
     width: int = 60
     height: int = 60
     density: float = 0.5
-    
+
     # filtering parameters (None → physics defaults in get_problem)
     # rmin is inert unless filter_width='linear' asks for it (2 * rmin);
     # setting rmin alone leaves the radius at the Problem default and warns.
     filter_width: Union[float, str, None] = None
     rmin: Union[float, str, None] = None
-    
+
     # projection parameters (None → physics defaults in get_problem)
     # heavyside is opt-in. With it enabled, Environment.render and the
     # objective share the filtered physical density, which holds `density`.
@@ -786,7 +849,7 @@ class StructuralParams:
     heavyside: Optional[bool] = None
     beta: Union[float, str, None] = None
     eta: Optional[float] = None
-    
+
     # for beam and cantilever
     force_position: float = 0.5 # 0. is top, 1. is bottom
     support_position: float = 0.25 # for 2-point cantilevers
@@ -825,17 +888,17 @@ class StructuralParams:
     def __post_init__(self):
         if not 0.0 < self.density <= 1.0:
             raise ValueError(f"density must be positive, nonzero, between 0. and 1. Got {self.density}.")
-        
+
         if self.width <= 0 or self.height <= 0:
             raise ValueError(f"width and height must be greater than 0. Got {self.width}x{self.height}.")
 
-        for param_name in ['force_position', 'support_position', 'deck_level', 
-                          'deck_height', 'span_position', 'design_width', 
+        for param_name in ['force_position', 'support_position', 'deck_level',
+                          'deck_height', 'span_position', 'design_width',
                           'aspect', 'radius', 'position']:
             value = getattr(self, param_name)
             if not 0.0 <= value <= 1.0:
                 raise ValueError(f"{param_name} must be between 0 and 1, got {value}")
-        
+
         # Validate filtering parameters. Schedule strings are resolved against
         # rmin in get_problem(), which validates the resolved radius there.
         if isinstance(self.filter_width, (int, float)) and not isinstance(
@@ -876,7 +939,7 @@ class StructuralParams:
         # Validate special cases
         if self.problem_name == "hoop" and 2 * self.width != self.height:
             raise ValueError("hoop problems require height = 2 * width")
-    
+
     def to_dict(self) -> dict:
         return dataclasses.asdict(self)
 
@@ -889,25 +952,25 @@ class StructuralParams:
         return [
             # Beam and cantilever problems
             "mbb_beam",
-            "cantilever_beam_full", 
+            "cantilever_beam_full",
             "cantilever_beam_two_point",
             "pure_bending_moment",
-            
+
             # Michell structures
             "michell_centered_both",
             "michell_centered_below",
-            
+
             # Constrained designs
             "ground_structure",
             "l_shape",
             "crane",
-            
+
             # Vertical support structures
             "tower",
-            "center_support", 
+            "center_support",
             "column",
             "roof",
-            
+
             # Bridge problems
             "causeway_bridge",
             "two_level_bridge",
@@ -915,7 +978,7 @@ class StructuralParams:
             "canyon_bridge",
             "thin_support_bridge",
             "drawbridge",
-            
+
             # Complex designs
             "hoop",
             "multipoint_circle",
@@ -923,7 +986,10 @@ class StructuralParams:
             "ramp",
             "staircase",
             "staggered_points",
-            "multistory_building"
+            "multistory_building",
+            "tall_building",
+            "short_cantilever_building",
+            "double_decker_bridge",
         ]
 
     def get_problem(self) -> 'Problem':
@@ -966,8 +1032,8 @@ class StructuralParams:
             if 'fix_right_wall' not in sig.parameters:
                 warnings.warn(
                     f'fix_right_wall=False is ignored by {self.problem_name}, '
-                    'which does not take it; only multistory_building has a '
-                    'right wall to drop.',
+                    'which does not take it; only multistory_building and '
+                    'tall_building have a right wall to drop.',
                     stacklevel=3)
             elif topo_autograd.HAS_CHOLMOD:
                 raise ValueError(

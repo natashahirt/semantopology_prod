@@ -31,7 +31,7 @@ from PIL import Image
 
 # Repo-relative directory of the Stage 6 corpus. Copied from the Venice
 # sibling so a hardfork clone does not read across repositories at runtime.
-SKETCH_DIR = Path('script/resources/input_images/sketches')
+SKETCH_DIR = Path('inputs/sketches')
 SKETCH_CORPUS = ('1.jpg', '3.jpg', '6.jpg', '9.jpg', '11.jpg', '12.jpg')
 
 # After invert, paper sits near 0 and ink near 1. Measured on the six-sketch

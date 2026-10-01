@@ -96,20 +96,20 @@ def _clip_diy_weights(H: int, W: int, patch_fracs: Sequence[float], device=None,
     # base weights per scale index (0=global largest frac, last=local smallest)
     n = len(patch_fracs)
     idx = torch.arange(n, device=device, dtype=dtype)
-    
+
     # More gradual transition: use softer scaling and preserve global signal longer
     # At low res (t=0): heavily favor global
     # At mid res (t=0.5): balanced
     # At high res (t=1): favor local but still keep some global
-    w_global = 1.0 
+    w_global = 1.0
     w_local  = torch.softmax(idx * (0.3 + 0.7*t), dim=0)     # softer scaling
-    
+
     # Adaptive blending: preserve more global signal at higher resolutions
     # At low res: 70% global, 30% local
     # At high res: 30% global, 70% local (instead of 50/50)
     global_weight = 0.9 * (1.0 - t) + 0.1 * t
     local_weight = 1.0 - global_weight
-    
+
     w = global_weight * w_global + local_weight * w_local
     return (w / w.sum()).detach()
 
@@ -145,7 +145,7 @@ def physical_scale_boxes(
 def _seamless_edges_loss(x_img: torch.Tensor) -> torch.Tensor:
     """Encourage wrap-around continuity."""
     y = x_img.unsqueeze(0) if x_img.dim() == 3 else x_img
-    return 0.5 * (F.mse_loss(y[:, :, :, 0], y[:, :, :, -1]) + 
+    return 0.5 * (F.mse_loss(y[:, :, :, 0], y[:, :, :, -1]) +
                   F.mse_loss(y[:, :, 0, :], y[:, :, -1, :]))
 
 def _down_up(x: torch.Tensor, side: int) -> torch.Tensor:
@@ -192,7 +192,7 @@ def _encode_image_microbatch(encoder: nn.Module, imgs: torch.Tensor, chunk: int 
     """Encode images in microbatches to manage memory usage."""
     device = device or imgs.device
     outs = []
-    
+
     for i in range(0, imgs.size(0), chunk):
         batch = imgs[i:i+chunk]
         if device.type == "cuda":
@@ -200,7 +200,7 @@ def _encode_image_microbatch(encoder: nn.Module, imgs: torch.Tensor, chunk: int 
                 outs.append(encoder(batch).float())
         else:
             outs.append(encoder(batch).float())
-    
+
     return torch.cat(outs, dim=0)
 
 def _ensure_nchw(x: torch.Tensor) -> torch.Tensor:
@@ -671,6 +671,8 @@ class CLIPLoss(nn.Module):
         motif_scale_fracs: Tuple[float, ...] = (),
         motif_scale_crops: int = 4,
         motif_scale_weight: float = 1.0,
+        tiled_scales: Tuple[str, ...] = (),
+        tile_layout=None,
     ):
         super().__init__()
         self.device = torch.device(device)
@@ -722,8 +724,8 @@ class CLIPLoss(nn.Module):
         # Cropper with paired mode
         self.clip_input_res = int(self.clip_model.visual.input_resolution)
         self.cropper = PairedCrops(
-            self.clip_input_res, 
-            self.num_augs, 
+            self.clip_input_res,
+            self.num_augs,
             min_original_size=480,
         ).to(self.device)
 
@@ -782,6 +784,14 @@ class CLIPLoss(nn.Module):
             if not 0.0 < frac <= 1.0:
                 raise ValueError(
                     f'motif_scale_fracs must be in (0, 1], got {motif_scale_fracs}')
+        from guidance.clip_scales import parse_clip_scales
+        self.tiled_scales = parse_clip_scales(tiled_scales)
+        self.tile_layout = tile_layout
+        self.last_tiled_scale_losses: dict[str, float] = {}
+        if self.tiled_scales and self.tile_layout is None and (
+                'm' in self.tiled_scales or 'e' in self.tiled_scales):
+            raise ValueError(
+                'tiled module/element scales need a tile_layout')
 
     # ---- legacy compatibility seam ----
     def _validate_venice_compat_prompts(self) -> None:
@@ -843,7 +853,7 @@ class CLIPLoss(nn.Module):
     def _set_and_cache_prompts(self, pos_texts, pos_weights, neg_texts, neg_weights):
         self.pos_prompts = self._make_weighted(pos_texts, pos_weights) if pos_texts else []
         self.neg_prompts = self._make_weighted(neg_texts, neg_weights) if neg_texts else []
-        
+
         # Cache combined embeddings
         self.e_pos = self._encode_weighted(self.pos_prompts)
         self.e_neg = self._encode_weighted(self.neg_prompts)
@@ -926,6 +936,8 @@ class CLIPLoss(nn.Module):
             self._E_pos_bank if prompt_embeds is None else prompt_embeds)
         weights = (
             self._pos_weights if prompt_weights is None else prompt_weights)
+        if self.tiled_scales:
+            return self.score_tiled_scales(field, embeds, weights)
         if self.venice_path is None:
             return self.forward(field)
         return self.venice_path(
@@ -937,16 +949,87 @@ class CLIPLoss(nn.Module):
             full_frame_weight=BOUNDED_FULL_FRAME_WEIGHT,
         )
 
+    def score_tiled_scales(
+        self,
+        field: torch.Tensor,
+        prompt_embeds: Optional[torch.Tensor] = None,
+        prompt_weights: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        """Text-CLIP on letterboxed global + structure-specific tiles.
+
+        Replaces RandomResizedCrop for the S1 scale arms so a storey crop is
+        actually a storey-aligned square, not a random window of that area.
+        The same path still supports rectangular boxes by preserving their
+        aspect ratio and letterboxing rather than stretching.
+        ``physical_scale_boxes`` is left untouched.
+        """
+        from guidance.clip_scales import scale_boxes_to_image
+
+        embeds = (
+            self._E_pos_bank if prompt_embeds is None else prompt_embeds)
+        weights = (
+            self._pos_weights if prompt_weights is None else prompt_weights)
+        self.last_tiled_scale_losses = {}
+        x = _to_clip_rgb(_ensure_nchw(field))
+        if self.venice_preset is not None:
+            x = _resize_short_side(x, self.venice_preset.resize_short_side)
+        _, _, height, width = x.shape
+        crop_size = (
+            self.cropper.crop_size if self.venice_path is not None
+            else self.clip_input_res)
+        per_scale = []
+        for key in self.tiled_scales:
+            if key == 'g':
+                crops = letterbox_to_square(x, crop_size)
+            else:
+                layout = self.tile_layout
+                boxes = scale_boxes_to_image(
+                    layout.boxes_for(key),
+                    src_height=layout.height,
+                    src_width=layout.width,
+                    dst_height=height,
+                    dst_width=width,
+                    device=x.device,
+                    dtype=x.dtype,
+                )
+                box_width = float(boxes[0, 2])
+                box_height = float(boxes[0, 3])
+                scale = crop_size / max(box_width, box_height)
+                sample_width = max(1, int(round(box_width * scale)))
+                sample_height = max(1, int(round(box_height * scale)))
+                grid = _affine_grid_from_boxes(
+                    height, width, boxes, (sample_height, sample_width))
+                crops = F.grid_sample(
+                    x.repeat(boxes.size(0), 1, 1, 1),
+                    grid, mode='bilinear', align_corners=False)
+                crops = letterbox_to_square(crops, crop_size)
+            if self.venice_path is not None:
+                z_img = self.venice_path._encode_crops(crops)
+                scale_loss = self.venice_path._prompt_distance_loss(
+                    z_img, embeds, weights)
+            else:
+                crops = _preprocess_image_for_clip(
+                    crops, self.clip_input_res, self.clip_mean, self.clip_std)
+                z_img = F.normalize(self.clip_encoder(crops).float(), dim=-1)
+                scale_loss = self._spherical_loss(
+                    z_img, embeds[0] if embeds.ndim == 2 else embeds,
+                    self.use_arcsin_transform)
+            self.last_tiled_scale_losses[key] = float(scale_loss.detach())
+            per_scale.append(scale_loss)
+        stacked = torch.stack(per_scale)
+        self.last_tiled_scale_losses['mean'] = float(stacked.detach().mean())
+        return stacked.mean()
+
     # ---- distance on the unit sphere or cosine ----
     def _spherical_loss(self, z_img, z_txt, use_arcsin=True):
         """Compute spherical or cosine distance loss."""
         if z_txt is None:
             return z_img.new_tensor(0.0)
-        
+
         if use_arcsin:
             d = torch.norm(z_img - z_txt[None, :], dim=1).clamp(0.0, 2.0 - 1e-6)
             return (torch.arcsin(d * 0.5) ** 2).mean()
-        
+
         cos = (z_img * z_txt[None, :]).sum(dim=1).clamp(-1+1e-6, 1-1e-6)
         return (1.0 - cos).mean()
 
@@ -970,13 +1053,13 @@ class CLIPLoss(nn.Module):
         for idx, w in enumerate(self.conv_layer_weights):
             if w:
                 total = total + float(w) * conv_losses[idx]
-        
+
         # Add pairwise cosine spread loss if enabled
         if self.use_pairwise_spread:
             imgs = _preprocess_image_for_clip(x_aug, self.clip_input_res, self.clip_mean, self.clip_std)
             z_img = F.normalize(_encode_image_microbatch(self.clip_encoder, imgs, chunk=32, device=self.device), dim=-1)
             total = total + self.consistency_weight * _pairwise_cosine_spread(z_img, weights=None)
-            
+
         return total
 
     # ---- semantics: image↔text (positives + optional negatives with hinge) ----
@@ -1048,7 +1131,7 @@ class CLIPLoss(nn.Module):
 
         # ---------- CLIP ENCODE ----------
         imgs = _preprocess_image_for_clip(imgs, self.clip_input_res, self.clip_mean, self.clip_std)
-        
+
         if self.device.type == "cuda":
             with torch.autocast(device_type="cuda", dtype=torch.float16):
                 z_img = F.normalize(self.clip_encoder(imgs).float(), dim=-1)

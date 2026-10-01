@@ -24,7 +24,7 @@ def test_paper_preset_matches_the_skeleton_recipe():
 
 
 def test_prompt_slug_and_clip_passthrough():
-    assert prompt_slug('Unfurling fern fronds') == 'unfurling_fern_fronds'
+    assert prompt_slug('fern fronds') == 'fern_fronds'
     assert resolve_prompt('butterfly wing venation', None) == 'butterfly wing venation'
     with pytest.raises(ValueError):
         resolve_prompt(None, None)
