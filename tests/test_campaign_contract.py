@@ -49,7 +49,7 @@ def test_incomplete_final_grid_is_not_marked_done(tmp_path, monkeypatch):
     assert record['exit_status'] == 'incomplete_final_grid'
     assert record['reached_final_grid'] is False
     assert record['presentation_shape'] == [2400, 2400]
-    assert record['presentation_resampling'] == 'bilinear'
+    assert record['presentation_resampling'] == 'nearest'
     assert not (tmp_path / 'DONE').exists()
 
 
@@ -87,7 +87,7 @@ def test_hybrid_contract_preserves_full_progress_gif(tmp_path, monkeypatch):
         args=args,
         preset=preset,
         density=np.ones((4, 4)),
-        raw=None,
+        raw=np.ones((4, 4)),
         scaffold=np.zeros((4, 4)),
         ds=None,
         summary={'_t0': time.perf_counter()},
@@ -97,3 +97,6 @@ def test_hybrid_contract_preserves_full_progress_gif(tmp_path, monkeypatch):
 
     assert progress.read_bytes() == b'full-trajectory'
     assert (tmp_path / 'DONE').exists()
+    record = json.loads((tmp_path / 'run.json').read_text())
+    assert record['semantic_presentation_shape'] == [1024, 1024]
+    assert record['semantic_presentation_resampling'] == 'bilinear'

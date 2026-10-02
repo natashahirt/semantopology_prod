@@ -16,6 +16,7 @@ import torch
 
 from figures import (
     PRESENTATION_MAX_EDGE,
+    SEMANTIC_MAX_EDGE,
     save_field_png,
     write_comparison,
     write_progress_gif,
@@ -255,7 +256,7 @@ def _write_contract(
             output_dir / 'final.png',
             density,
             max_edge=PRESENTATION_MAX_EDGE,
-            smooth=True,
+            smooth=False,
         )
         if raw is not None and (
                 args.mode in ('semantic', 'hybrid', 'prompt_sketch')
@@ -263,7 +264,7 @@ def _write_contract(
             save_field_png(
                 output_dir / 'semantic_design.png',
                 raw,
-                max_edge=PRESENTATION_MAX_EDGE,
+                max_edge=SEMANTIC_MAX_EDGE,
                 smooth=True,
             )
         if ds is not None and 'design' in ds:
@@ -284,7 +285,7 @@ def _write_contract(
             output_dir / 'final.png',
             scaffold,
             max_edge=PRESENTATION_MAX_EDGE,
-            smooth=True,
+            smooth=False,
         )
         write_progress_gif(output_dir / 'progress.gif', scaffold[None, ...])
 
@@ -339,7 +340,18 @@ def _write_contract(
             max(1, int(round(height * factor))),
             max(1, int(round(width * factor))),
         ]
-        record['presentation_resampling'] = 'bilinear'
+        record['presentation_resampling'] = 'nearest'
+    if raw is not None and (
+            args.mode in ('semantic', 'hybrid', 'prompt_sketch')
+            or args.prompt_sketch):
+        raw_height, raw_width = _plane(raw).shape
+        raw_factor = float(SEMANTIC_MAX_EDGE) / float(
+            max(raw_height, raw_width))
+        record['semantic_presentation_shape'] = [
+            max(1, int(round(raw_height * raw_factor))),
+            max(1, int(round(raw_width * raw_factor))),
+        ]
+        record['semantic_presentation_resampling'] = 'bilinear'
     (output_dir / 'run.json').write_text(_to_json(record))
     if status == 'incomplete_final_grid':
         raise RuntimeError(

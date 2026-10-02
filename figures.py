@@ -12,6 +12,7 @@ import numpy as np
 from PIL import Image
 
 PRESENTATION_MAX_EDGE = 2400
+SEMANTIC_MAX_EDGE = 1024
 
 
 def _plane(field: np.ndarray) -> np.ndarray:

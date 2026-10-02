@@ -82,3 +82,15 @@ def test_smooth_presentation_png_fits_max_edge(tmp_path: Path):
     )
     with Image.open(path) as image:
         assert image.size == (1200, 2400)
+
+
+def test_hardfork_style_semantic_render_is_512_by_1024(tmp_path: Path):
+    field = np.ones((256, 128), dtype=np.float64)
+    path = save_field_png(
+        tmp_path / 'semantic.png',
+        field,
+        max_edge=1024,
+        smooth=True,
+    )
+    with Image.open(path) as image:
+        assert image.size == (512, 1024)
