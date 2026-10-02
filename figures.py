@@ -88,9 +88,10 @@ def write_progress_gif(
     path: Path,
     design: np.ndarray,
     *,
-    duration_ms: int = 80,
+    duration_ms: int = 50,
+    scale: int = 2,
 ) -> Path:
-    """GIF of the physics run from the rendered design stack.
+    """Write a smooth, enlarged GIF with one frame per recorded physics step.
 
     ``design`` is ``(step, y, x)`` or ``(step, 1, y, x)``, already on the
     common final grid. The dream loop does not record frames.
@@ -102,9 +103,19 @@ def write_progress_gif(
         raise ValueError(f'expected a step stack, got shape {arr.shape}')
     if arr.shape[0] < 1:
         raise ValueError('progress GIF needs at least one frame')
+    if int(scale) < 1:
+        raise ValueError(f'scale must be >= 1, got {scale}')
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    frames = [ink_image(frame).convert('P') for frame in arr]
+    frames = []
+    for frame in arr:
+        image = ink_image(frame)
+        if int(scale) > 1:
+            image = image.resize(
+                (image.width * int(scale), image.height * int(scale)),
+                resample=Image.Resampling.NEAREST,
+            )
+        frames.append(image.convert('P'))
     frames[0].save(
         path,
         save_all=True,

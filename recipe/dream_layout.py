@@ -358,6 +358,7 @@ def run_dream_layout(preset: DreamLayoutPreset, output_dir: Path) -> dict:
         'problem': preset.problem_name,
         'slug': prompt_slug(preset.clip_prompt),
         'steps': int(np.asarray(ds['loss'].values).reshape(-1).size),
+        'progress_gif_frames': int(np.asarray(ds['design'].values).shape[0]),
         'compliance': _last(ds, 'compliance'),
         'clip_loss': report['clip_loss'],
         'clip_loss_raw': report['clip_loss_raw'],

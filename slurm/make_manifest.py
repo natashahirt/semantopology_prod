@@ -215,7 +215,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         '--include-s1b', action='store_true',
-        help='Append S1b (only after the butterfly {m} gate passes).')
+        help='Append S1b only after the butterfly-wing-venation {m} gate passes.')
     parser.add_argument(
         '--out', default=str(_REPO / 'slurm' / 'campaign.tsv'))
     args = parser.parse_args(argv)

@@ -95,7 +95,8 @@ analysis/out/
   figures/
 ```
 
-Tokens: `tall|short|bridge`, prompt slugs `fern_fronds|butterfly|skeletons|human_skull`,
+Tokens: `tall|short|bridge`, prompt slugs
+`fern_fronds|butterfly_wing_venation|skeletons|human_skull`,
 `sketch-12`, `g|m|e|gme`, `rho-0.50`, `wend-400`, `hybrid|dream_only|coadapt-off`,
 `lhs-00`.
 
@@ -121,7 +122,7 @@ python run.py --run-id GATE/bridge3/fern_fronds --experiment GATE \
 ```
 
 If the extra middle deck produces a clearer and structurally credible section,
-run butterfly and skeletons too, then decide whether `bridge3` replaces
+run butterfly wing venation and skeletons too, then decide whether `bridge3` replaces
 `bridge` in the reported prompt × structure figure. Do not report both as
 independent evidence without accounting for the selection gate.
 
@@ -129,7 +130,7 @@ independent evidence without accounting for the selection gate.
 Run, on a compute node, one row from each of: unguided on each structure,
 sketch, semantic, hybrid, dream_only, and one S1 scale arm. Easiest: submit
 those array indices from the TSV (B/*, one F3, one S3, H1 hybrid, H1
-dream_only, S1/tall/butterfly/m). Record wall-clock per mode in
+dream_only, S1/tall/butterfly_wing_venation/m). Record wall-clock per mode in
 `CAMPAIGN_LOG.md`. Check that the three unguided `final.png` files are
 sensible topology. If a structure is degenerate (disconnected, all gray,
 solver error), fix that problem definition before Phase 2.
@@ -140,9 +141,10 @@ Unless stated otherwise: tall building, volume fraction 0.30, seed 12,
 `PAPER` settings, coupling = CLIP on the projected physical density.
 
 **Prompts.** Whenever a run has a CLIP prompt, use all three:
-`"fern fronds"`, `"butterfly"`, `"skeletons"`. Exceptions: formal (F) and
+`"fern fronds"`, `"butterfly wing venation"`, `"skeletons"`. Exceptions:
+formal (F) and
 conventional (B, D) have no prompt; `"human skull"` is S3 on tall only;
-the S1 **gate** is judged on butterfly `{m}`.
+the S1 **gate** is judged on butterfly-wing-venation `{m}`.
 
 | ID | Claim | Runs |
 |---|---|---|
@@ -163,8 +165,9 @@ the S1 **gate** is judged on butterfly `{m}`.
 Without S1b: 109 runs. With S1b: 133.
 
 **S1 gate.** Write the criterion in `CAMPAIGN_LOG.md` *before* viewing the
-results: "the {m} arm shows one butterfly instance per storey in at least 3 of
-4 storeys". Judge it from `results/S1/tall/butterfly/m/attempt_*/final.png`.
+results: "the {m} arm shows one butterfly-wing-venation instance per storey in
+at least 3 of 4 storeys". Judge it from
+`results/S1/tall/butterfly_wing_venation/m/attempt_*/final.png`.
 Pass: queue S1b. Fail: skip S1b, and log "two-scale result: element vs global".
 
 **H4.** Co-adaptation is part of the hybrid method. Compare each

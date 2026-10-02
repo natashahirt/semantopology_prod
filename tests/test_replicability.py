@@ -58,6 +58,10 @@ def test_figures_write_strip_and_gif(tmp_path: Path):
     gif = write_progress_gif(tmp_path / 'progress.gif', frames)
     assert comparison.is_file() and comparison.stat().st_size > 0
     assert gif.is_file() and gif.stat().st_size > 0
+    with Image.open(gif) as image:
+        assert image.size == (8, 8)
+        assert image.n_frames == 2
+        assert image.info['duration'] == 50
 
 
 def test_presentation_png_can_be_enlarged_without_changing_array_resolution(

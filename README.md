@@ -55,7 +55,7 @@ and it is passed through as written. A language model is not called.
 
 ```bash
 python run.py --problem multistory_building --clip "fern fronds"
-python run.py --problem multistory_building --clip "butterfly"
+python run.py --problem multistory_building --clip "butterfly wing venation"
 ```
 
 Each run writes `results/<slug>/`. `comparison.png` is the physical density,

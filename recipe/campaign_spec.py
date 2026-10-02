@@ -10,7 +10,7 @@ from pathlib import Path
 
 from recipe.preset import prompt_slug
 
-PROMPTS = ('fern fronds', 'butterfly', 'skeletons')
+PROMPTS = ('fern fronds', 'butterfly wing venation', 'skeletons')
 COUNTER_PROMPT = 'human skull'
 
 SKETCH_STEMS = (

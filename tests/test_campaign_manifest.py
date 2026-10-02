@@ -10,10 +10,10 @@ def test_default_count_is_109():
     assert len(rows) == 109
     ids = [row['run_id'] for row in rows]
     assert len(ids) == len(set(ids))
-    assert 'S1b/short/butterfly/m' not in ids
+    assert 'S1b/short/butterfly_wing_venation/m' not in ids
     assert 'H4/tall/skeletons/coadapt-off' in ids
     assert 'H2/bridge/fern_fronds/hybrid' in ids
-    assert 'S2/tall/butterfly/rho-0.50' in ids
+    assert 'S2/tall/butterfly_wing_venation/rho-0.50' in ids
     assert 'S1/tall/skeletons/gme' in ids
 
 
@@ -21,7 +21,7 @@ def test_s1b_adds_24():
     rows = experiment_rows(include_s1b=True)
     assert len(rows) == 133
     ids = [row['run_id'] for row in rows]
-    assert 'S1b/short/butterfly/m' in ids
+    assert 'S1b/short/butterfly_wing_venation/m' in ids
     assert 'S1b/bridge/fern_fronds/e' in ids
 
 
@@ -30,7 +30,7 @@ def test_three_prompts_on_hybrid_and_semantic():
         ' '.join(row['argv']) for row in experiment_rows(include_s1b=False)
         if row['run_id'].startswith('H1/') or row['run_id'].startswith('S3/tall/'))
     assert 'fern fronds' in argv_blob
-    assert 'butterfly' in argv_blob
+    assert 'butterfly wing venation' in argv_blob
     assert 'skeletons' in argv_blob
     assert 'human skull' in argv_blob
 

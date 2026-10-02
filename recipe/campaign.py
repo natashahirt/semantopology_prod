@@ -250,6 +250,10 @@ def _write_contract(
         if ds is not None and 'design' in ds:
             write_progress_gif(
                 output_dir / 'progress.gif', np.asarray(ds['design'].values))
+        elif (output_dir / 'progress.gif').exists():
+            # Hybrid runs already wrote the complete physics trajectory.
+            # Do not replace it with a two-frame scaffold/final animation.
+            pass
         elif scaffold is not None:
             write_progress_gif(
                 output_dir / 'progress.gif', np.stack([scaffold, density]))
@@ -262,6 +266,12 @@ def _write_contract(
 
     nely = preset.height
     nelx = preset.width
+    reached_final_grid = (
+        density is None
+        or tuple(np.asarray(density).shape) == (int(nely), int(nelx))
+    )
+    if status == 'ok' and not reached_final_grid:
+        status = 'incomplete_final_grid'
     sites = None
     report = {'validity': {}, 'mean_physical_density': None,
               'clip_loss': None, 'clip_loss_raw': None,
@@ -293,14 +303,17 @@ def _write_contract(
     if density is not None:
         record['density_shape'] = list(np.asarray(density).shape)
         record['configured_shape'] = [int(preset.height), int(preset.width)]
-        record['reached_final_grid'] = (
-            tuple(np.asarray(density).shape)
-            == (int(preset.height), int(preset.width))
-        )
+        record['reached_final_grid'] = reached_final_grid
         record['mean_density'] = float(np.mean(density))
         record['gray_fraction'] = _gray_fraction(density)
         record['volume_fraction'] = float(np.mean(density))
     (output_dir / 'run.json').write_text(_to_json(record))
+    if status == 'incomplete_final_grid':
+        raise RuntimeError(
+            f'Final density has shape {tuple(np.asarray(density).shape)}, '
+            f'expected {(int(preset.height), int(preset.width))}; '
+            'refusing to mark this run DONE.'
+        )
     if status == 'ok':
         (output_dir / 'DONE').write_text('')
     return record
@@ -407,6 +420,7 @@ def run_campaign(args, output_dir: Path) -> dict:
         'compliance': _last(ds, 'compliance'),
         'clip_loss': report['clip_loss'],
         'steps': int(np.asarray(ds['loss'].values).reshape(-1).size),
+        'progress_gif_frames': int(np.asarray(ds['design'].values).shape[0]),
         'mean_physical_density': report['mean_physical_density'],
         'mass_on_scaffold': report['mass_on_scaffold'],
         'validity': report['validity'],
