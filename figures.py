@@ -12,7 +12,7 @@ import numpy as np
 from PIL import Image
 
 PRESENTATION_MAX_EDGE = 2400
-SEMANTIC_MAX_EDGE = 1024
+SEMANTIC_SHORT_EDGE = 512
 
 
 def _plane(field: np.ndarray) -> np.ndarray:
@@ -76,6 +76,38 @@ def save_field_png(
             ),
         )
     image.save(path)
+    return path
+
+
+def save_semantic_design_png(
+    path: Path,
+    raw_field: np.ndarray,
+    *,
+    short_edge: int = SEMANTIC_SHORT_EDGE,
+) -> Path:
+    """Reproduce the hardfork raw-z display path exactly.
+
+    Hardfork resized the unbounded design parameter with Torch's bilinear,
+    antialiased short-edge transform *before* clamping and inverting it.
+    Clipping first creates softer transition bands and is not equivalent.
+    """
+    import torch
+
+    from guidance.loss_clip import _resize_short_side
+
+    if int(short_edge) < 1:
+        raise ValueError(f'short_edge must be >= 1, got {short_edge}')
+    raw = np.ascontiguousarray(_plane(raw_field), dtype=np.float32)
+    resized = _resize_short_side(
+        torch.as_tensor(raw)[None, None],
+        int(short_edge),
+    ).clamp(0.0, 1.0)
+    ink = (
+        255.0 * (1.0 - resized[0, 0].detach().cpu().numpy())
+    ).clip(0, 255).astype(np.uint8)
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    Image.fromarray(ink, mode='L').save(path)
     return path
 
 

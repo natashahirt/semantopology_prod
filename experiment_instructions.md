@@ -103,8 +103,9 @@ edge.
 It does not change the optimization grid; use `physical_density.npy` (or the
 native `physical_density.png`) for measurements and exact pixel inspection.
 `semantic_design.png` reproduces the visually rich raw-design view used by the
-successful hardfork fern and skeleton figures: bilinear 512×1024 for the tall
-building. It is not the final structure.
+successful hardfork fern and skeleton figures: resize unbounded raw z to a
+512-pixel short edge with Torch bilinear antialiasing, then clamp and invert
+(512×1024 for the tall building). It is not the final structure.
 
 Tokens: `tall|short|bridge`, prompt slugs
 `fern_fronds|butterfly_wing_venation|skeletons|human_skull`,
@@ -156,6 +157,13 @@ Unless stated otherwise: tall building, volume fraction 0.30, seed 12,
 formal (F) and
 conventional (B, D) have no prompt; `"human skull"` is S3 on tall only;
 the S1 **gate** is judged on butterfly-wing-venation `{m}`.
+
+The hybrid algorithm and numeric recipe match the hardfork skeleton recipe,
+but two campaign texts are intentional wording changes: hardfork's archived
+fern result used `"unfurling fern fronds"` and its dual-CLIP skeleton
+diagnostic used `"human skeleton"`. Therefore butterfly can replay the
+hardfork path exactly; fern and skeleton use the same method but are not
+expected to produce bit-identical arrays.
 
 | ID | Claim | Runs |
 |---|---|---|

@@ -98,5 +98,7 @@ def test_hybrid_contract_preserves_full_progress_gif(tmp_path, monkeypatch):
     assert progress.read_bytes() == b'full-trajectory'
     assert (tmp_path / 'DONE').exists()
     record = json.loads((tmp_path / 'run.json').read_text())
-    assert record['semantic_presentation_shape'] == [1024, 1024]
-    assert record['semantic_presentation_resampling'] == 'bilinear'
+    assert record['semantic_presentation_shape'] == [512, 512]
+    assert record['semantic_presentation_resampling'] == (
+        'torch-bilinear-antialias-before-clamp'
+    )

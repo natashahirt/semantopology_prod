@@ -6,7 +6,12 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from figures import save_field_png, write_comparison, write_progress_gif
+from figures import (
+    save_field_png,
+    save_semantic_design_png,
+    write_comparison,
+    write_progress_gif,
+)
 from language.interpret import interpret_motive
 from recipe.preset import PAPER, prompt_slug
 from run import resolve_prompt
@@ -15,14 +20,44 @@ from run import resolve_prompt
 def test_paper_preset_matches_the_skeleton_recipe():
     assert PAPER.problem_name == 'multistory_building'
     assert (PAPER.width, PAPER.height, PAPER.density) == (128, 256, 0.3)
+    assert PAPER.interval == 64
+    assert PAPER.filter_width == 2.0
+    assert PAPER.penal == 3.0
     assert PAPER.control_height == 32
     assert PAPER.control_width == 16
     assert PAPER.resize_num == 2
     assert PAPER.resize_scale == 2
+    assert PAPER.seed == 12
+    assert PAPER.init_noise_amp == 0.01
+    assert PAPER.union_load_sites is False
+    assert PAPER.clip_model_name == 'ViT-B/32'
+    assert PAPER.clip_rn_model_name == 'RN50'
+    assert PAPER.clip_prompt == 'fern fronds'  # Intentional wording change.
+    assert PAPER.num_augs == 32
+    assert PAPER.clip_resize_short_side == 512
+    assert PAPER.clip_alpha == 10.0
+    assert PAPER.compliance_weight == 1.0
+    assert PAPER.lr == 0.2
     assert PAPER.max_iterations == 200
+    assert PAPER.resize_threshold == 0.5
+    assert PAPER.max_resize_iteration == 50
+    assert PAPER.convergence_threshold == 0.05
+    assert PAPER.dream_steps == 64
+    assert PAPER.dream_lr == 0.2
     assert PAPER.blend_rho == 1.0
     assert PAPER.blend_rho_z == 0.75
     assert PAPER.coadapt is True
+    assert PAPER.coadapt_interval == 5
+    assert PAPER.coadapt_until == 0.6
+    assert PAPER.coadapt_release is False
+    assert PAPER.mask_lr == 0.05
+    assert PAPER.ema_decay == 0.9
+    assert PAPER.mask_clip_weight == 1.0
+    assert PAPER.saliency_weight == 1.0
+    assert PAPER.overlap_weight == 1.0
+    assert PAPER.area_weight == 10.0
+    assert PAPER.anchor_weight == 1.0
+    assert PAPER.deficit_weight == 0.0
     assert PAPER.physical_clip_projection_beta_max == 8.0
     assert PAPER.physical_clip_projection_sigma == 2.0
     assert PAPER.physical_clip_projection_sigma_end == 0.5
@@ -85,12 +120,28 @@ def test_smooth_presentation_png_fits_max_edge(tmp_path: Path):
 
 
 def test_hardfork_style_semantic_render_is_512_by_1024(tmp_path: Path):
-    field = np.ones((256, 128), dtype=np.float64)
-    path = save_field_png(
-        tmp_path / 'semantic.png',
-        field,
-        max_edge=1024,
-        smooth=True,
-    )
+    field = np.linspace(-2.0, 3.0, 256 * 128).reshape(256, 128)
+    path = save_semantic_design_png(tmp_path / 'semantic.png', field)
     with Image.open(path) as image:
         assert image.size == (512, 1024)
+
+
+def test_semantic_render_resizes_before_clamping(tmp_path: Path):
+    from guidance.loss_clip import _resize_short_side
+    import torch
+
+    field = np.array([[-2.0, 2.0], [2.0, -2.0]], dtype=np.float32)
+    path = save_semantic_design_png(
+        tmp_path / 'semantic.png',
+        field,
+        short_edge=8,
+    )
+    resized = _resize_short_side(
+        torch.as_tensor(field)[None, None],
+        8,
+    ).clamp(0.0, 1.0)
+    expected = (
+        255.0 * (1.0 - resized[0, 0].numpy())
+    ).clip(0, 255).astype(np.uint8)
+    with Image.open(path) as image:
+        np.testing.assert_array_equal(np.asarray(image), expected)

@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
+from recipe.campaign import onoff, preset_from_args
+from recipe.preset import PAPER
+from run import build_parser
 from slurm.make_manifest import experiment_rows
 
 
@@ -64,3 +69,24 @@ def test_non_ablation_prompt_rows_keep_the_proven_recipe():
     assert rows
     for row in rows:
         assert forbidden_overrides.isdisjoint(row['argv']), row['run_id']
+
+
+def test_h1_manifest_resolves_to_the_hardfork_recipe():
+    row = next(
+        row for row in experiment_rows(include_s1b=False)
+        if row['run_id'] == 'H1/tall/butterfly_wing_venation/hybrid'
+    )
+    args = build_parser().parse_args(row['argv'])
+    args.sketch_init = onoff(args.sketch_init)
+    args.sketch_weight = onoff(args.sketch_weight)
+    args.coadapt = onoff(
+        'on' if args.coadapt is None and args.mode == 'hybrid'
+        else args.coadapt
+    )
+    args.device = args.device or PAPER.device
+
+    assert preset_from_args(args) == replace(
+        PAPER,
+        problem_name='tall_building',
+        clip_prompt='butterfly wing venation',
+    )
