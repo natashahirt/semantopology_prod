@@ -11,6 +11,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+PRESENTATION_MAX_EDGE = 2400
+
 
 def _plane(field: np.ndarray) -> np.ndarray:
     arr = np.asarray(field, dtype=np.float64)
@@ -33,17 +35,44 @@ def save_field_png(
     field: np.ndarray,
     *,
     scale: int = 1,
+    max_edge: int | None = None,
+    smooth: bool = False,
 ) -> Path:
-    """Save a density field, optionally enlarged without inventing detail."""
+    """Save a density field as either an exact or presentation rendering.
+
+    ``scale`` with nearest-neighbour resampling exposes the finite-element
+    pixels. ``max_edge`` fits the image to a publication-size box while
+    preserving its aspect ratio; ``smooth=True`` mirrors the antialiased
+    enlargement used by the legacy Venice figures. The native array remains
+    the scientific result.
+    """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     image = ink_image(field)
     if int(scale) < 1:
         raise ValueError(f'scale must be >= 1, got {scale}')
-    if int(scale) > 1:
+    if max_edge is not None and int(max_edge) < 1:
+        raise ValueError(f'max_edge must be >= 1, got {max_edge}')
+    if max_edge is not None:
+        factor = float(max_edge) / float(max(image.size))
+        output_size = (
+            max(1, int(round(image.width * factor))),
+            max(1, int(round(image.height * factor))),
+        )
+        image = image.resize(
+            output_size,
+            resample=(
+                Image.Resampling.BILINEAR
+                if smooth else Image.Resampling.NEAREST
+            ),
+        )
+    elif int(scale) > 1:
         image = image.resize(
             (image.width * int(scale), image.height * int(scale)),
-            resample=Image.Resampling.NEAREST,
+            resample=(
+                Image.Resampling.BILINEAR
+                if smooth else Image.Resampling.NEAREST
+            ),
         )
     image.save(path)
     return path
@@ -113,7 +142,7 @@ def write_progress_gif(
         if int(scale) > 1:
             image = image.resize(
                 (image.width * int(scale), image.height * int(scale)),
-                resample=Image.Resampling.NEAREST,
+                resample=Image.Resampling.BILINEAR,
             )
         frames.append(image.convert('P'))
     frames[0].save(

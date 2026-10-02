@@ -82,7 +82,10 @@ claim. Do not add experiments that are not listed.
 ```
 results/<experiment>/<structure>/<…tokens…>/attempt_<n>/
   physical_density.npy
-  final.png  comparison.png  progress.gif
+  physical_density.png  # exact native-grid raster
+  final.png              # smooth paper rendering of physical density
+  semantic_design.png    # smooth raw-z rendering for CLIP-guided runs
+  comparison.png  progress.gif
   run.json
   DONE                 # written last, only on success
 logs/<jobid>_<array>.out
@@ -94,6 +97,12 @@ analysis/out/
   tables/vendi.csv
   figures/
 ```
+
+`final.png` is the smooth paper rendering, fit to a 2400-pixel maximum edge.
+It does not change the optimization grid; use `physical_density.npy` (or the
+native `physical_density.png`) for measurements and exact pixel inspection.
+`semantic_design.png` reproduces the visually rich raw-design view used by the
+successful hardfork fern and skeleton figures; it is not the final structure.
 
 Tokens: `tall|short|bridge`, prompt slugs
 `fern_fronds|butterfly_wing_venation|skeletons|human_skull`,

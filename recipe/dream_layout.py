@@ -331,6 +331,7 @@ def run_dream_layout(preset: DreamLayoutPreset, output_dir: Path) -> dict:
 
     panels = [
         ('Physical density', density),
+        ('Semantic design (raw z)', np.clip(raw, 0.0, 1.0)),
         ('Dream scaffold', scaffold),
     ]
     saliency = None

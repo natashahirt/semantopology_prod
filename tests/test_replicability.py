@@ -70,3 +70,15 @@ def test_presentation_png_can_be_enlarged_without_changing_array_resolution(
     path = save_field_png(tmp_path / 'bridge.png', field, scale=4)
     with Image.open(path) as image:
         assert image.size == (1792, 288)
+
+
+def test_smooth_presentation_png_fits_max_edge(tmp_path: Path):
+    field = np.linspace(0.0, 1.0, 32, dtype=np.float64).reshape(8, 4)
+    path = save_field_png(
+        tmp_path / 'tall.png',
+        field,
+        max_edge=2400,
+        smooth=True,
+    )
+    with Image.open(path) as image:
+        assert image.size == (1200, 2400)

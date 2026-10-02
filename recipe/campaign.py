@@ -14,7 +14,12 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from figures import save_field_png, write_comparison, write_progress_gif
+from figures import (
+    PRESENTATION_MAX_EDGE,
+    save_field_png,
+    write_comparison,
+    write_progress_gif,
+)
 from guidance.clip_scales import parse_clip_scales
 from guidance.loss_semantic_prior import (
     CoadaptiveMask,
@@ -246,7 +251,21 @@ def _write_contract(
     if density is not None:
         save_design_arrays(output_dir, density, raw=raw)
         save_field_png(output_dir / 'physical_density.png', density)
-        save_field_png(output_dir / 'final.png', density, scale=4)
+        save_field_png(
+            output_dir / 'final.png',
+            density,
+            max_edge=PRESENTATION_MAX_EDGE,
+            smooth=True,
+        )
+        if raw is not None and (
+                args.mode in ('semantic', 'hybrid', 'prompt_sketch')
+                or args.prompt_sketch):
+            save_field_png(
+                output_dir / 'semantic_design.png',
+                raw,
+                max_edge=PRESENTATION_MAX_EDGE,
+                smooth=True,
+            )
         if ds is not None and 'design' in ds:
             write_progress_gif(
                 output_dir / 'progress.gif', np.asarray(ds['design'].values))
@@ -261,7 +280,12 @@ def _write_contract(
             write_progress_gif(
                 output_dir / 'progress.gif', density[None, ...])
     elif scaffold is not None:
-        save_field_png(output_dir / 'final.png', scaffold, scale=4)
+        save_field_png(
+            output_dir / 'final.png',
+            scaffold,
+            max_edge=PRESENTATION_MAX_EDGE,
+            smooth=True,
+        )
         write_progress_gif(output_dir / 'progress.gif', scaffold[None, ...])
 
     nely = preset.height
@@ -307,6 +331,15 @@ def _write_contract(
         record['mean_density'] = float(np.mean(density))
         record['gray_fraction'] = _gray_fraction(density)
         record['volume_fraction'] = float(np.mean(density))
+    presentation_field = density if density is not None else scaffold
+    if presentation_field is not None:
+        height, width = _plane(presentation_field).shape
+        factor = float(PRESENTATION_MAX_EDGE) / float(max(height, width))
+        record['presentation_shape'] = [
+            max(1, int(round(height * factor))),
+            max(1, int(round(width * factor))),
+        ]
+        record['presentation_resampling'] = 'bilinear'
     (output_dir / 'run.json').write_text(_to_json(record))
     if status == 'incomplete_final_grid':
         raise RuntimeError(
@@ -373,7 +406,6 @@ def run_campaign(args, output_dir: Path) -> dict:
             output_dir / 'final_design_raw.npy').exists() else None
         scaffold = np.load(output_dir / 'scaffold.npy') if (
             output_dir / 'scaffold.npy').exists() else None
-        save_field_png(output_dir / 'final.png', density, scale=4)
         summary.update(hybrid_summary)
         summary['_t0'] = t0
         # Hybrid already ran FEA. Thresholded compliance uses the live model
@@ -409,6 +441,8 @@ def run_campaign(args, output_dir: Path) -> dict:
     report = report_design_metrics(
         density, sites, scaffold=occupancy, ds=ds)
     panels = [('Physical density', density)]
+    if needs_clip:
+        panels.append(('Semantic design (raw z)', np.clip(raw, 0.0, 1.0)))
     if occupancy is not None:
         panels.append(('Occupancy', occupancy))
         scaffold = occupancy

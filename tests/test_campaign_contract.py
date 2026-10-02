@@ -48,6 +48,8 @@ def test_incomplete_final_grid_is_not_marked_done(tmp_path, monkeypatch):
     record = json.loads((tmp_path / 'run.json').read_text())
     assert record['exit_status'] == 'incomplete_final_grid'
     assert record['reached_final_grid'] is False
+    assert record['presentation_shape'] == [2400, 2400]
+    assert record['presentation_resampling'] == 'bilinear'
     assert not (tmp_path / 'DONE').exists()
 
 
