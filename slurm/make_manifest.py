@@ -19,9 +19,9 @@ from recipe.campaign_spec import (
     F3_SKETCHES,
     H3_SKETCHES,
     PROMPTS,
+    REPORTED_STRUCTURES,
     SCALE_ARMS,
     SKETCH_ROOT,
-    STRUCTURES,
     WEIGHT_ENDS,
     prompt_token,
     rho_token,
@@ -70,7 +70,7 @@ def _lerp(lo: float, hi: float, u: float) -> float:
 def experiment_rows(*, include_s1b: bool) -> list[dict]:
     rows: list[dict] = []
 
-    for key in STRUCTURES:
+    for key in REPORTED_STRUCTURES:
         rows.append(_row(
             f'B/{key}/unguided', 'B', 'baseline',
             ['--mode', 'unguided', *_structure_args(key)],
@@ -130,7 +130,7 @@ def experiment_rows(*, include_s1b: bool) -> list[dict]:
                  '--clip', prompt, '--blend-rho', str(rho)],
             ))
 
-    for key in STRUCTURES:
+    for key in REPORTED_STRUCTURES:
         for prompt in PROMPTS:
             rows.append(_row(
                 f'S3/{key}/{prompt_token(prompt)}', 'S3', 'semantic',

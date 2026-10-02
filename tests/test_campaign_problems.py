@@ -14,6 +14,7 @@ from problem.problems import (
     double_decker_bridge,
     short_cantilever_building,
     tall_building,
+    three_decker_bridge,
 )
 
 
@@ -89,6 +90,21 @@ class DoubleDeckerBridgeTest(absltest.TestCase):
         problem = double_decker_bridge(width=32, height=8)
         self.assertEqual(problem.normals[0, -1, X], 1)
         np.testing.assert_allclose(problem.forces[:, 7, Y], -1.0 / 32)
+        _factors(problem)
+
+
+class ThreeDeckerBridgeTest(absltest.TestCase):
+
+    def test_adds_a_middle_loaded_deck(self):
+        problem = three_decker_bridge()
+        loaded = np.flatnonzero(np.abs(problem.forces[0, :, Y]) > 0)
+        np.testing.assert_array_equal(loaded, [0, 36, 71])
+        np.testing.assert_allclose(problem.forces[:, 36, Y], -1.0 / 448)
+
+    def test_factors_on_a_similar_grid(self):
+        problem = three_decker_bridge(width=32, height=8)
+        loaded = np.flatnonzero(np.abs(problem.forces[0, :, Y]) > 0)
+        np.testing.assert_array_equal(loaded, [0, 4, 7])
         _factors(problem)
 
 

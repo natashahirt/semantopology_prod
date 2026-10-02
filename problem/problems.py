@@ -803,6 +803,20 @@ def double_decker_bridge(width=448, height=72, density=0.3):
   problem.name = f"double_decker_bridge_{width}x{height}"
   return problem
 
+
+def three_decker_bridge(width=448, height=72, density=0.3):
+  """Pin-roller span with uniform loads on three horizontal decks.
+
+  Uses the same supports and domain as :func:`double_decker_bridge`, adding a
+  middle loaded row at ``height // 2``. The other decks remain at y = 0 and
+  y = height - 1, immediately above the support row.
+  """
+  problem = double_decker_bridge(width=width, height=height, density=density)
+  problem.forces[:, height // 2, Y] = -1.0 / width
+  problem.name = f"three_decker_bridge_{width}x{height}"
+  return problem
+
+
 # =============================================================================
 # StructuralParams dataclass for parameterized problem creation
 # =============================================================================
@@ -990,6 +1004,7 @@ class StructuralParams:
             "tall_building",
             "short_cantilever_building",
             "double_decker_bridge",
+            "three_decker_bridge",
         ]
 
     def get_problem(self) -> 'Problem':

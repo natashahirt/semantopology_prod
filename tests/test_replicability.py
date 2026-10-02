@@ -4,8 +4,9 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from PIL import Image
 
-from figures import write_comparison, write_progress_gif
+from figures import save_field_png, write_comparison, write_progress_gif
 from language.interpret import interpret_motive
 from recipe.preset import PAPER, prompt_slug
 from run import resolve_prompt
@@ -49,3 +50,11 @@ def test_figures_write_strip_and_gif(tmp_path: Path):
     gif = write_progress_gif(tmp_path / 'progress.gif', frames)
     assert comparison.is_file() and comparison.stat().st_size > 0
     assert gif.is_file() and gif.stat().st_size > 0
+
+
+def test_presentation_png_can_be_enlarged_without_changing_array_resolution(
+        tmp_path: Path):
+    field = np.ones((72, 448), dtype=np.float64)
+    path = save_field_png(tmp_path / 'bridge.png', field, scale=4)
+    with Image.open(path) as image:
+        assert image.size == (1792, 288)

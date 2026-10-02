@@ -26,6 +26,7 @@ BLEND_RHOS = (0.0, 0.25, 0.5, 0.75, 1.0)
 WEIGHT_ENDS = (200.0, 400.0, 800.0, 1200.0, 2000.0)
 
 SKETCH_ROOT = Path('inputs/sketches')
+REPORTED_STRUCTURES = ('tall', 'short', 'bridge')
 
 
 @dataclass(frozen=True)
@@ -77,6 +78,19 @@ STRUCTURES = {
         width=448,
         height=72,
         interval=72,
+        density=0.3,
+        kind='bridge',
+        resize_num=2,
+        control_height=8,
+        control_width=32,
+    ),
+    # Exploratory gate only; not expanded into the main campaign manifest.
+    'bridge3': StructureSpec(
+        key='bridge3',
+        problem_name='three_decker_bridge',
+        width=448,
+        height=72,
+        interval=36,
         density=0.3,
         kind='bridge',
         resize_num=2,

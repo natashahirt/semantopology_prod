@@ -246,7 +246,7 @@ def _write_contract(
     if density is not None:
         save_design_arrays(output_dir, density, raw=raw)
         save_field_png(output_dir / 'physical_density.png', density)
-        save_field_png(output_dir / 'final.png', density)
+        save_field_png(output_dir / 'final.png', density, scale=4)
         if ds is not None and 'design' in ds:
             write_progress_gif(
                 output_dir / 'progress.gif', np.asarray(ds['design'].values))
@@ -257,7 +257,7 @@ def _write_contract(
             write_progress_gif(
                 output_dir / 'progress.gif', density[None, ...])
     elif scaffold is not None:
-        save_field_png(output_dir / 'final.png', scaffold)
+        save_field_png(output_dir / 'final.png', scaffold, scale=4)
         write_progress_gif(output_dir / 'progress.gif', scaffold[None, ...])
 
     nely = preset.height
@@ -291,6 +291,12 @@ def _write_contract(
         **{k: v for k, v in summary.items() if not str(k).startswith('_')},
     }
     if density is not None:
+        record['density_shape'] = list(np.asarray(density).shape)
+        record['configured_shape'] = [int(preset.height), int(preset.width)]
+        record['reached_final_grid'] = (
+            tuple(np.asarray(density).shape)
+            == (int(preset.height), int(preset.width))
+        )
         record['mean_density'] = float(np.mean(density))
         record['gray_fraction'] = _gray_fraction(density)
         record['volume_fraction'] = float(np.mean(density))
@@ -354,7 +360,7 @@ def run_campaign(args, output_dir: Path) -> dict:
             output_dir / 'final_design_raw.npy').exists() else None
         scaffold = np.load(output_dir / 'scaffold.npy') if (
             output_dir / 'scaffold.npy').exists() else None
-        save_field_png(output_dir / 'final.png', density)
+        save_field_png(output_dir / 'final.png', density, scale=4)
         summary.update(hybrid_summary)
         summary['_t0'] = t0
         # Hybrid already ran FEA. Thresholded compliance uses the live model

@@ -61,6 +61,8 @@ claim. Do not add experiments that are not listed.
   Y-support on the left 70%, X-fix on the left wall; AdaptivePixel
   `resize_num=1` because 150 is not divisible by 4),
   `double_decker_bridge` (448×72, pin-roller, UDL on y=0 and y=71).
+  `three_decker_bridge` adds a middle deck at y=36 and is available as
+  `--structure bridge3` for an exploratory gate; it is not in the manifest.
 - Sketches in `inputs/sketches/`. `col3_braced.png` has columns flush with
   the domain edges. Do not regenerate.
 - `run.py` modes: `unguided`, `sketch`, `semantic`, `hybrid`, `dream_only`,
@@ -108,6 +110,20 @@ After the S1 gate passes:
 python slurm/make_manifest.py --include-s1b   # appends rows 109-132
 sbatch --array=109-132%8 slurm/campaign.sbatch
 ```
+
+Optional three-deck gate (run separately; do not append to the main manifest):
+
+```bash
+python run.py --run-id GATE/bridge3/unguided --experiment GATE \
+  --group baseline --mode unguided --structure bridge3
+python run.py --run-id GATE/bridge3/fern_fronds --experiment GATE \
+  --group semantic --mode semantic --structure bridge3 --clip "fern fronds"
+```
+
+If the extra middle deck produces a clearer and structurally credible section,
+run butterfly and skeletons too, then decide whether `bridge3` replaces
+`bridge` in the reported prompt × structure figure. Do not report both as
+independent evidence without accounting for the selection gate.
 
 ## Phase 1 — smoke tests (gate)
 Run, on a compute node, one row from each of: unguided on each structure,
