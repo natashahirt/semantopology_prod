@@ -16,6 +16,10 @@ from PIL import Image, ImageDraw
 SHARP_INK_SHORT_EDGE = 512
 SHARP_INK_RESAMPLING = 'torch-bilinear-antialias-before-clamp'
 COMPARISON_PANEL_MAX_EDGE = 1200
+# Venice pacing: every 2nd optimization step, 30 steps per second.
+GIF_STEP_STRIDE = 2
+GIF_STEPS_PER_SECOND = 30.0
+GIF_FINAL_HOLD_MS = 1000
 
 
 def _plane(field: np.ndarray) -> np.ndarray:
@@ -217,32 +221,71 @@ def write_comparison(
     return path
 
 
+def gif_step_indices(n_steps: int, stride: int = GIF_STEP_STRIDE) -> list[int]:
+    """Every ``stride``-th step, always ending on the final step."""
+    if n_steps < 1:
+        raise ValueError('progress GIF needs at least one frame')
+    if int(stride) < 1:
+        raise ValueError(f'stride must be >= 1, got {stride}')
+    indices = list(range(0, n_steps, int(stride)))
+    if indices[-1] != n_steps - 1:
+        indices.append(n_steps - 1)
+    return indices
+
+
+def gif_frame_durations(
+    n_frames: int,
+    *,
+    stride: int = GIF_STEP_STRIDE,
+    steps_per_second: float = GIF_STEPS_PER_SECOND,
+    final_hold_ms: int = GIF_FINAL_HOLD_MS,
+) -> list[int]:
+    """Per-frame delays in ms averaging ``stride / steps_per_second``.
+
+    GIF stores delays in whole centiseconds, so each frame takes the rounded
+    cumulative target: 2 steps at 30 per second alternates 70/60/70 ms rather
+    than drifting to 70 ms. The last frame is held for ``final_hold_ms``.
+    """
+    if float(steps_per_second) <= 0.0:
+        raise ValueError(f'steps_per_second must be > 0, got {steps_per_second}')
+    period_cs = 100.0 * int(stride) / float(steps_per_second)
+    edges = [round(i * period_cs) for i in range(int(n_frames) + 1)]
+    durations = [10 * max(1, b - a) for a, b in zip(edges, edges[1:])]
+    durations[-1] = max(durations[-1], int(final_hold_ms))
+    return durations
+
+
 def write_progress_gif(
     path: Path,
     raw_frames: Sequence[np.ndarray],
     *,
-    duration_ms: int = 50,
+    stride: int = GIF_STEP_STRIDE,
+    steps_per_second: float = GIF_STEPS_PER_SECOND,
+    final_hold_ms: int = GIF_FINAL_HOLD_MS,
     short_edge: int = SHARP_INK_SHORT_EDGE,
 ) -> Path:
-    """Write one sharp-ink frame per recorded physics step.
+    """Write a sharp-ink animation of the recorded physics steps.
 
-    ``raw_frames`` may mix grids (one per AdaptivePixel stage); every frame
-    is rendered to the same short edge, so the animation keeps one size.
+    Keeps every ``stride``-th step plus the final one, played at
+    ``steps_per_second`` optimization steps per second. ``raw_frames`` may
+    mix grids (one per AdaptivePixel stage); every frame is rendered to the
+    same short edge, so the animation keeps one size.
     """
-    if len(raw_frames) < 1:
-        raise ValueError('progress GIF needs at least one frame')
+    indices = gif_step_indices(len(raw_frames), stride)
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     frames = [
-        sharp_ink_image(frame, short_edge=short_edge).convert('P')
-        for frame in raw_frames
+        sharp_ink_image(raw_frames[i], short_edge=short_edge).convert('P')
+        for i in indices
     ]
     frames[0].save(
         path,
         save_all=True,
         append_images=frames[1:],
-        duration=int(duration_ms),
+        duration=gif_frame_durations(
+            len(frames), stride=stride, steps_per_second=steps_per_second,
+            final_hold_ms=final_hold_ms),
         loop=0,
-        optimize=False,
+        optimize=True,
     )
     return path

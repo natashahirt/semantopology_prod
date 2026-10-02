@@ -7,6 +7,8 @@ import pytest
 from PIL import Image
 
 from figures import (
+    gif_frame_durations,
+    gif_step_indices,
     native_raw_frames,
     save_field_png,
     save_sharp_ink_png,
@@ -103,7 +105,9 @@ def test_figures_write_strip_and_gif(tmp_path: Path):
     with Image.open(gif) as image:
         assert image.size == (512, 512)
         assert image.n_frames == 2
-        assert image.info['duration'] == 50
+        assert image.info['duration'] == 70
+        image.seek(1)
+        assert image.info['duration'] == 1000
 
 
 def test_presentation_png_can_be_enlarged_without_changing_array_resolution(
@@ -137,10 +141,23 @@ def test_hardfork_style_sharp_ink_render_is_512_by_1024(tmp_path: Path):
 
 def test_gif_frames_from_every_stage_share_the_sharp_ink_size(tmp_path: Path):
     frames = [np.zeros((64, 32)), np.full((128, 64), 0.5), np.ones((256, 128))]
-    gif = write_progress_gif(tmp_path / 'progress.gif', frames)
+    gif = write_progress_gif(tmp_path / 'progress.gif', frames, stride=1)
     with Image.open(gif) as image:
         assert image.size == (512, 1024)
         assert image.n_frames == 3
+
+
+def test_gif_keeps_every_second_step_and_ends_on_the_last():
+    assert gif_step_indices(5) == [0, 2, 4]
+    assert gif_step_indices(6) == [0, 2, 4, 5]
+    assert gif_step_indices(1) == [0]
+
+
+def test_gif_durations_average_thirty_steps_per_second():
+    durations = gif_frame_durations(30, final_hold_ms=0)
+    assert set(durations) <= {60, 70}
+    assert sum(durations) == 1000 * 30 * 2 // 30
+    assert gif_frame_durations(3)[-1] == 1000
 
 
 def test_native_raw_frames_recover_each_stage_grid_exactly():
