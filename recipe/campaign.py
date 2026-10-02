@@ -31,6 +31,7 @@ from guidance.loss_semantic_prior import (
 )
 from guidance.loss_sketch import (
     apply_scaffold_as_occupancy_prior,
+    load_on_solid_fraction,
     load_site_mask,
     load_sketch_occupancy,
 )
@@ -136,6 +137,8 @@ def preset_from_args(args) -> DreamLayoutPreset:
         structure_kind=spec.kind,
         beta=beta,
         heavyside=beta is not None,
+        physics_projection_beta_max=float(
+            getattr(args, 'physics_beta_max', 0.0) or 0.0),
     )
 
 
@@ -434,12 +437,17 @@ def run_campaign(args, output_dir: Path) -> dict:
         'compliance': _last(ds, 'compliance'),
         'clip_loss': report['clip_loss'],
         'steps': int(np.asarray(ds['loss'].values).reshape(-1).size),
+        'converged': bool(ds.attrs.get('converged', 0)),
+        'physics_projection_beta_max': preset.physics_projection_beta_max,
+        'physics_projection_beta_final': model._last_physics_projection_beta,
         'progress_gif_frames': int(np.asarray(ds['design'].values).shape[0]),
         'mean_physical_density': report['mean_physical_density'],
         'mass_on_scaffold': report['mass_on_scaffold'],
         'validity': report['validity'],
         'gray_fraction': _gray_fraction(density),
         'thresholded_compliance': _thresholded_compliance(model, density),
+        'load_on_solid_fraction': load_on_solid_fraction(
+            density, model.env.args['forces']),
         'connected_components': report['validity'].get('component_count'),
         'volume_actual': float(np.mean(raw > 0.9)),
     })

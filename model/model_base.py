@@ -235,6 +235,9 @@ class Model(nn.Module):
         self._last_occupancy_weight = None
         self._opt_step = 0
         self._opt_max_iterations = 1
+        # Physics Heaviside continuation. 0 keeps every loss path bit-identical.
+        self.physics_projection_beta_max = 0.0
+        self._last_physics_projection_beta = None
         if clip_loss is not None:
             clip_loss.clip_model = (
                 clip_loss.clip_model.to(self.device).eval().requires_grad_(False)
@@ -641,6 +644,39 @@ class Model(nn.Module):
         denom = max(int(self._opt_max_iterations) - 1, 1)
         t = min(max(int(self._opt_step) / float(denom), 0.0), 1.0)
         return 1.0 + (beta_max - 1.0) * t
+
+    @property
+    def physics_projection_active(self) -> bool:
+        """Whether the physics Heaviside beta is being ramped this run."""
+        return float(self.physics_projection_beta_max) > 0.0
+
+    def apply_physics_projection_schedule(self) -> None:
+        """Ramp the physics Heaviside beta from 1 to ``physics_projection_beta_max``.
+
+        Geometric in ``step / (max_iterations - 1)``: the design spends its
+        early iterations close to the unprojected problem and sharpens late.
+        The value is written straight into each live environment's args
+        because an upsample rebuilds ``env`` from ``structural_params``, which
+        leaves projection off.
+
+        Raises:
+            ValueError: if ``physics_projection_beta_max`` lies in (0, 1),
+                which would soften the projection over the run.
+        """
+        beta_max = float(self.physics_projection_beta_max)
+        if beta_max <= 0.0:
+            return
+        if beta_max < 1.0:
+            raise ValueError(
+                f'physics_projection_beta_max must be 0 (off) or >= 1, got {beta_max}')
+        denom = max(int(self._opt_max_iterations) - 1, 1)
+        t = min(max(int(self._opt_step) / float(denom), 0.0), 1.0)
+        beta = beta_max ** t
+        for env in {id(self.env): self.env,
+                    id(self.analysis_env): self.analysis_env}.values():
+            env.args['heavyside'] = True
+            env.args['beta'] = beta
+        self._last_physics_projection_beta = beta
 
     def _physical_clip_projection_sigma(self) -> float:
         """Gaussian sigma CLIP(rho) sees, in current-grid elements.

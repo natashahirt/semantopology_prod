@@ -125,6 +125,42 @@ def load_site_mask(
     return mask
 
 
+def load_on_solid_fraction(
+    density: np.ndarray,
+    forces: np.ndarray,
+    *,
+    threshold: float = 0.5,
+) -> Optional[float]:
+    """Share of the applied load that lands on solid material.
+
+    A loaded node counts as carried when any of the (up to four) elements
+    touching it has density at or above `threshold`; nodes are weighted by
+    force magnitude. Thresholded compliance answers the same question but is
+    driven to ~1e7 by a single stranded node, so it cannot say how much of
+    the load is stranded.
+
+    Args:
+        density: element densities, shape ``(nely, nelx)``.
+        forces: nodal forces, raveled ``(nelx+1, nely+1, 2)`` as on
+            ``env.args['forces']``.
+        threshold: density at or above which an element counts as solid.
+
+    Returns:
+        A fraction in [0, 1], or None when no load is applied.
+    """
+    rho = np.asarray(density, dtype=np.float64)
+    nely, nelx = rho.shape
+    f = np.asarray(forces, dtype=np.float64).reshape(nelx + 1, nely + 1, 2)
+    magnitude = np.hypot(f[..., 0], f[..., 1]).T  # (nely+1, nelx+1)
+    total = float(magnitude.sum())
+    if total == 0.0:
+        return None
+    # Node (iy, ix) touches elements rows iy-1..iy, cols ix-1..ix.
+    solid = np.pad(rho >= threshold, 1)
+    touched = solid[:-1, :-1] | solid[1:, :-1] | solid[:-1, 1:] | solid[1:, 1:]
+    return float((magnitude * touched).sum() / total)
+
+
 def sketch_mass_prior_loss(
     density: torch.Tensor,
     occupancy: torch.Tensor,

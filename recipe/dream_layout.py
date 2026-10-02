@@ -32,6 +32,7 @@ from guidance.loss_semantic_prior import CoadaptiveMask, report_design_metrics
 from guidance.loss_semantic_prior import save_design_arrays
 from guidance.loss_sketch import (
     apply_scaffold_as_occupancy_prior,
+    load_on_solid_fraction,
     load_site_mask,
     rank_ink_from_raw,
     resample_field,
@@ -136,6 +137,7 @@ def build_model(
     )
     model.args['penal'] = float(preset.penal)
     model.env.args['penal'] = float(preset.penal)
+    model.physics_projection_beta_max = float(preset.physics_projection_beta_max)
     if venice_algebra:
         model.enable_venice_compat_loss(VeniceLossAlgebra(
             clip_alpha=preset.clip_alpha,
@@ -364,8 +366,11 @@ def run_dream_layout(preset: DreamLayoutPreset, output_dir: Path) -> dict:
         'problem': preset.problem_name,
         'slug': prompt_slug(preset.clip_prompt),
         'steps': int(np.asarray(ds['loss'].values).reshape(-1).size),
+        'converged': bool(ds.attrs.get('converged', 0)),
         'progress_gif_frames': int(np.asarray(ds['design'].values).shape[0]),
         'compliance': _last(ds, 'compliance'),
+        'physics_projection_beta_max': preset.physics_projection_beta_max,
+        'physics_projection_beta_final': physics_model._last_physics_projection_beta,
         'clip_loss': report['clip_loss'],
         'clip_loss_raw': report['clip_loss_raw'],
         'dream_clip_loss': float(dream_losses[-1]),
@@ -373,6 +378,8 @@ def run_dream_layout(preset: DreamLayoutPreset, output_dir: Path) -> dict:
         'mean_physical_density': report['mean_physical_density'],
         'mass_on_scaffold': report['mass_on_scaffold'],
         'validity': report['validity'],
+        'load_on_solid_fraction': load_on_solid_fraction(
+            density, physics_model.env.args['forces']),
         'scaffold_source': 'soft_rank',
         'scaffold_mean': float(np.mean(scaffold)),
         'control_grid': [preset.control_height, preset.control_width],

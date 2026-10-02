@@ -1,0 +1,5 @@
+run_id	argv_json
+GATE/projection/tall/unguided/beta0	["--run-id", "GATE/projection/tall/unguided/beta0", "--experiment", "GATE", "--group", "baseline", "--mode", "unguided", "--structure", "tall"]
+GATE/projection/tall/unguided/beta8	["--run-id", "GATE/projection/tall/unguided/beta8", "--experiment", "GATE", "--group", "baseline", "--mode", "unguided", "--structure", "tall", "--physics-beta-max", "8"]
+GATE/projection/tall/fern_fronds/hybrid/beta0	["--run-id", "GATE/projection/tall/fern_fronds/hybrid/beta0", "--experiment", "GATE", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "fern fronds"]
+GATE/projection/tall/fern_fronds/hybrid/beta8	["--run-id", "GATE/projection/tall/fern_fronds/hybrid/beta8", "--experiment", "GATE", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "fern fronds", "--physics-beta-max", "8"]

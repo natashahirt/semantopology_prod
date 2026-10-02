@@ -56,12 +56,15 @@ CLIP_DYNAMIC_WEIGHT_MAX = 2000.0
 
 
 def _apply_sketch_schedule(model, step: int, max_iterations: int) -> None:
-    """Advance the sketch-weight anneal for this step, if the model has one."""
+    """Advance the per-step schedules (sketch weight, physics projection)."""
     model._opt_step = int(step)
     model._opt_max_iterations = int(max_iterations)
     apply = getattr(model, 'apply_sketch_schedule', None)
     if apply is not None:
         apply(step=step, max_iterations=max_iterations)
+    project = getattr(model, 'apply_physics_projection_schedule', None)
+    if project is not None:
+        project()
 
 
 def _reject_clip_alpha_under_venice_compat(model, clip_alpha, optimizer_name: str) -> None:
@@ -887,8 +890,11 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
             # Deliberately not elif: the final upsample makes the schedule
             # exhausted within this same iteration, and Venice tests for
             # convergence immediately, against the same compliance delta.
-            if not model.can_upsample and model.threshold_crossed(
-                    compliance_value, self.convergence_threshold):
+            # A projection ramp must reach its final beta, so it runs the cap.
+            if (not model.can_upsample
+                    and not getattr(model, 'physics_projection_active', False)
+                    and model.threshold_crossed(
+                        compliance_value, self.convergence_threshold)):
                 self.converged = True
                 break
 

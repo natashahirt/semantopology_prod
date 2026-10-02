@@ -92,6 +92,8 @@ class DreamLayoutPreset:
     structure_kind: str = 'building'
     beta: float | None = None
     heavyside: bool = False
+    # Physics Heaviside ramp 1 -> beta over the run; 0 is off (legacy path).
+    physics_projection_beta_max: float = 0.0
 
     def with_clip(self, clip_prompt: str) -> 'DreamLayoutPreset':
         stripped = clip_prompt.strip()

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Run one campaign.tsv row. Called by campaign.sbatch."""
+"""Run one campaign.tsv row. Called by campaign.sbatch.
+
+Set ``CAMPAIGN_MANIFEST`` (a path relative to the repo, or absolute) to run a
+row from a gate manifest instead, e.g. ``slurm/projection_gate.tsv``.
+"""
 
 from __future__ import annotations
 
@@ -10,7 +14,7 @@ import sys
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[1]
-MANIFEST = _REPO / 'slurm' / 'campaign.tsv'
+MANIFEST = _REPO / os.environ.get('CAMPAIGN_MANIFEST', 'slurm/campaign.tsv')
 
 
 def load_row(index: int) -> tuple[str, list[str]]:

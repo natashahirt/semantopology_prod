@@ -65,6 +65,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--filter-width', type=float, default=PAPER.filter_width)
     parser.add_argument('--penal', type=float, default=PAPER.penal)
     parser.add_argument('--beta-max', type=float, default=None)
+    parser.add_argument(
+        '--physics-beta-max', type=float,
+        default=PAPER.physics_projection_beta_max,
+        help='Ramp the physics Heaviside beta from 1 to this value over the '
+             'run (0 = off). Disables early convergence stopping.')
     parser.add_argument('--resolution-scale', type=float, default=1.0)
     parser.add_argument('--seed', type=int, default=PAPER.seed)
     parser.add_argument('--out', default=None)

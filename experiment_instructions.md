@@ -159,6 +159,37 @@ run butterfly wing venation and skeletons too, then decide whether `bridge3` rep
 `bridge` in the reported prompt × structure figure. Do not report both as
 independent evidence without accounting for the selection gate.
 
+### 0.5 Projection gate (run before Phase 2; the user decides)
+
+Unguided smoke runs leave 19–26% of the domain gray, and their thresholded
+compliance is about 10⁷. The structures lean on filter-blurred material to
+reach the loaded floors. `--physics-beta-max 8` ramps a Heaviside projection
+on the physics density from beta 1 to 8 over the run, and it always runs
+the full 200 steps. The default (0) is the current physics. Run all four rows
+at the same commit:
+
+```bash
+sbatch --array=0-3 --export=ALL,CAMPAIGN_MANIFEST=slurm/projection_gate.tsv \
+  slurm/campaign.sbatch
+```
+
+Report a table for the four rows with these `run.json` fields: `steps`,
+`converged`, `compliance`, `thresholded_compliance` (unguided only),
+`load_on_solid_fraction`, `gray_fraction`, `validity.component_count`,
+`validity.floating_mass_fraction`, `clip_loss_raw` (hybrid only),
+`physics_projection_beta_final`, and `wall_clock_seconds`. Also send each
+row's `final.png` and `physical_density.png`.
+
+Criteria for switching the campaign to `--physics-beta-max 8`, fixed before
+the runs:
+- `gray_fraction` below 0.05 on both beta8 rows;
+- unguided beta8 `load_on_solid_fraction` at least 0.99;
+- hybrid beta8 `clip_loss_raw` no more than 0.005 above hybrid beta0;
+- the user judges that the beta8 fern keeps its frond detail.
+
+Do not submit Phase 2 until the user has made this call. If the projection
+is adopted, it applies to every row, and finished rows are rerun.
+
 ## Phase 1 — smoke tests (gate)
 Run, on a compute node, one row from each of: unguided on each structure,
 sketch, semantic, hybrid, dream_only, and one S1 scale arm. Easiest: submit
