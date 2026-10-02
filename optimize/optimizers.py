@@ -35,9 +35,10 @@ from guidance.blend import (
     BlendMode,
     GradNormEma,
     freeze_blend_mode,
+    grad_norm,
+    grad_wrt,
     resolve_blend_mode,
     snapshot_blend,
-    unweighted_grad_norms,
 )
 
 from .base import BaseOptimizer
@@ -145,6 +146,18 @@ def _static_clip_weight_or_default(
         value: Optional[float], default: float = 1.0) -> float:
     """None means unset; the default path then uses `default`."""
     return default if value is None else float(value)
+
+
+def _add_scaled(
+    total: Optional[torch.Tensor],
+    grad: Optional[torch.Tensor],
+    scale,
+) -> Optional[torch.Tensor]:
+    """``total + scale * grad``, where ``None`` is a term with no gradient."""
+    if grad is None:
+        return total
+    scaled = grad * scale
+    return scaled if total is None else total + scaled
 
 
 def _reject_venice_compat_under_physics_only(model, optimizer_name: str) -> None:
@@ -582,6 +595,9 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
         self.physical_clip_terms = []
         self.blend_terms = []
         self.converged = False
+        # Assembled step gradient from `_compose_grad_matched`; None means
+        # `optimize` backpropagates the total loss instead.
+        self._step_grad = None
 
     def _freeze_live_blend_mode(self) -> BlendMode:
         return freeze_blend_mode(
@@ -611,6 +627,7 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
         composition -- a detached weight and no unweighted term -- is spelled
         out, packed into the same container so one dataset schema covers both.
         """
+        self._step_grad = None
         if self.model.venice_loss_algebra is not None:
             return self.model.get_venice_compat_losses(
                 logits,
@@ -635,38 +652,74 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
                 clip_loss_raw=zero,
                 clip_weight=zero,
             )
-        if grad_match and rho_d == 0.0:
-            zero = compliance.detach().new_tensor(0.0)
-            semantic = zero
-            weight = zero
-            clip_loss = zero
+        if grad_match:
+            return self._compose_grad_matched(
+                logits, compliance, rho_d=rho_d, rho_z=rho_z)
+        semantic = self.model.get_semantic_loss(logits)
+        if self.clip_alpha is not None:
+            weight = float(self.clip_alpha) * compliance.detach()
         else:
+            static = _static_clip_weight_or_default(self.clip_weight)
+            weight = semantic.detach().new_tensor(static)
+        clip_loss = semantic * weight
+        self._clear_raw_z_clip_state()
+        return VeniceLossTerms(
+            total_loss=self.model.add_sketch_term(
+                compliance + clip_loss, logits),
+            compliance_loss=compliance,
+            clip_loss=clip_loss,
+            clip_loss_raw=semantic,
+            clip_weight=weight,
+        )
+
+    def _compose_grad_matched(
+        self,
+        logits: torch.Tensor,
+        compliance: torch.Tensor,
+        *,
+        rho_d: float,
+        rho_z: float,
+    ) -> VeniceLossTerms:
+        """Grad-match loss, plus its gradient from one backward per term.
+
+        The weights need each term's unweighted gradient norm, so every term
+        is differentiated once here. Because the weights are detached, the
+        step gradient is exactly ``g_C + w_d g_d + w_z g_z + g_sketch``; it is
+        assembled from those same gradients and stashed for ``optimize``
+        instead of backpropagating the total a second time. The sum rounds
+        differently from autograd's accumulation (~1 ulp), nothing more.
+        """
+        zero = compliance.detach().new_tensor(0.0)
+        g_c = grad_wrt(compliance, logits)
+        step_grad = g_c
+        total = compliance
+        semantic = weight = clip_loss = zero
+        if rho_d != 0.0:
             semantic = self.model.get_semantic_loss(logits)
-            if grad_match:
-                weight = self._grad_match_weight(
-                    compliance, semantic, logits,
-                    rho=rho_d, ema=self._grad_norm_ema)
-            elif self.clip_alpha is not None:
-                weight = float(self.clip_alpha) * compliance.detach()
-            else:
-                static = _static_clip_weight_or_default(self.clip_weight)
-                weight = semantic.detach().new_tensor(static)
+            g_d = grad_wrt(semantic, logits)
+            weight = semantic.detach().new_tensor(self._grad_match_weight(
+                g_c, g_d, rho=rho_d, ema=self._grad_norm_ema))
             clip_loss = semantic * weight
-        total = compliance + clip_loss
-        if grad_match and rho_z != 0.0:
+            total = total + clip_loss
+            step_grad = _add_scaled(step_grad, g_d, weight)
+        if rho_z != 0.0:
             raw_z = self.model.get_raw_z_clip_loss(logits)
-            w_z = self._grad_match_weight(
-                compliance, raw_z, logits,
-                rho=rho_z, ema=self._grad_norm_ema_z)
+            g_z = grad_wrt(raw_z, logits)
+            w_z = raw_z.detach().new_tensor(self._grad_match_weight(
+                g_c, g_z, rho=rho_z, ema=self._grad_norm_ema_z))
             total = total + raw_z * w_z
-            self.model._last_raw_z_clip = (
-                raw_z.detach() if torch.is_tensor(raw_z) else raw_z)
-            self.model._last_raw_z_clip_weight = (
-                w_z.detach() if torch.is_tensor(w_z) else w_z)
+            step_grad = _add_scaled(step_grad, g_z, w_z)
+            self.model._last_raw_z_clip = raw_z.detach()
+            self.model._last_raw_z_clip_weight = w_z
         else:
             self._clear_raw_z_clip_state()
+        # Sketch, live-prior, and density-CLIP terms are purely additive, so
+        # composing them on a constant zero isolates their gradient.
+        sketch = self.model.add_sketch_term(zero, logits)
+        step_grad = _add_scaled(step_grad, grad_wrt(sketch, logits), 1.0)
+        self._step_grad = step_grad
         return VeniceLossTerms(
-            total_loss=self.model.add_sketch_term(total, logits),
+            total_loss=total + sketch,
             compliance_loss=compliance,
             clip_loss=clip_loss,
             clip_loss_raw=semantic,
@@ -677,25 +730,17 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
         self.model._last_raw_z_clip = None
         self.model._last_raw_z_clip_weight = None
 
+    @staticmethod
     def _grad_match_weight(
-        self,
-        compliance: torch.Tensor,
-        semantic: torch.Tensor,
-        logits: torch.Tensor,
+        g_c: Optional[torch.Tensor],
+        g_term: Optional[torch.Tensor],
         *,
-        rho: Optional[float] = None,
-        ema: Optional[GradNormEma] = None,
-    ) -> torch.Tensor:
-        """Detached ``rho * EMA||g_C|| / EMA||g_d||``. Occupancy is not in it."""
-        if rho is None:
-            rho = 0.0 if self.blend_rho is None else float(self.blend_rho)
-        if ema is None:
-            ema = self._grad_norm_ema
-        if float(rho) == 0.0:
-            return semantic.detach().new_tensor(0.0)
-        n_c, n_d = unweighted_grad_norms(compliance, semantic, logits)
-        ema.update(n_c, n_d)
-        return semantic.detach().new_tensor(ema.weight(rho))
+        rho: float,
+        ema: GradNormEma,
+    ) -> float:
+        """Detached ``rho * EMA||g_C|| / EMA||g_term||``; occupancy excluded."""
+        ema.update(grad_norm(g_c), grad_norm(g_term))
+        return ema.weight(rho)
 
     def _reset_run_state(self) -> None:
         """Discard everything a previous `optimize` call left behind.
@@ -799,7 +844,11 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
                     blend_snap['ema_g_clip_raw_z'] = (
                         float('nan') if ema_z is None or ema_z.g_d is None
                         else ema_z.g_d)
-            loss.backward()
+            if self._step_grad is not None:
+                logits.backward(self._step_grad)
+                self._step_grad = None
+            else:
+                loss.backward()
             if self.grad_clip is not None:
                 torch.nn.utils.clip_grad_norm_(model.parameters(), self.grad_clip)
             optimizer.step()

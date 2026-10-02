@@ -13,6 +13,7 @@ LOG = _REPO / 'CAMPAIGN_LOG.md'
 RESULTS = _REPO / 'results'
 LOGS = _REPO / 'logs'
 MAX_ATTEMPTS = 3
+MAX_CONCURRENT = 24  # matches campaign.sbatch; see its comment on the core cap
 
 
 def load_rows() -> list[tuple[int, str]]:
@@ -76,7 +77,7 @@ def main() -> int:
         print('nothing to resubmit')
         return 0
     array = ','.join(missing)
-    cmd = ['sbatch', f'--array={array}', str(_REPO / 'slurm' / 'campaign.sbatch')]
+    cmd = ['sbatch', f'--array={array}%{MAX_CONCURRENT}', str(_REPO / 'slurm' / 'campaign.sbatch')]
     print(' '.join(cmd))
     subprocess.check_call(cmd, cwd=_REPO)
     log(f'resubmitted array indices {array}')

@@ -25,8 +25,9 @@ claim. Do not add experiments that are not listed.
 ## Hard rules
 
 1. **One platform for every reported run.** Every run, including baselines, uses
-   the same partition, environment, and device: `--device cpu`. Never mix
-   devices. `slurm/campaign.sbatch` is already CPU-only.
+   the same partition, environment, device, and code revision:
+   `--device cpu`. Never mix devices. `slurm/campaign.sbatch` is already
+   CPU-only.
 2. **Never unset `OMP_NUM_THREADS=1`.** `runtime.py` pins it. Without it, CHOLMOD
    segfaults intermittently, with no traceback.
 3. **CHOLMOD cannot be retried in-process.** After a CHOLMOD error, the next
@@ -120,14 +121,29 @@ Tokens: `tall|short|bridge`, prompt slugs
 ### 0.4 Submit
 ```bash
 python slurm/make_manifest.py          # 109 rows; do not hand-edit the TSV
-# campaign.sbatch --array is 0-108%8; regenerate if the count changes
+# campaign.sbatch --array is 0-108%24; regenerate if the count changes
 sbatch slurm/campaign.sbatch
 ```
 After the S1 gate passes:
 ```bash
 python slurm/make_manifest.py --include-s1b   # appends rows 109-132
-sbatch --array=109-132%8 slurm/campaign.sbatch
+sbatch --array=109-132%24 slurm/campaign.sbatch
 ```
+
+Concurrency: ORCD documents `mit_normal` at 12 h maximum wall time and a base
+limit of 96 cores per user (256 on a Standard account). Each task asks for
+4 CPUs, so `%24` uses 96 cores. Confirm the cap before raising it:
+`sacctmgr show assoc user=$USER format=partition,qos,grptres,maxjobs` and
+`scontrol show partition mit_normal`; log what you find in `CAMPAIGN_LOG.md`.
+
+Stay on `mit_normal`. `mit_normal_gpu` allows only 2 GPUs per user, so it runs
+far fewer rows at once than CPU, and the environment has CPU-only Torch.
+
+Rows finished before commit "Reuse grad-match term gradients" must be rerun.
+That commit changes CLIP-guided rows (semantic, hybrid, prompt-sketch, and S1)
+at the rounding level; unguided, sketch, and `dream_only` rows are unchanged.
+Move the affected `results/<row>/` directories to `results_superseded/`
+before resubmitting so every reported row comes from one code revision.
 
 Optional three-deck gate (run separately; do not append to the main manifest):
 

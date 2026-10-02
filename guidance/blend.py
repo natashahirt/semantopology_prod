@@ -205,7 +205,8 @@ def unweighted_grad_norms(
     logits: torch.Tensor,
 ) -> tuple[float, float]:
     """||dC/d logits|| and ||d clip_z / d logits||. NaN if a term is dead."""
-    return _norm(_grad_wrt(compliance, logits)), _norm(_grad_wrt(clip_z, logits))
+    return (grad_norm(grad_wrt(compliance, logits)),
+            grad_norm(grad_wrt(clip_z, logits)))
 
 
 def _finite_positive(value: float) -> bool:
@@ -279,10 +280,10 @@ def _gradient_conflict(
     """
     compliance = terms.compliance_loss
     clip_z = terms.clip_loss_raw
-    g_c = _grad_wrt(compliance, logits)
-    g_d = _grad_wrt(clip_z, logits)
-    n_c = _norm(g_c)
-    n_d = _norm(g_d)
+    g_c = grad_wrt(compliance, logits)
+    g_d = grad_wrt(clip_z, logits)
+    n_c = grad_norm(g_c)
+    n_d = grad_norm(g_d)
     return {
         'g_compliance': n_c,
         'g_clip_z': n_d,
@@ -290,7 +291,8 @@ def _gradient_conflict(
     }
 
 
-def _grad_wrt(loss: torch.Tensor, logits: torch.Tensor) -> Optional[torch.Tensor]:
+def grad_wrt(loss: torch.Tensor, logits: torch.Tensor) -> Optional[torch.Tensor]:
+    """``d loss / d logits`` with the graph retained; None for a dead term."""
     if not torch.is_tensor(loss) or not loss.requires_grad:
         return None
     if not logits.requires_grad:
@@ -307,7 +309,7 @@ def _grad_wrt(loss: torch.Tensor, logits: torch.Tensor) -> Optional[torch.Tensor
     return grad
 
 
-def _norm(grad: Optional[torch.Tensor]) -> float:
+def grad_norm(grad: Optional[torch.Tensor]) -> float:
     if grad is None:
         return float('nan')
     return float(grad.detach().norm())

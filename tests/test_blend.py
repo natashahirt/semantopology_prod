@@ -537,6 +537,28 @@ class GradMatchMixerTest(absltest.TestCase):
             ds['blend_clip_raw_z_weight'].values[0], expected_z, rtol=1e-4)
         self.assertEqual(ds.attrs['blend_rho_z'], 0.25)
 
+    def test_assembled_step_gradient_matches_backprop_of_the_total(self):
+        from guidance.loss_sketch import apply_scaffold_as_occupancy_prior
+
+        model = _default_model(clip_loss=_scaled_clip)
+        model.enable_physical_clip(weight=0.0, as_semantic=True)
+        occupancy = np.random.default_rng(0).uniform(
+            size=(SMALL_HEIGHT, SMALL_WIDTH))
+        apply_scaffold_as_occupancy_prior(
+            model, occupancy, weight=40.0, weight_end=4.0,
+            init_from_occupancy=False)
+        model.apply_sketch_schedule(step=0, max_iterations=2)
+        optimizer = AdaptiveAdam_Optimizer(
+            model, max_iterations=2, blend_rho=1.0, blend_rho_z=0.25)
+        logits = model()
+        terms = optimizer._compose_loss(logits)
+        self.assertIsNotNone(optimizer._step_grad)
+        self.assertIsNotNone(model._last_occupancy_loss)
+        reference = torch.autograd.grad(terms.total_loss, logits)[0]
+        np.testing.assert_allclose(
+            optimizer._step_grad.detach().numpy(), reference.numpy(),
+            rtol=1e-5, atol=1e-8)
+
     def test_rho_z_changes_the_total_without_retuning_density_weight(self):
         def _as_semantic():
             model = _default_model(clip_loss=_scaled_clip)
