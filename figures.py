@@ -9,10 +9,11 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 PRESENTATION_MAX_EDGE = 2400
 SEMANTIC_SHORT_EDGE = 512
+COMPARISON_PANEL_MAX_EDGE = 1200
 
 
 def _plane(field: np.ndarray) -> np.ndarray:
@@ -111,38 +112,61 @@ def save_semantic_design_png(
     return path
 
 
-def write_comparison(path: Path, panels: list[tuple[str, np.ndarray]]) -> Path:
-    """Write a labeled horizontal strip. Each panel is a [0, 1] field."""
-    import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
-
+def write_comparison(
+    path: Path,
+    panels: list[tuple[str, np.ndarray]],
+    *,
+    panel_max_edge: int = COMPARISON_PANEL_MAX_EDGE,
+) -> Path:
+    """Write an uncropped labeled strip with every panel fully visible."""
     if not panels:
         raise ValueError('comparison needs at least one panel')
+    if int(panel_max_edge) < 1:
+        raise ValueError(
+            f'panel_max_edge must be >= 1, got {panel_max_edge}')
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    sample = _plane(panels[0][1])
-    aspect = sample.shape[0] / sample.shape[1]
-    if aspect >= 1.0:
-        panel_width = 3.4
-        panel_height = min(8.0, max(3.0, panel_width * aspect))
-    else:
-        panel_width = 7.2
-        panel_height = max(2.4, panel_width * aspect + 0.8)
-    fig, axes = plt.subplots(
-        1,
-        len(panels),
-        figsize=(panel_width * len(panels), panel_height),
-        squeeze=False,
+    measure = ImageDraw.Draw(Image.new('L', (1, 1), 255))
+    rendered = []
+    for title, field in panels:
+        image = ink_image(field)
+        factor = float(panel_max_edge) / float(max(image.size))
+        image = image.resize(
+            (
+                max(1, int(round(image.width * factor))),
+                max(1, int(round(image.height * factor))),
+            ),
+            resample=Image.Resampling.NEAREST,
+        )
+        text_box = measure.textbbox((0, 0), str(title))
+        text_width = text_box[2] - text_box[0]
+        text_height = text_box[3] - text_box[1]
+        slot_width = max(image.width, text_width + 16)
+        rendered.append(
+            (str(title), image, slot_width, text_box, text_width, text_height))
+
+    gap = 16
+    label_height = 32
+    image_height = max(image.height for _, image, *_ in rendered)
+    canvas = Image.new(
+        'L',
+        (
+            sum(slot_width for _, _, slot_width, *_ in rendered)
+            + gap * (len(rendered) - 1),
+            label_height + image_height,
+        ),
+        255,
     )
-    for ax, (title, field) in zip(axes[0], panels):
-        arr = np.clip(_plane(field), 0.0, 1.0)
-        ax.imshow(1.0 - arr, cmap='gray', vmin=0.0, vmax=1.0, interpolation='nearest')
-        ax.set_title(title, fontsize=10)
-        ax.axis('off')
-    fig.tight_layout()
-    fig.savefig(path, dpi=140)
-    plt.close(fig)
+    draw = ImageDraw.Draw(canvas)
+    x = 0
+    for title, image, slot_width, box, text_width, text_height in rendered:
+        image_x = x + (slot_width - image.width) // 2
+        canvas.paste(image, (image_x, label_height))
+        text_x = x + (slot_width - text_width) // 2 - box[0]
+        text_y = (label_height - text_height) // 2 - box[1]
+        draw.text((text_x, text_y), title, fill=0)
+        x += slot_width + gap
+    canvas.save(path)
     return path
 
 

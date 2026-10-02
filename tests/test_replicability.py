@@ -93,6 +93,11 @@ def test_figures_write_strip_and_gif(tmp_path: Path):
     gif = write_progress_gif(tmp_path / 'progress.gif', frames)
     assert comparison.is_file() and comparison.stat().st_size > 0
     assert gif.is_file() and gif.stat().st_size > 0
+    with Image.open(comparison) as image:
+        assert image.size == (2416, 1232)
+        comparison_pixels = np.asarray(image)
+        assert comparison_pixels[32, 0] == 255
+        assert comparison_pixels[32, 1216] == 0
     with Image.open(gif) as image:
         assert image.size == (8, 8)
         assert image.n_frames == 2
