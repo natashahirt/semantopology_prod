@@ -894,6 +894,19 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
         data = {'loss': (('step',), losses)}
         if self.tracker.save_intermediate_designs:
             data['design'] = (('step', 'y', 'x'), designs)
+            # Raw z per step, block-repeated so each stage's native grid is
+            # recoverable exactly by striding (see figures.native_raw_frames).
+            raw_planes = [
+                np.asarray(stage_envs[stage].reshape(frame), dtype=np.float32)
+                for frame, stage in zip(self.tracker.frames, stage_of_step)
+            ]
+            data['design_raw'] = (
+                ('step', 'y', 'x'),
+                [repeat_to_shape(plane, height, width) for plane in raw_planes])
+            data['design_raw_height'] = (
+                ('step',), [plane.shape[0] for plane in raw_planes])
+            data['design_raw_width'] = (
+                ('step',), [plane.shape[1] for plane in raw_planes])
         else:
             data['design'] = (('y', 'x'), designs[int(np.nanargmin(losses))])
 

@@ -21,7 +21,12 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
-from figures import save_field_png, write_comparison, write_progress_gif
+from figures import (
+    native_raw_frames,
+    save_field_png,
+    write_comparison,
+    write_progress_gif,
+)
 from guidance.loss_clip import CLIPLoss, VeniceClipPreset
 from guidance.loss_semantic_prior import CoadaptiveMask, report_design_metrics
 from guidance.loss_semantic_prior import save_design_arrays
@@ -347,7 +352,7 @@ def run_dream_layout(preset: DreamLayoutPreset, output_dir: Path) -> dict:
             save_field_png(output_dir / 'saliency.png', saliency)
             panels.append(('CLIP saliency', saliency))
     write_comparison(output_dir / 'comparison.png', panels)
-    write_progress_gif(output_dir / 'progress.gif', np.asarray(ds['design'].values))
+    write_progress_gif(output_dir / 'progress.gif', native_raw_frames(ds))
 
     nely = int(physics_model.env.args['nely'])
     nelx = int(physics_model.env.args['nelx'])

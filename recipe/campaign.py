@@ -15,10 +15,11 @@ import numpy as np
 import torch
 
 from figures import (
-    PRESENTATION_MAX_EDGE,
-    SEMANTIC_SHORT_EDGE,
+    SHARP_INK_RESAMPLING,
+    native_raw_frames,
     save_field_png,
-    save_semantic_design_png,
+    save_sharp_ink_png,
+    sharp_ink_shape,
     write_comparison,
     write_progress_gif,
 )
@@ -253,40 +254,23 @@ def _write_contract(
     if density is not None:
         save_design_arrays(output_dir, density, raw=raw)
         save_field_png(output_dir / 'physical_density.png', density)
-        save_field_png(
-            output_dir / 'final.png',
-            density,
-            max_edge=PRESENTATION_MAX_EDGE,
-            smooth=False,
-        )
-        if raw is not None and (
-                args.mode in ('semantic', 'hybrid', 'prompt_sketch')
-                or args.prompt_sketch):
-            save_semantic_design_png(
-                output_dir / 'semantic_design.png',
-                raw,
-            )
-        if ds is not None and 'design' in ds:
-            write_progress_gif(
-                output_dir / 'progress.gif', np.asarray(ds['design'].values))
-        elif (output_dir / 'progress.gif').exists():
-            # Hybrid runs already wrote the complete physics trajectory.
-            # Do not replace it with a two-frame scaffold/final animation.
-            pass
-        elif scaffold is not None:
-            write_progress_gif(
-                output_dir / 'progress.gif', np.stack([scaffold, density]))
-        else:
-            write_progress_gif(
-                output_dir / 'progress.gif', density[None, ...])
+    if raw is not None:
+        final_source, final_field = 'final_design_raw', raw
+    elif density is not None:
+        final_source, final_field = 'physical_density', density
     elif scaffold is not None:
-        save_field_png(
-            output_dir / 'final.png',
-            scaffold,
-            max_edge=PRESENTATION_MAX_EDGE,
-            smooth=False,
-        )
-        write_progress_gif(output_dir / 'progress.gif', scaffold[None, ...])
+        final_source, final_field = 'scaffold', scaffold
+    else:
+        final_source, final_field = None, None
+    if final_field is not None:
+        save_sharp_ink_png(output_dir / 'final.png', final_field)
+        progress = output_dir / 'progress.gif'
+        if ds is not None and 'design_raw' in ds:
+            write_progress_gif(progress, native_raw_frames(ds))
+        elif not progress.exists():
+            # Hybrid runs already wrote the full physics trajectory; only a
+            # run without one gets this single-frame stand-in.
+            write_progress_gif(progress, [final_field])
 
     nely = preset.height
     nelx = preset.width
@@ -331,34 +315,11 @@ def _write_contract(
         record['mean_density'] = float(np.mean(density))
         record['gray_fraction'] = _gray_fraction(density)
         record['volume_fraction'] = float(np.mean(density))
-    presentation_field = density if density is not None else scaffold
-    if presentation_field is not None:
-        height, width = _plane(presentation_field).shape
-        factor = float(PRESENTATION_MAX_EDGE) / float(max(height, width))
-        record['presentation_shape'] = [
-            max(1, int(round(height * factor))),
-            max(1, int(round(width * factor))),
-        ]
-        record['presentation_resampling'] = 'nearest'
-    if raw is not None and (
-            args.mode in ('semantic', 'hybrid', 'prompt_sketch')
-            or args.prompt_sketch):
-        raw_height, raw_width = _plane(raw).shape
-        if raw_width <= raw_height:
-            semantic_width = int(SEMANTIC_SHORT_EDGE)
-            semantic_height = int(
-                SEMANTIC_SHORT_EDGE * raw_height / raw_width)
-        else:
-            semantic_height = int(SEMANTIC_SHORT_EDGE)
-            semantic_width = int(
-                SEMANTIC_SHORT_EDGE * raw_width / raw_height)
-        record['semantic_presentation_shape'] = [
-            semantic_height,
-            semantic_width,
-        ]
-        record['semantic_presentation_resampling'] = (
-            'torch-bilinear-antialias-before-clamp'
-        )
+    if final_field is not None:
+        record['presentation_source'] = final_source
+        record['presentation_shape'] = list(
+            sharp_ink_shape(*_plane(final_field).shape))
+        record['presentation_resampling'] = SHARP_INK_RESAMPLING
     (output_dir / 'run.json').write_text(_to_json(record))
     if status == 'incomplete_final_grid':
         raise RuntimeError(

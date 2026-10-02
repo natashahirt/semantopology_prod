@@ -82,10 +82,10 @@ claim. Do not add experiments that are not listed.
 ```
 results/<experiment>/<structure>/<…tokens…>/attempt_<n>/
   physical_density.npy
-  physical_density.png  # exact native-grid raster
-  final.png              # crisp paper rendering of physical density
-  semantic_design.png    # hardfork-style raw-z view for CLIP-guided runs
-  comparison.png  progress.gif
+  physical_density.png  # exact native-grid raster of the structure
+  final.png              # sharp-ink paper render of the final raw design
+  progress.gif           # sharp-ink render of every physics step
+  comparison.png
   run.json
   DONE                 # written last, only on success
 logs/<jobid>_<array>.out
@@ -98,14 +98,19 @@ analysis/out/
   figures/
 ```
 
-`final.png` is a crisp nearest-neighbour rendering, fit to a 2400-pixel maximum
-edge.
-It does not change the optimization grid; use `physical_density.npy` (or the
-native `physical_density.png`) for measurements and exact pixel inspection.
-`semantic_design.png` reproduces the visually rich raw-design view used by the
-successful hardfork fern and skeleton figures: resize unbounded raw z to a
-512-pixel short edge with Torch bilinear antialiasing, then clamp and invert
-(512×1024 for the tall building). It is not the final structure.
+`final.png` is the declared result for every mode. It is the sharp-ink render
+used by the hardfork fern and skeleton figures: resize the unbounded raw design
+(`final_design_raw.npy`) to a 512-pixel short edge with Torch bilinear
+antialiasing, then clamp and invert (512×1024 for the tall building).
+`progress.gif` renders every recorded physics step the same way, from each
+step's native AdaptivePixel grid. `run.json` records `presentation_source`
+(`final_design_raw`; `scaffold` for `dream_only`), `presentation_shape`, and
+`presentation_resampling`.
+
+The sharp-ink render is the raw design, not the analysed structure. Use
+`physical_density.npy` (or the native `physical_density.png`) for measurements,
+connectivity, and exact pixel inspection, and show it beside `final.png` when a
+figure makes a structural claim.
 
 Tokens: `tall|short|bridge`, prompt slugs
 `fern_fronds|butterfly_wing_venation|skeletons|human_skull`,

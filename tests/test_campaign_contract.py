@@ -48,8 +48,11 @@ def test_incomplete_final_grid_is_not_marked_done(tmp_path, monkeypatch):
     record = json.loads((tmp_path / 'run.json').read_text())
     assert record['exit_status'] == 'incomplete_final_grid'
     assert record['reached_final_grid'] is False
-    assert record['presentation_shape'] == [2400, 2400]
-    assert record['presentation_resampling'] == 'nearest'
+    assert record['presentation_source'] == 'physical_density'
+    assert record['presentation_shape'] == [512, 512]
+    assert record['presentation_resampling'] == (
+        'torch-bilinear-antialias-before-clamp'
+    )
     assert not (tmp_path / 'DONE').exists()
 
 
@@ -98,7 +101,10 @@ def test_hybrid_contract_preserves_full_progress_gif(tmp_path, monkeypatch):
     assert progress.read_bytes() == b'full-trajectory'
     assert (tmp_path / 'DONE').exists()
     record = json.loads((tmp_path / 'run.json').read_text())
-    assert record['semantic_presentation_shape'] == [512, 512]
-    assert record['semantic_presentation_resampling'] == (
+    assert record['presentation_source'] == 'final_design_raw'
+    assert record['presentation_shape'] == [512, 512]
+    assert record['presentation_resampling'] == (
         'torch-bilinear-antialias-before-clamp'
     )
+    assert (tmp_path / 'final.png').is_file()
+    assert not (tmp_path / 'semantic_design.png').exists()

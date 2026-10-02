@@ -1,18 +1,20 @@
-"""Comparison strip and progress GIF for a dream-layout run.
+"""Paper renders, comparison strip, and progress GIF for a run.
 
-Material is drawn black, matching the paper figures. No frozen Venice
-reference image is required.
+Material is drawn black, matching the paper figures. ``final.png`` and every
+GIF frame use the sharp-ink render of the raw design (see
+:func:`sharp_ink_image`); ``physical_density.png`` keeps the native FE grid.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Sequence
 
 import numpy as np
 from PIL import Image, ImageDraw
 
-PRESENTATION_MAX_EDGE = 2400
-SEMANTIC_SHORT_EDGE = 512
+SHARP_INK_SHORT_EDGE = 512
+SHARP_INK_RESAMPLING = 'torch-bilinear-antialias-before-clamp'
 COMPARISON_PANEL_MAX_EDGE = 1200
 
 
@@ -80,12 +82,34 @@ def save_field_png(
     return path
 
 
-def semantic_design_image(
+def sharp_ink_shape(
+    height: int,
+    width: int,
+    short_edge: int = SHARP_INK_SHORT_EDGE,
+) -> tuple[int, int]:
+    """``(height, width)`` of :func:`sharp_ink_image` for a field of this size.
+
+    Mirrors ``_resize_short_side``, including its truncation of the long edge.
+    """
+    height, width, short_edge = int(height), int(width), int(short_edge)
+    if min(height, width) == short_edge:
+        return height, width
+    if width <= height:
+        return int(short_edge * height / width), short_edge
+    return short_edge, int(short_edge * width / height)
+
+
+def sharp_ink_image(
     raw_field: np.ndarray,
     *,
-    short_edge: int = SEMANTIC_SHORT_EDGE,
+    short_edge: int = SHARP_INK_SHORT_EDGE,
 ) -> Image.Image:
-    """Hardfork raw-z view: Torch bilinear short-edge resize, then clamp."""
+    """Hardfork's raw-design display: resize, *then* clamp, then invert.
+
+    Torch's bilinear, antialiased short-edge resize runs on the unbounded
+    design so values beyond ``[0, 1]`` sharpen the ink edges before the clamp.
+    Clipping first gives softer transition bands and is not equivalent.
+    """
     import torch
 
     from guidance.loss_clip import _resize_short_side
@@ -103,22 +127,33 @@ def semantic_design_image(
     return Image.fromarray(ink, mode='L')
 
 
-def save_semantic_design_png(
+def save_sharp_ink_png(
     path: Path,
     raw_field: np.ndarray,
     *,
-    short_edge: int = SEMANTIC_SHORT_EDGE,
+    short_edge: int = SHARP_INK_SHORT_EDGE,
 ) -> Path:
-    """Reproduce the hardfork raw-z display path exactly.
-
-    Hardfork resized the unbounded design parameter with Torch's bilinear,
-    antialiased short-edge transform *before* clamping and inverting it.
-    Clipping first creates softer transition bands and is not equivalent.
-    """
+    """Write :func:`sharp_ink_image` of ``raw_field`` to ``path``."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    semantic_design_image(raw_field, short_edge=short_edge).save(path)
+    sharp_ink_image(raw_field, short_edge=short_edge).save(path)
     return path
+
+
+def native_raw_frames(ds) -> list[np.ndarray]:
+    """Per-step raw design on the grid each step was optimized on.
+
+    ``design_raw`` is block-repeated to the final grid; striding by the
+    repeat factor recovers every stage's native field exactly.
+    """
+    stack = np.asarray(ds['design_raw'].values)
+    heights = np.asarray(ds['design_raw_height'].values).astype(int)
+    widths = np.asarray(ds['design_raw_width'].values).astype(int)
+    full_height, full_width = stack.shape[-2:]
+    return [
+        frame[::full_height // height, ::full_width // width]
+        for frame, height, width in zip(stack, heights, widths)
+    ]
 
 
 def write_comparison(
@@ -139,7 +174,7 @@ def write_comparison(
     rendered = []
     for title, field in panels:
         if 'semantic' in str(title).lower() or 'raw z' in str(title).lower():
-            image = semantic_design_image(field)
+            image = sharp_ink_image(field)
         else:
             image = ink_image(field)
         factor = float(panel_max_edge) / float(max(image.size))
@@ -184,36 +219,24 @@ def write_comparison(
 
 def write_progress_gif(
     path: Path,
-    design: np.ndarray,
+    raw_frames: Sequence[np.ndarray],
     *,
     duration_ms: int = 50,
-    scale: int = 2,
+    short_edge: int = SHARP_INK_SHORT_EDGE,
 ) -> Path:
-    """Write a smooth, enlarged GIF with one frame per recorded physics step.
+    """Write one sharp-ink frame per recorded physics step.
 
-    ``design`` is ``(step, y, x)`` or ``(step, 1, y, x)``, already on the
-    common final grid. The dream loop does not record frames.
+    ``raw_frames`` may mix grids (one per AdaptivePixel stage); every frame
+    is rendered to the same short edge, so the animation keeps one size.
     """
-    arr = np.asarray(design, dtype=np.float64)
-    if arr.ndim == 4 and arr.shape[1] == 1:
-        arr = arr[:, 0]
-    if arr.ndim != 3:
-        raise ValueError(f'expected a step stack, got shape {arr.shape}')
-    if arr.shape[0] < 1:
+    if len(raw_frames) < 1:
         raise ValueError('progress GIF needs at least one frame')
-    if int(scale) < 1:
-        raise ValueError(f'scale must be >= 1, got {scale}')
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    frames = []
-    for frame in arr:
-        image = ink_image(frame)
-        if int(scale) > 1:
-            image = image.resize(
-                (image.width * int(scale), image.height * int(scale)),
-                resample=Image.Resampling.BILINEAR,
-            )
-        frames.append(image.convert('P'))
+    frames = [
+        sharp_ink_image(frame, short_edge=short_edge).convert('P')
+        for frame in raw_frames
+    ]
     frames[0].save(
         path,
         save_all=True,

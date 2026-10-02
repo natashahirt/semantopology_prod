@@ -190,6 +190,21 @@ class AdaptiveAdamRestartTest(absltest.TestCase):
     self.assertLess(float(second['compliance'].values[0]),
                     float(first['compliance'].values[0]))
 
+  def test_raw_trajectory_keeps_each_stage_native_grid(self):
+    """``design_raw`` strides back to the grid each step was optimized on."""
+    from figures import native_raw_frames
+
+    model = _adaptive_model(resize_num=1)
+    optimizer = _adaptive_optimizer(
+        model, max_resize_iteration=UPSAMPLE_AT_FIRST_STEP)
+    ds = optimizer.optimize()
+    self.assertEqual(ds['design_raw'].shape, ds['design'].shape)
+    frames = native_raw_frames(ds)
+    self.assertLen(frames, RUN_STEPS)
+    self.assertEqual(frames[0].shape, (SMALL_HEIGHT // 2, SMALL_WIDTH // 2))
+    self.assertEqual(frames[-1].shape, (SMALL_HEIGHT, SMALL_WIDTH))
+    self.assertTrue(all(np.all(np.isfinite(frame)) for frame in frames))
+
   def test_restart_after_a_resolution_change_renders_on_one_grid(self):
     """The other half of the desync: frames drawn under a stale environment.
 

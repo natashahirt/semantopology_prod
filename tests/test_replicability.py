@@ -7,8 +7,10 @@ import pytest
 from PIL import Image
 
 from figures import (
+    native_raw_frames,
     save_field_png,
-    save_semantic_design_png,
+    save_sharp_ink_png,
+    sharp_ink_shape,
     write_comparison,
     write_progress_gif,
 )
@@ -85,7 +87,7 @@ def test_interpret_returns_motive_only():
 
 def test_figures_write_strip_and_gif(tmp_path: Path):
     field = np.linspace(0.0, 1.0, 16, dtype=np.float64).reshape(4, 4)
-    frames = np.stack([field, 1.0 - field])
+    frames = [field, 1.0 - field]
     comparison = write_comparison(
         tmp_path / 'comparison.png',
         [('Physical density', field), ('Dream scaffold', 1.0 - field)],
@@ -99,7 +101,7 @@ def test_figures_write_strip_and_gif(tmp_path: Path):
         assert comparison_pixels[32, 0] == 255
         assert comparison_pixels[32, 1216] == 0
     with Image.open(gif) as image:
-        assert image.size == (8, 8)
+        assert image.size == (512, 512)
         assert image.n_frames == 2
         assert image.info['duration'] == 50
 
@@ -124,20 +126,46 @@ def test_smooth_presentation_png_fits_max_edge(tmp_path: Path):
         assert image.size == (1200, 2400)
 
 
-def test_hardfork_style_semantic_render_is_512_by_1024(tmp_path: Path):
+def test_hardfork_style_sharp_ink_render_is_512_by_1024(tmp_path: Path):
     field = np.linspace(-2.0, 3.0, 256 * 128).reshape(256, 128)
-    path = save_semantic_design_png(tmp_path / 'semantic.png', field)
+    path = save_sharp_ink_png(tmp_path / 'final.png', field)
     with Image.open(path) as image:
         assert image.size == (512, 1024)
+    assert sharp_ink_shape(256, 128) == (1024, 512)
+    assert sharp_ink_shape(150, 300) == (512, 1024)
 
 
-def test_semantic_render_resizes_before_clamping(tmp_path: Path):
+def test_gif_frames_from_every_stage_share_the_sharp_ink_size(tmp_path: Path):
+    frames = [np.zeros((64, 32)), np.full((128, 64), 0.5), np.ones((256, 128))]
+    gif = write_progress_gif(tmp_path / 'progress.gif', frames)
+    with Image.open(gif) as image:
+        assert image.size == (512, 1024)
+        assert image.n_frames == 3
+
+
+def test_native_raw_frames_recover_each_stage_grid_exactly():
+    import xarray
+
+    coarse = np.arange(8, dtype=np.float32).reshape(4, 2)
+    fine = np.arange(32, dtype=np.float32).reshape(8, 4)
+    stack = np.stack([np.repeat(np.repeat(coarse, 2, 0), 2, 1), fine])
+    ds = xarray.Dataset({
+        'design_raw': (('step', 'y', 'x'), stack),
+        'design_raw_height': (('step',), [4, 8]),
+        'design_raw_width': (('step',), [2, 4]),
+    })
+    recovered = native_raw_frames(ds)
+    np.testing.assert_array_equal(recovered[0], coarse)
+    np.testing.assert_array_equal(recovered[1], fine)
+
+
+def test_sharp_ink_render_resizes_before_clamping(tmp_path: Path):
     from guidance.loss_clip import _resize_short_side
     import torch
 
     field = np.array([[-2.0, 2.0], [2.0, -2.0]], dtype=np.float32)
-    path = save_semantic_design_png(
-        tmp_path / 'semantic.png',
+    path = save_sharp_ink_png(
+        tmp_path / 'final.png',
         field,
         short_edge=8,
     )
