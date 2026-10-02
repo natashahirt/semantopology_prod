@@ -44,3 +44,23 @@ def test_prompt_sketch_rows_keep_coadaptation_on():
     for row in rows:
         coadapt = row['argv'].index('--coadapt')
         assert row['argv'][coadapt + 1] == 'on'
+
+
+def test_non_ablation_prompt_rows_keep_the_proven_recipe():
+    rows = [
+        row for row in experiment_rows(include_s1b=False)
+        if row['run_id'].startswith(('S3/', 'H1/', 'H2/', 'H3/'))
+        and not row['run_id'].endswith('/dream_only')
+    ]
+    forbidden_overrides = {
+        '--clip-scales',
+        '--blend-rho',
+        '--filter-width',
+        '--penal',
+        '--beta-max',
+        '--resolution-scale',
+        '--seed',
+    }
+    assert rows
+    for row in rows:
+        assert forbidden_overrides.isdisjoint(row['argv']), row['run_id']

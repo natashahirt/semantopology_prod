@@ -17,8 +17,16 @@ def test_paper_preset_matches_the_skeleton_recipe():
     assert (PAPER.width, PAPER.height, PAPER.density) == (128, 256, 0.3)
     assert PAPER.control_height == 32
     assert PAPER.control_width == 16
+    assert PAPER.resize_num == 2
+    assert PAPER.resize_scale == 2
+    assert PAPER.max_iterations == 200
     assert PAPER.blend_rho == 1.0
     assert PAPER.blend_rho_z == 0.75
+    assert PAPER.coadapt is True
+    assert PAPER.physical_clip_projection_beta_max == 8.0
+    assert PAPER.physical_clip_projection_sigma == 2.0
+    assert PAPER.physical_clip_projection_sigma_end == 0.5
+    assert PAPER.tiled_scales == ()
     assert PAPER.device == 'cpu'
     assert PAPER.sketch_weight_start == 4000.0
     assert PAPER.sketch_weight_end == 400.0
