@@ -104,7 +104,7 @@ used by the hardfork fern and skeleton figures: resize the unbounded raw design
 (`final_design_raw.npy`) to a 512-pixel short edge with Torch bilinear
 antialiasing, then clamp and invert (512×1024 for the tall building).
 `progress.gif` renders every 2nd physics step (plus the last) the same way,
-from each step's native AdaptivePixel grid, at 30 steps per second with a
+from each step's native AdaptivePixel grid, at 20 steps per second with a
 1 s hold on the final frame. `run.json` records `presentation_source`
 (`final_design_raw`; `scaffold` for `dream_only`), `presentation_shape`, and
 `presentation_resampling`.

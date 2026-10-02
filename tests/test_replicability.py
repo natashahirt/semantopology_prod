@@ -105,7 +105,7 @@ def test_figures_write_strip_and_gif(tmp_path: Path):
     with Image.open(gif) as image:
         assert image.size == (512, 512)
         assert image.n_frames == 2
-        assert image.info['duration'] == 70
+        assert image.info['duration'] == 100
         image.seek(1)
         assert image.info['duration'] == 1000
 
@@ -153,10 +153,12 @@ def test_gif_keeps_every_second_step_and_ends_on_the_last():
     assert gif_step_indices(1) == [0]
 
 
-def test_gif_durations_average_thirty_steps_per_second():
-    durations = gif_frame_durations(30, final_hold_ms=0)
+def test_gif_durations_average_the_requested_step_rate():
+    assert gif_frame_durations(4, final_hold_ms=0) == [100] * 4
+    durations = gif_frame_durations(
+        30, steps_per_second=30.0, final_hold_ms=0)
     assert set(durations) <= {60, 70}
-    assert sum(durations) == 1000 * 30 * 2 // 30
+    assert sum(durations) == 2000
     assert gif_frame_durations(3)[-1] == 1000
 
 

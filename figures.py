@@ -16,9 +16,9 @@ from PIL import Image, ImageDraw
 SHARP_INK_SHORT_EDGE = 512
 SHARP_INK_RESAMPLING = 'torch-bilinear-antialias-before-clamp'
 COMPARISON_PANEL_MAX_EDGE = 1200
-# Venice pacing: every 2nd optimization step, 30 steps per second.
+# Every 2nd optimization step, 20 steps per second (100 ms per frame).
 GIF_STEP_STRIDE = 2
-GIF_STEPS_PER_SECOND = 30.0
+GIF_STEPS_PER_SECOND = 20.0
 GIF_FINAL_HOLD_MS = 1000
 
 
@@ -243,8 +243,9 @@ def gif_frame_durations(
     """Per-frame delays in ms averaging ``stride / steps_per_second``.
 
     GIF stores delays in whole centiseconds, so each frame takes the rounded
-    cumulative target: 2 steps at 30 per second alternates 70/60/70 ms rather
-    than drifting to 70 ms. The last frame is held for ``final_hold_ms``.
+    cumulative target: e.g. 2 steps at 30 per second alternates 70/60/70 ms
+    rather than drifting to 70 ms. The last frame is held for
+    ``final_hold_ms``.
     """
     if float(steps_per_second) <= 0.0:
         raise ValueError(f'steps_per_second must be > 0, got {steps_per_second}')

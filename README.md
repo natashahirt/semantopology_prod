@@ -60,7 +60,7 @@ python run.py --problem multistory_building --clip "butterfly wing venation"
 
 Each run writes `results/<slug>/`. `comparison.png` is the physical density,
 the dream scaffold, the coadaptive mask, and CLIP saliency. `progress.gif`
-is the physics run, every 2nd step at 30 steps per second, in the same
+is the physics run, every 2nd step at 20 steps per second, in the same
 sharp-ink raw-design render the campaign uses for `final.png`. `summary.json` records final compliance, weighted CLIP
 loss, raw CLIP loss, step count, realized volume, mean physical density,
 mass on the scaffold, connectivity, and wall-clock seconds for the dream,
