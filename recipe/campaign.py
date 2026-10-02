@@ -461,7 +461,7 @@ def run_campaign(args, output_dir: Path) -> dict:
         density, sites, scaffold=occupancy, ds=ds)
     panels = [('Physical density', density)]
     if needs_clip:
-        panels.append(('Semantic design (raw z)', np.clip(raw, 0.0, 1.0)))
+        panels.append(('Semantic design (raw z)', raw))
     if occupancy is not None:
         panels.append(('Occupancy', occupancy))
         scaffold = occupancy

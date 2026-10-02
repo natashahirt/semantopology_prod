@@ -80,18 +80,12 @@ def save_field_png(
     return path
 
 
-def save_semantic_design_png(
-    path: Path,
+def semantic_design_image(
     raw_field: np.ndarray,
     *,
     short_edge: int = SEMANTIC_SHORT_EDGE,
-) -> Path:
-    """Reproduce the hardfork raw-z display path exactly.
-
-    Hardfork resized the unbounded design parameter with Torch's bilinear,
-    antialiased short-edge transform *before* clamping and inverting it.
-    Clipping first creates softer transition bands and is not equivalent.
-    """
+) -> Image.Image:
+    """Hardfork raw-z view: Torch bilinear short-edge resize, then clamp."""
     import torch
 
     from guidance.loss_clip import _resize_short_side
@@ -106,9 +100,24 @@ def save_semantic_design_png(
     ink = (
         255.0 * (1.0 - resized[0, 0].detach().cpu().numpy())
     ).clip(0, 255).astype(np.uint8)
+    return Image.fromarray(ink, mode='L')
+
+
+def save_semantic_design_png(
+    path: Path,
+    raw_field: np.ndarray,
+    *,
+    short_edge: int = SEMANTIC_SHORT_EDGE,
+) -> Path:
+    """Reproduce the hardfork raw-z display path exactly.
+
+    Hardfork resized the unbounded design parameter with Torch's bilinear,
+    antialiased short-edge transform *before* clamping and inverting it.
+    Clipping first creates softer transition bands and is not equivalent.
+    """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(ink, mode='L').save(path)
+    semantic_design_image(raw_field, short_edge=short_edge).save(path)
     return path
 
 
@@ -129,7 +138,10 @@ def write_comparison(
     measure = ImageDraw.Draw(Image.new('L', (1, 1), 255))
     rendered = []
     for title, field in panels:
-        image = ink_image(field)
+        if 'semantic' in str(title).lower() or 'raw z' in str(title).lower():
+            image = semantic_design_image(field)
+        else:
+            image = ink_image(field)
         factor = float(panel_max_edge) / float(max(image.size))
         image = image.resize(
             (

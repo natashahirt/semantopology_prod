@@ -23,10 +23,11 @@ export OMP_NUM_THREADS=1
 export PYTHONUNBUFFERED=1
 
 # Pre-downloaded CLIP weights. Compute nodes may have no internet.
-# export CLIP_CACHE="${SLURM_SUBMIT_DIR}/.cache/clip"
-# export TORCH_HOME="${SLURM_SUBMIT_DIR}/.cache/torch"
+export CLIP_CACHE="${HOME}/.cache/clip"
+export TORCH_HOME="${HOME}/.cache/torch"
 
-# module load miniforge
-# source activate semantopology
+module load miniforge/23.11.0-0
+source activate semantopology
+export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH:-}"
 
 python slurm/run_row.py
