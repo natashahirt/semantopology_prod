@@ -108,3 +108,39 @@ def test_hybrid_contract_preserves_full_progress_gif(tmp_path, monkeypatch):
     )
     assert (tmp_path / 'final.png').is_file()
     assert not (tmp_path / 'semantic_design.png').exists()
+
+
+def _tiny_semantic_model():
+    from model.model_ada import AdaptivePixelModel
+    from problem.problems import StructuralParams
+
+    model = AdaptivePixelModel(
+        structural_params=StructuralParams(
+            problem_name='multistory_building', width=16, height=32,
+            density=0.3, interval=8, filter_width=1.5),
+        clip_loss=None, seed=0, resize_num=0, resize_scale=2)
+    object.__setattr__(model, 'clip_loss', lambda field: field.mean() * 1.0e5)
+    model.enable_physical_clip(weight=0.0, match_venice=False, as_semantic=True)
+    return model
+
+
+def test_fixed_weights_reach_the_physics_optimizer():
+    from dataclasses import replace
+    from recipe.preset import PAPER
+
+    preset = replace(PAPER, max_iterations=2, clip_weight=7.0, clip_weight_z=11.0)
+    ds = campaign._run_physics(_tiny_semantic_model(), preset)
+    np.testing.assert_array_equal(ds['clip_weight'].values, 7.0)
+    assert 'blend_clip_raw_z_weight' not in ds
+    assert campaign._mean(ds, 'clip_weight') == 7.0
+
+
+def test_grad_match_logs_the_raw_z_weight_c2_calibrates_from():
+    from dataclasses import replace
+    from recipe.preset import PAPER
+
+    ds = campaign._run_physics(
+        _tiny_semantic_model(), replace(PAPER, max_iterations=2))
+    assert ds.attrs['blend_mode'] == 'grad_match'
+    assert campaign._mean(ds, 'blend_clip_raw_z_weight') > 0.0
+    assert campaign._mean(ds, 'clip_weight') > 0.0

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-from recipe.campaign import onoff, preset_from_args
+import pytest
+
+from recipe.campaign import onoff, preset_from_args, run_campaign
 from recipe.campaign_spec import (
     CONTROL_PROMPTS,
     FERN_WORDINGS,
@@ -18,6 +20,7 @@ from slurm.make_manifest import (
     control_prompt_rows,
     experiment_rows,
     fern_wording_rows,
+    fixed_weight_rows,
 )
 
 
@@ -199,6 +202,43 @@ def test_c1_control_prompts_match_s3_off_the_main_table():
         assert argv[argv.index('--clip') + 1] in CONTROL_PROMPTS
         reference = s3[f'S3/{structure}/{prompt_token(PROMPTS[0])}']
         assert _without_identity(argv) == _without_identity(reference), row['run_id']
+
+
+def test_c2_fixed_weight_rows_are_s3_plus_two_weights():
+    s3 = {
+        row['run_id']: row['argv'] for row in experiment_rows(include_s1b=False)
+        if row['run_id'].startswith('S3/')
+    }
+    rows = fixed_weight_rows(12.5, 340.0)
+    assert len(rows) == 9
+    for row in rows:
+        argv = row['argv']
+        _, structure, token = row['run_id'].split('/')
+        reference = s3[f'S3/{structure}/{token}']
+        assert _without_identity(argv) == [
+            *_without_identity(reference)[:-2],
+            '--clip-weight', '12.5', '--clip-weight-z', '340',
+            *_without_identity(reference)[-2:],
+        ], row['run_id']
+        preset = preset_from_args(build_parser().parse_args(argv))
+        assert (preset.clip_weight, preset.clip_weight_z) == (12.5, 340.0)
+
+
+def test_campaign_presets_keep_grad_match():
+    for row in experiment_rows(include_s1b=True):
+        preset = preset_from_args(build_parser().parse_args(row['argv']))
+        assert preset.clip_weight is None, row['run_id']
+        assert preset.clip_weight_z is None, row['run_id']
+
+
+def test_fixed_weights_are_refused_outside_semantic(tmp_path):
+    args = build_parser().parse_args([
+        '--mode', 'hybrid', '--clip-weight', '1', '--clip-weight-z', '1'])
+    with pytest.raises(ValueError, match='semantic-only'):
+        run_campaign(args, tmp_path)
+    args = build_parser().parse_args(['--mode', 'semantic', '--clip-weight', '1'])
+    with pytest.raises(ValueError, match='set together'):
+        run_campaign(args, tmp_path)
 
 
 def _without_identity(argv: list[str]) -> list[str]:

@@ -57,6 +57,13 @@ def build_parser() -> argparse.ArgumentParser:
         '--prompt-sketch', action='store_true',
         help='Sketch occupancy plus a CLIP prompt (no dream).')
     parser.add_argument('--blend-rho', type=float, default=PAPER.blend_rho)
+    parser.add_argument(
+        '--clip-weight', type=float, default=None,
+        help='Fixed weight on density CLIP, replacing grad-match (C2 only; '
+             'semantic mode; set with --clip-weight-z).')
+    parser.add_argument(
+        '--clip-weight-z', type=float, default=None,
+        help='Fixed weight on raw-z CLIP, paired with --clip-weight.')
     parser.add_argument('--clip-scales', default='')
     parser.add_argument(
         '--coadapt', default=None,

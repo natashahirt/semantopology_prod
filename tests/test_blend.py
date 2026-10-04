@@ -578,5 +578,43 @@ class GradMatchMixerTest(absltest.TestCase):
         self.assertTrue(np.isfinite(both['blend_clip_raw_z_weight'].values[0]))
 
 
+class FixedRawZWeightTest(absltest.TestCase):
+    """C2: the static path can carry a fixed raw-z term beside density CLIP."""
+
+    def _terms(self, **kwargs):
+        model = _default_model(clip_loss=_mean_clip)
+        optimizer = AdaptiveAdam_Optimizer(model, max_iterations=1, **kwargs)
+        logits = model()
+        return model, logits, optimizer._compose_loss(logits)
+
+    def test_fixed_raw_z_term_is_added_at_its_weight(self):
+        model, logits, terms = self._terms(clip_weight=3.0, clip_weight_z=5.0)
+        expected = (
+            terms.compliance_loss
+            + 3.0 * model.get_semantic_loss(logits)
+            + 5.0 * model.get_raw_z_clip_loss(logits))
+        torch.testing.assert_close(terms.total_loss, expected)
+        self.assertEqual(float(terms.clip_weight), 3.0)
+        self.assertEqual(model._last_raw_z_clip_weight, 5.0)
+
+    def test_unset_raw_z_weight_keeps_the_single_term_static_path(self):
+        model, logits, terms = self._terms(clip_weight=3.0)
+        expected = terms.compliance_loss + 3.0 * model.get_semantic_loss(logits)
+        torch.testing.assert_close(terms.total_loss, expected, rtol=0, atol=0)
+        self.assertIsNone(model._last_raw_z_clip_weight)
+
+    def test_raw_z_weight_needs_a_static_clip_weight(self):
+        with self.assertRaisesRegex(ValueError, 'needs a static clip_weight'):
+            AdaptiveAdam_Optimizer(
+                _default_model(clip_loss=_mean_clip),
+                max_iterations=1, clip_weight_z=5.0)
+
+    def test_raw_z_weight_is_refused_under_grad_match(self):
+        with self.assertRaisesRegex(ValueError, 'needs a static clip_weight'):
+            AdaptiveAdam_Optimizer(
+                _default_model(clip_loss=_mean_clip),
+                max_iterations=1, blend_rho=1.0, clip_weight_z=5.0)
+
+
 if __name__ == '__main__':
     absltest.main()

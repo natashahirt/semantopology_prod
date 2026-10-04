@@ -70,7 +70,8 @@ claim. Do not add experiments that are not listed.
   the domain edges. Do not regenerate.
 - `run.py` modes: `unguided`, `sketch`, `semantic`, `hybrid`, `dream_only`,
   plus `--prompt-sketch`, `--clip-scales {g,m,e,gme}`, `--coadapt`,
-  `--blend-rho`, conventional knobs.
+  `--blend-rho`, conventional knobs. `--clip-weight` / `--clip-weight-z`
+  (semantic only, set together) replace grad-match with fixed weights for C2.
 - CLIP modules are one centered 64×64 tile per tall-building storey, two
   centered 50×50 tiles per short-building storey, and full-depth square
   panels for the bridge. Element crops remain square and sit inside each
@@ -121,7 +122,7 @@ Tokens: `tall|short|bridge`, prompt slugs
 `sketch-12`, `g|m|e|gme`, `rho-0.50`, `wend-400`, `hybrid|dream_only|coadapt-off`,
 `lhs-00`. H5 is the standard hybrid plus `--gravity-load 0.05`.
 S4 slugs: `fern_frond|many_fern_fronds|field_of_ferns|unfurling_fern_fronds`.
-C1 slugs: `structure|qzv_xlrp_mnek`.
+C1 slugs: `structure|qzv_xlrp_mnek`. C2 uses the S3 prompt slugs.
 
 ### 0.4 Submit
 ```bash
@@ -291,7 +292,7 @@ Never append them to `slurm/campaign.tsv`; the 0–117 indices stay fixed.
 | ID | Claim | Runs |
 |---|---|---|
 | C1 | The prompt's meaning, not generic CLIP pressure, moves the design | `semantic` × {`"structure"`, `"qzv xlrp mnek"`} × {tall, short, bridge} = 6 |
-| C2 | A fixed CLIP weight does not transfer between problems | **Blocked: needs a `--clip-weight` flag that does not exist yet.** `semantic` × 3 prompts × {tall, short, bridge} at one fixed weight = 9 |
+| C2 | A fixed CLIP weight does not transfer between problems | `semantic` × 3 prompts × {tall, short, bridge} at one fixed pair of weights calibrated on tall = 9 (after S3 tall) |
 
 **C1.** `"structure"` is a neutral subject (it becomes "a minimal ink
 drawing of a structure"). `"qzv xlrp mnek"` is a fixed meaningless string.
@@ -307,16 +308,33 @@ Report each C1 row beside the S3 rows on the same structure: `final.png`,
 `physical_density.png`, `compliance`, `thresholded_compliance`, and the
 Phase 3 evaluator scores against all three campaign prompts.
 
-**C2 (do not run until the flag lands; log it as parked).** The design is
-fixed now so the comparison cannot be tuned after the fact:
-- The fixed weight `W` is the mean of the logged `clip_weight` column over
-  the steps of the three S3 tall rows. Compute it once from those
-  `run.json`/dataset outputs, log the value in `CAMPAIGN_LOG.md`, and use it
-  unchanged on every C2 row.
-- Each C2 row matches its S3 row except that the coupling is replaced by
-  the fixed weight `W`.
-- Report, per structure, the C2 vs S3 `clip_loss_raw`, `compliance`, and
-  `thresholded_compliance`, and send both `final.png` files.
+**C2.** The semantic coupling weights two CLIP terms: density CLIP and
+raw-z CLIP. C2 keeps both terms and replaces each grad-matched weight with
+one fixed number, the way a person would hand-tune it on one problem and
+reuse it. The calibration rule is fixed now so it cannot be tuned after
+the fact:
+- Every semantic `run.json` records `coupling`, `clip_weight_mean`, and
+  `clip_raw_z_weight_mean` (each the mean over that run's steps).
+- `W_DENSITY` is the mean of `clip_weight_mean` over the three S3 tall
+  rows; `W_Z` is the mean of their `clip_raw_z_weight_mean`. Compute both
+  once, log them in `CAMPAIGN_LOG.md` before any C2 row runs, and never
+  change them.
+- If the S3 tall `run.json` files predate these fields, resubmit those three
+  rows (physics is unchanged; the change only adds logging), log the
+  differing `git_commit`, then calibrate from the new attempts.
+
+```bash
+python slurm/make_manifest.py --fixed-weight W_DENSITY W_Z   # slurm/fixed_weight.tsv, 9 rows
+sbatch --array=0-8 --export=ALL,CAMPAIGN_MANIFEST=slurm/fixed_weight.tsv \
+  slurm/campaign.sbatch
+```
+
+Each C2 row matches its S3 row except for `--clip-weight` and
+`--clip-weight-z`; check that each C2 `run.json` says `coupling: fixed`.
+Report, per structure, C2 vs S3 `clip_loss_raw`, `compliance`,
+`thresholded_compliance`, and the two weights, and send both `final.png`
+files. Either outcome is a result: the claim is that the tall calibration
+is right on tall and wrong (too strong or too weak) elsewhere.
 
 ## Wishlist — seed replicates (only if time remains after 2b)
 
@@ -342,8 +360,8 @@ CLIP losses. Outputs land under `analysis/out/`.
 - Every manifest row is `DONE`, or permanently failed after 3 attempts with a
   logged reason.
 - The S1 gate and the H4 comparison are logged.
-- Every C1 row is `DONE` (or permanently failed), and C2 is logged as
-  parked unless the `--clip-weight` flag has landed.
+- Every C1 and C2 row is `DONE` (or permanently failed), and the C2
+  calibration weights are logged.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

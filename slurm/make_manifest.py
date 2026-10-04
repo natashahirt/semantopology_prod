@@ -252,6 +252,20 @@ def control_prompt_rows() -> list[dict]:
     ]
 
 
+def fixed_weight_rows(clip_weight: float, clip_weight_z: float) -> list[dict]:
+    """C2: the S3 grid with grad-match replaced by one pair of fixed weights."""
+    return [
+        _row(
+            f'C2/{key}/{prompt_token(prompt)}', 'C2', 'semantic',
+            ['--mode', 'semantic', *_structure_args(key), '--clip', prompt,
+             '--clip-weight', f'{clip_weight:.6g}',
+             '--clip-weight-z', f'{clip_weight_z:.6g}'],
+        )
+        for key in REPORTED_STRUCTURES
+        for prompt in PROMPTS
+    ]
+
+
 # Off-table panels: flag -> (default TSV name, row builder).
 OFF_TABLE_PANELS = {
     'fern_wording': ('fern_wording.tsv', fern_wording_rows),
@@ -280,14 +294,23 @@ def main(argv: list[str] | None = None) -> int:
         '--controls', action='store_true',
         help='Write only the C1 control-prompt panel, never the 118-row campaign TSV.')
     parser.add_argument(
+        '--fixed-weight', nargs=2, type=float, metavar=('W_DENSITY', 'W_Z'),
+        help='Write only the C2 fixed-weight panel at these two CLIP weights.')
+    parser.add_argument(
         '--out', default=None)
     args = parser.parse_args(argv)
     default_campaign = _REPO / 'slurm' / 'campaign.tsv'
     panels = [name for name in OFF_TABLE_PANELS if getattr(args, name)]
+    if args.fixed_weight is not None:
+        panels.append('fixed_weight')
     if len(panels) > 1:
         raise SystemExit('choose one off-table panel per call')
     if panels:
-        filename, build_rows = OFF_TABLE_PANELS[panels[0]]
+        if panels[0] == 'fixed_weight':
+            filename = 'fixed_weight.tsv'
+            build_rows = lambda: fixed_weight_rows(*args.fixed_weight)
+        else:
+            filename, build_rows = OFF_TABLE_PANELS[panels[0]]
         out = Path(args.out) if args.out else _REPO / 'slurm' / filename
         if out.resolve() == default_campaign.resolve():
             raise SystemExit(f'refusing to write {panels[0]} over slurm/campaign.tsv')

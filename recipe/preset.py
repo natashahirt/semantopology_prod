@@ -82,6 +82,10 @@ class DreamLayoutPreset:
 
     blend_rho: float = 1.0
     blend_rho_z: float = 0.75
+    # Fixed CLIP weights (C2 ablation). Set together, they replace the
+    # grad-match coupling; None keeps it.
+    clip_weight: float | None = None
+    clip_weight_z: float | None = None
     physical_clip_projection_beta_max: float = 8.0
     physical_clip_projection_sigma: float = 2.0
     physical_clip_projection_sigma_end: float = 0.5

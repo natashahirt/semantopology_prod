@@ -480,7 +480,8 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
                  blend_grads: bool = False,
                  blend_mode: Optional[str] = None,
                  blend_rho: Optional[float] = None,
-                 blend_rho_z: Optional[float] = None):
+                 blend_rho_z: Optional[float] = None,
+                 clip_weight_z: Optional[float] = None):
         """Configure the run.
 
         Args:
@@ -533,6 +534,10 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
                 ``rho_z * EMA||g_C|| / EMA||g_z||``. Requires ``blend_rho``
                 and ``physical_clip_as_semantic`` so density CLIP stays the
                 structural term. Unset keeps the single-term mixer.
+            clip_weight_z: optional static weight on the raw-``z`` CLIP term,
+                the fixed-weight counterpart of ``blend_rho_z``. Requires a
+                static ``clip_weight`` (no ``clip_alpha``, no grad-match).
+                None (the default) leaves the static path single-term.
         """
         super().__init__(model, max_iterations, save_intermediate_designs)
         self._validate_model_type(AdaptivePixelModel, "Adaptive Adam")
@@ -545,6 +550,8 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
         self.lr = lr
         self.grad_clip = grad_clip
         self.clip_weight = None if clip_weight is None else float(clip_weight)
+        self.clip_weight_z = (
+            None if clip_weight_z is None else float(clip_weight_z))
         self.clip_alpha = clip_alpha
         self.compliance_weight = compliance_weight
         self.resize_threshold = float(resize_threshold)
@@ -565,6 +572,15 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
         _reject_clip_weight_under_venice_compat(
             model, self.clip_weight, 'AdaptiveAdam_Optimizer')
         self.blend_mode = self._freeze_live_blend_mode()
+        if self.clip_weight_z is not None and (
+                self.clip_weight is None
+                or self.blend_mode != BlendMode.STATIC):
+            raise ValueError(
+                f'clip_weight_z={self.clip_weight_z!r} needs a static '
+                f'clip_weight and the static algebra, but the live algebra '
+                f'is {self.blend_mode.value!r} with clip_weight='
+                f'{self.clip_weight!r}. Use blend_rho_z for the grad-matched '
+                'raw-z term.')
         if self.blend_mode == BlendMode.GRAD_MATCH:
             if self.blend_rho is None:
                 raise ValueError(
@@ -665,10 +681,15 @@ class AdaptiveAdam_Optimizer(BaseOptimizer):
             static = _static_clip_weight_or_default(self.clip_weight)
             weight = semantic.detach().new_tensor(static)
         clip_loss = semantic * weight
+        total = compliance + clip_loss
         self._clear_raw_z_clip_state()
+        if self.clip_weight_z is not None:
+            raw_z = self.model.get_raw_z_clip_loss(logits)
+            total = total + raw_z * self.clip_weight_z
+            self.model._last_raw_z_clip = raw_z.detach()
+            self.model._last_raw_z_clip_weight = self.clip_weight_z
         return VeniceLossTerms(
-            total_loss=self.model.add_sketch_term(
-                compliance + clip_loss, logits),
+            total_loss=self.model.add_sketch_term(total, logits),
             compliance_loss=compliance,
             clip_loss=clip_loss,
             clip_loss_raw=semantic,

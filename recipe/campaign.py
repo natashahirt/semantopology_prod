@@ -140,7 +140,13 @@ def preset_from_args(args) -> DreamLayoutPreset:
         physics_projection_beta_max=float(
             getattr(args, 'physics_beta_max', 0.0) or 0.0),
         gravity_load=float(getattr(args, 'gravity_load', 0.0) or 0.0),
+        clip_weight=_optional_float(getattr(args, 'clip_weight', None)),
+        clip_weight_z=_optional_float(getattr(args, 'clip_weight_z', None)),
     )
+
+
+def _optional_float(value) -> float | None:
+    return None if value is None else float(value)
 
 
 def _apply_sketch(model, preset: DreamLayoutPreset) -> np.ndarray | None:
@@ -200,9 +206,20 @@ def _maybe_coadapt(model, occupancy, preset: DreamLayoutPreset):
 
 
 def _run_physics(model, preset: DreamLayoutPreset, after_step=None):
-    blend_rho = 0.0 if model.clip_loss is None else float(preset.blend_rho)
-    blend_rho_z = (
-        0.0 if model.clip_loss is None else float(preset.blend_rho_z))
+    if preset.clip_weight is not None:
+        # Fixed weights replace grad-match; the two couplings are exclusive.
+        coupling = dict(
+            clip_weight=preset.clip_weight,
+            clip_weight_z=preset.clip_weight_z,
+            blend_rho=None,
+            blend_rho_z=None,
+        )
+    else:
+        coupling = dict(
+            blend_rho=0.0 if model.clip_loss is None else float(preset.blend_rho),
+            blend_rho_z=(
+                0.0 if model.clip_loss is None else float(preset.blend_rho_z)),
+        )
     optimizer = AdaptiveAdam_Optimizer(
         model,
         max_iterations=int(preset.max_iterations),
@@ -211,10 +228,18 @@ def _run_physics(model, preset: DreamLayoutPreset, after_step=None):
         resize_threshold=preset.resize_threshold,
         max_resize_iteration=preset.max_resize_iteration,
         convergence_threshold=preset.convergence_threshold,
-        blend_rho=blend_rho,
-        blend_rho_z=blend_rho_z,
+        **coupling,
     )
     return _attach_final(optimizer.optimize(after_step=after_step), model)
+
+
+def _mean(ds, name: str) -> float | None:
+    """Finite mean of a per-step column, or None when it was not logged."""
+    if name not in ds:
+        return None
+    values = np.asarray(ds[name].values, dtype=np.float64).reshape(-1)
+    values = values[np.isfinite(values)]
+    return float(values.mean()) if values.size else None
 
 
 def _gray_fraction(density: np.ndarray) -> float:
@@ -331,6 +356,10 @@ def run_campaign(args, output_dir: Path) -> dict:
         if not preset.sketch_path or mode == 'unguided':
             raise ValueError('--prompt-sketch needs --sketch and a CLIP prompt')
         mode = 'prompt_sketch'
+    if (preset.clip_weight is None) != (preset.clip_weight_z is None):
+        raise ValueError('--clip-weight and --clip-weight-z are set together')
+    if preset.clip_weight is not None and mode != 'semantic':
+        raise ValueError(f'fixed CLIP weights are semantic-only, got {mode}')
 
     density = None
     raw = None
@@ -433,6 +462,15 @@ def run_campaign(args, output_dir: Path) -> dict:
         'connected_components': report['validity'].get('component_count'),
         'volume_actual': float(np.mean(raw > 0.9)),
     })
+    if needs_clip:
+        fixed = preset.clip_weight is not None
+        summary.update({
+            'coupling': 'fixed' if fixed else 'grad_match',
+            'clip_weight_mean': _mean(ds, 'clip_weight'),
+            'clip_raw_z_weight_mean': (
+                preset.clip_weight_z if fixed
+                else _mean(ds, 'blend_clip_raw_z_weight')),
+        })
     return _write_contract(
         output_dir, args=args, preset=preset, density=density, raw=raw,
         scaffold=scaffold, ds=ds, summary=summary, started=started,
