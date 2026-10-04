@@ -1,5 +1,5 @@
 # lint as python3
-"""Opt-in physics Heaviside ramp and the load-on-solid metric.
+"""Opt-in physics Heaviside ramp, load-on-solid, and thresholded compliance.
 
 No CLIP checkpoint. Grids are small enough that a physics solve is cheap.
 """
@@ -15,6 +15,7 @@ from guidance.loss_sketch import load_on_solid_fraction
 from model.model_ada import AdaptivePixelModel
 from optimize.optimizers import AdaptiveAdam_Optimizer
 from problem.problems import StructuralParams
+from recipe.dream_layout import thresholded_compliance
 
 ALWAYS_CONVERGE = 1.0e12
 
@@ -108,6 +109,24 @@ class LoadOnSolidFractionTest(absltest.TestCase):
     def test_no_load_returns_none(self):
         self.assertIsNone(
             load_on_solid_fraction(np.ones((2, 2)), np.zeros(3 * 3 * 2)))
+
+
+class ThresholdedComplianceTest(absltest.TestCase):
+
+    def test_gray_material_below_the_cut_carries_nothing(self):
+        env = _model().env
+        shape = (env.args['nely'], env.args['nelx'])
+        solid = thresholded_compliance(env, np.ones(shape))
+        gray = thresholded_compliance(env, np.full(shape, 0.49))
+        self.assertGreater(solid, 0.0)
+        self.assertGreater(gray, 1.0e6 * solid)
+
+    def test_cut_is_inclusive_at_one_half(self):
+        env = _model().env
+        shape = (env.args['nely'], env.args['nelx'])
+        self.assertAlmostEqual(
+            thresholded_compliance(env, np.full(shape, 0.5)),
+            thresholded_compliance(env, np.ones(shape)))
 
 
 if __name__ == '__main__':

@@ -37,7 +37,6 @@ from guidance.loss_sketch import (
 )
 from model.model_base import PHYSICAL_CLIP_INK_WRAP
 from optimize.optimizers import AdaptiveAdam_Optimizer
-from physics import physics
 from recipe.campaign_spec import STRUCTURES
 from recipe.dream_layout import (
     _attach_final,
@@ -51,6 +50,7 @@ from recipe.dream_layout import (
     git_revision,
     run_clip_dream,
     seed_everything,
+    thresholded_compliance,
 )
 from recipe.preset import PAPER, DreamLayoutPreset
 from runtime import configure_torch_threads
@@ -222,25 +222,6 @@ def _gray_fraction(density: np.ndarray) -> float:
     return float(np.mean((flat > 0.1) & (flat < 0.9)))
 
 
-def _thresholded_compliance(model, density: np.ndarray) -> float | None:
-    binary = (np.asarray(density, dtype=np.float64) >= 0.5).astype(np.float64)
-    try:
-        forces = physics.calculate_forces(binary, model.env.args)
-        displacement = physics.displace(
-            binary, model.env.ke, forces,
-            model.env.args['freedofs'], model.env.args['fixdofs'],
-            penal=model.env.args['penal'])
-        value = physics.compliance(
-            binary, displacement, model.env.ke,
-            penal=model.env.args['penal'])
-    except Exception:
-        return None
-    value = float(np.asarray(value))
-    if not np.isfinite(value):
-        return None
-    return value
-
-
 def _write_contract(
     output_dir: Path,
     *,
@@ -393,9 +374,6 @@ def run_campaign(args, output_dir: Path) -> dict:
             output_dir / 'scaffold.npy').exists() else None
         summary.update(hybrid_summary)
         summary['_t0'] = t0
-        # Hybrid already ran FEA. Thresholded compliance uses the live model
-        # from this process only if we rebuild — skip a second CHOLMOD risk
-        # by using saved density without a new model when possible.
         summary['gray_fraction'] = _gray_fraction(density)
         return _write_contract(
             output_dir, args=args, preset=preset, density=density, raw=raw,
@@ -449,7 +427,7 @@ def run_campaign(args, output_dir: Path) -> dict:
         'mass_on_scaffold': report['mass_on_scaffold'],
         'validity': report['validity'],
         'gray_fraction': _gray_fraction(density),
-        'thresholded_compliance': _thresholded_compliance(model, density),
+        'thresholded_compliance': thresholded_compliance(model.env, density),
         'load_on_solid_fraction': load_on_solid_fraction(
             density, model.env.args['forces']),
         'connected_components': report['validity'].get('component_count'),

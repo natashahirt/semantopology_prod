@@ -178,7 +178,7 @@ sbatch --array=0-3 --export=ALL,CAMPAIGN_MANIFEST=slurm/projection_gate.tsv \
 ```
 
 Report a table for the four rows with these `run.json` fields: `steps`,
-`converged`, `compliance`, `thresholded_compliance` (unguided only),
+`converged`, `compliance`, `thresholded_compliance`,
 `load_on_solid_fraction`, `gray_fraction`, `validity.component_count`,
 `validity.floating_mass_fraction`, `clip_loss_raw` (hybrid only),
 `physics_projection_beta_final`, and `wall_clock_seconds`. Also send each

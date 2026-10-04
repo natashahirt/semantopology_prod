@@ -41,6 +41,7 @@ from model.model_ada import AdaptivePixelModel
 from model.model_base import PHYSICAL_CLIP_INK_WRAP, VeniceLossAlgebra
 from optimize.optimizers import AdaptiveAdam_Optimizer
 from optimize.utils import init_weight_neutral
+from physics import physics
 from problem.problems import StructuralParams
 from recipe.preset import DreamLayoutPreset, prompt_slug
 from runtime import configure_torch_threads
@@ -239,6 +240,33 @@ def _attach_final(ds, model):
     return ds
 
 
+def thresholded_compliance(env, density: np.ndarray) -> float | None:
+    """Compliance of the design cut at density 0.5, solved on ``env``.
+
+    Gray material can carry load that a built structure would not have, so
+    this re-solves the finite-element problem on the 0/1 design. Call it last
+    in a process: after a failed CHOLMOD factorization the next solve can
+    segfault, so nothing may solve after this returns None.
+
+    Returns:
+        The compliance, or None when the solve fails or is not finite.
+    """
+    binary = (np.asarray(density, dtype=np.float64) >= 0.5).astype(np.float64)
+    try:
+        # Self-weight follows the material, so loads are rebuilt for the cut.
+        forces = physics.calculate_forces(binary, env.args)
+        displacement = physics.displace(
+            binary, env.ke, forces,
+            env.args['freedofs'], env.args['fixdofs'],
+            penal=env.args['penal'])
+        value = physics.compliance(
+            binary, displacement, env.ke, penal=env.args['penal'])
+    except Exception:
+        return None
+    value = float(np.asarray(value))
+    return value if np.isfinite(value) else None
+
+
 def _last(ds, name: str):
     if name not in ds:
         return None
@@ -382,6 +410,8 @@ def run_dream_layout(preset: DreamLayoutPreset, output_dir: Path) -> dict:
         'validity': report['validity'],
         'load_on_solid_fraction': load_on_solid_fraction(
             density, physics_model.env.args['forces']),
+        'thresholded_compliance': thresholded_compliance(
+            physics_model.env, density),
         'scaffold_source': 'soft_rank',
         'scaffold_mean': float(np.mean(scaffold)),
         'control_grid': [preset.control_height, preset.control_width],
