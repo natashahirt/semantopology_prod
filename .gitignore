@@ -4,4 +4,5 @@ __pycache__/
 .pytest_cache
 .angelo
 results/
+results_superseded/
 logs/

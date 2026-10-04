@@ -119,18 +119,18 @@ figure makes a structural claim.
 Tokens: `tall|short|bridge`, prompt slugs
 `fern_fronds|butterfly_wing_venation|skeletons|human_skull`,
 `sketch-12`, `g|m|e|gme`, `rho-0.50`, `wend-400`, `hybrid|dream_only|coadapt-off`,
-`lhs-00`.
+`lhs-00`. H5 is the standard hybrid plus `--gravity-load 0.05`.
 
 ### 0.4 Submit
 ```bash
-python slurm/make_manifest.py          # 109 rows; do not hand-edit the TSV
-# campaign.sbatch --array is 0-108%24; regenerate if the count changes
+python slurm/make_manifest.py          # 118 rows; do not hand-edit the TSV
+# campaign.sbatch --array is 0-117%24; regenerate if the count changes
 sbatch slurm/campaign.sbatch
 ```
 After the S1 gate passes:
 ```bash
-python slurm/make_manifest.py --include-s1b   # appends rows 109-132
-sbatch --array=109-132%24 slurm/campaign.sbatch
+python slurm/make_manifest.py --include-s1b   # appends rows 118-141
+sbatch --array=118-141%24 slurm/campaign.sbatch
 ```
 
 Concurrency: ORCD documents `mit_normal` at 12 h maximum wall time and a base
@@ -193,11 +193,12 @@ the runs:
 
 **Decision: adopted.** The user judged the beta8 rows (crisp floor trusses
 on tall unguided; frond detail kept on the fern hybrid) and switched the
-campaign to the projection. `make_manifest.py` now appends
-`--physics-beta-max 8` to every row; the D rows instead use their sampled
-beta (4–16) as the ramp cap. Every row in `results/` that ran without the
-ramp (check `physics_projection_beta_max` in its `run.json`) is superseded:
-move it to `results_superseded/` and rerun it. Phase 2 is cleared to submit.
+campaign to the projection. `make_manifest.py` appends `--physics-beta-max 8`
+to every row, including D. D still samples conventional `--beta-max` (4–16)
+on top of that ramp. Every row in `results/` that ran without the ramp
+(check `physics_projection_beta_max` in its `run.json`) is superseded:
+move it to `results_superseded/` and rerun it. Phase 2 is the 118-row
+table below (H5 included) at that recipe.
 
 ## Phase 1 — smoke tests (gate)
 Run, on a compute node, one row from each of: unguided on each structure,
@@ -233,17 +234,19 @@ expected to produce bit-identical arrays.
 | F2 | The formal channel is a dial | sketch 12, weight end {200, 400, 800, 1200, 2000} = 5 |
 | F3 | Generality across drawings | `sketch` on {1, 3, 6, 9, 11, 12, col2, col3, col6_grid, col3_braced} = 10 |
 | S1 | Scale pilot (gate) | `semantic` × 3 prompts × scales {g}, {m}, {e}, {g,m,e} on tall = 12 |
-| S1b | Scale replication (only if S1 passes) | same 4 arms × 3 prompts × {short, bridge} = 24, **appended** as rows 109–132 |
+| S1b | Scale replication (only if S1 passes) | same 4 arms × 3 prompts × {short, bridge} = 24, **appended** as rows 118–141 |
 | S2 | The semantic channel is a dial | `semantic` × 3 prompts × `blend_rho` {0, 0.25, 0.5, 0.75, 1.0} = 15 |
 | S3 | Physics mediates the prompt | `semantic` × 3 prompts × {tall, short, bridge} = 9, plus "human skull" on tall = 1 |
 | H1 | The dream as a formal prior | {`hybrid`, `dream_only`} × 3 prompts on tall = 6 |
 | H2 | Same prompts, different structures | `hybrid` × 3 prompts × {short, bridge} = 6 |
 | H3 | Sketch plus prompt | `--prompt-sketch` with {12, col3_braced, col6_grid} × 3 prompts = 9 |
 | H4 | Co-adaptation is load-bearing | `hybrid` `--coadapt off` × 3 prompts on tall = 3. Default hybrid stays **on**. |
-| D | Conventional baseline | `unguided`, 24 Latin-hypercube samples on tall over filter width, penalty, projection-ramp cap (4–16), resolution, seed |
+| H5 | A small per-pixel self-weight | `hybrid` `--gravity-load 0.05` × 3 prompts × {tall, short, bridge} = 9. Default hybrid stays gravity off. |
+| D | Conventional baseline | `unguided`, 24 Latin-hypercube samples on tall over filter width, penalty, Heaviside `--beta-max` (4–16), resolution, seed |
 
-Without S1b: 109 runs. With S1b: 133. Every row runs the physics projection
-ramp (cap 8 unless D samples it), so every row runs the full 200 steps.
+Without S1b: 118 runs. With S1b: 142. Every row also runs the physics
+projection ramp to `--physics-beta-max 8`, so every row runs the full 200
+steps.
 
 **S1 gate.** Write the criterion in `CAMPAIGN_LOG.md` *before* viewing the
 results: "the {m} arm shows one butterfly-wing-venation instance per storey in
@@ -254,6 +257,9 @@ Pass: queue S1b. Fail: skip S1b, and log "two-scale result: element vs global".
 **H4.** Co-adaptation is part of the hybrid method. Compare each
 `H4/.../coadapt-off` `final.png` to the matching `H1/.../hybrid` row. Do
 not drop co-adaptation from the method.
+
+**H5.** Self-weight is opt-in. Compare each `H5/.../hybrid` `final.png` to
+the matching gravity-off hybrid (`H1` on tall, `H2` on short and bridge).
 
 Loop: `python slurm/status.py`, `python slurm/resubmit.py`, until every
 row is `DONE` or permanently failed (3 attempts, logged with a log tail).

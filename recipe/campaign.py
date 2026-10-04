@@ -139,6 +139,7 @@ def preset_from_args(args) -> DreamLayoutPreset:
         heavyside=beta is not None,
         physics_projection_beta_max=float(
             getattr(args, 'physics_beta_max', 0.0) or 0.0),
+        gravity_load=float(getattr(args, 'gravity_load', 0.0) or 0.0),
     )
 
 
@@ -224,8 +225,9 @@ def _gray_fraction(density: np.ndarray) -> float:
 def _thresholded_compliance(model, density: np.ndarray) -> float | None:
     binary = (np.asarray(density, dtype=np.float64) >= 0.5).astype(np.float64)
     try:
+        forces = physics.calculate_forces(binary, model.env.args)
         displacement = physics.displace(
-            binary, model.env.ke, model.env.args['forces'],
+            binary, model.env.ke, forces,
             model.env.args['freedofs'], model.env.args['fixdofs'],
             penal=model.env.args['penal'])
         value = physics.compliance(
@@ -440,6 +442,8 @@ def run_campaign(args, output_dir: Path) -> dict:
         'converged': bool(ds.attrs.get('converged', 0)),
         'physics_projection_beta_max': preset.physics_projection_beta_max,
         'physics_projection_beta_final': model._last_physics_projection_beta,
+        'gravity_load': preset.gravity_load,
+        'physics_gravity': float(model.env.args.get('g', 0.0) or 0.0),
         'progress_gif_frames': int(np.asarray(ds['design'].values).shape[0]),
         'mean_physical_density': report['mean_physical_density'],
         'mass_on_scaffold': report['mass_on_scaffold'],

@@ -138,6 +138,8 @@ def build_model(
     model.args['penal'] = float(preset.penal)
     model.env.args['penal'] = float(preset.penal)
     model.physics_projection_beta_max = float(preset.physics_projection_beta_max)
+    model.gravity_load = float(preset.gravity_load)
+    model.apply_gravity_load()
     if venice_algebra:
         model.enable_venice_compat_loss(VeniceLossAlgebra(
             clip_alpha=preset.clip_alpha,

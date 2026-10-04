@@ -28,6 +28,7 @@ from guidance.loss_semantic_prior import (
 from .config import DEFAULT_MAX_ANALYSIS_DIM
 from .utils import set_random_seed
 from physics import api as topo_api
+from physics.physics import apply_pixel_gravity
 
 
 # Bounded-field CLIP prompt wraps. Venice raw-z keeps the unwrapped subject.
@@ -238,6 +239,8 @@ class Model(nn.Module):
         # Physics Heaviside continuation. 0 keeps every loss path bit-identical.
         self.physics_projection_beta_max = 0.0
         self._last_physics_projection_beta = None
+        # Per-pixel self-weight fraction. 0 keeps calculate_forces on live load only.
+        self.gravity_load = 0.0
         if clip_loss is not None:
             clip_loss.clip_model = (
                 clip_loss.clip_model.to(self.device).eval().requires_grad_(False)
@@ -296,9 +299,20 @@ class Model(nn.Module):
         """Build physics args with discretization schedules resolved to concrete values."""
         return topo_api.specified_task(self.structural_params.get_problem())
 
+    def apply_gravity_load(self) -> None:
+        """Recompute ``g`` from the current grid and the stored fraction."""
+        fraction = float(getattr(self, 'gravity_load', 0.0) or 0.0)
+        apply_pixel_gravity(self.args, fraction)
+        if self.env is not None and self.env.args is not self.args:
+            apply_pixel_gravity(self.env.args, fraction)
+        analysis_env = getattr(self, 'analysis_env', None)
+        if analysis_env is not None and analysis_env is not self.env:
+            apply_pixel_gravity(analysis_env.args, fraction)
+
     def _refresh_physics_environment(self) -> None:
         """Rebuild env/args after structural or discretization parameters change."""
         new_args = self._build_physics_args()
+        apply_pixel_gravity(new_args, getattr(self, 'gravity_load', 0.0))
         self.env = topo_api.Environment(new_args)
         self.args = new_args
 
@@ -376,6 +390,7 @@ class Model(nn.Module):
         analysis_params = self.structural_params.copy(**analysis_dict)
         analysis_args = topo_api.specified_task(analysis_params.get_problem())
         analysis_args['volfrac'] = self.args.get('volfrac', analysis_args.get('volfrac', 0.5))
+        apply_pixel_gravity(analysis_args, getattr(self, 'gravity_load', 0.0))
 
         self.analysis_env = topo_api.Environment(analysis_args)
 

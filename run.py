@@ -70,6 +70,11 @@ def build_parser() -> argparse.ArgumentParser:
         default=PAPER.physics_projection_beta_max,
         help='Ramp the physics Heaviside beta from 1 to this value over the '
              'run (0 = off). Disables early convergence stopping.')
+    parser.add_argument(
+        '--gravity-load', type=float, default=PAPER.gravity_load,
+        help='Per-pixel self-weight as a fraction of the live-load '
+             'resultant (0 = off). A solid design then carries this share '
+             'of the applied load as gravity, split equally across pixels.')
     parser.add_argument('--resolution-scale', type=float, default=1.0)
     parser.add_argument('--seed', type=int, default=PAPER.seed)
     parser.add_argument('--out', default=None)

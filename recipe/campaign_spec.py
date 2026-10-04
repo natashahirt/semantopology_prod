@@ -24,6 +24,8 @@ H3_SKETCHES = ('12.jpg', 'col3_braced.png', 'col6_grid.png')
 SCALE_ARMS = ('g', 'm', 'e', 'gme')
 BLEND_RHOS = (0.0, 0.25, 0.5, 0.75, 1.0)
 WEIGHT_ENDS = (200.0, 400.0, 800.0, 1200.0, 2000.0)
+# H5: each solid pixel carries an equal share of this fraction of the live load.
+GRAVITY_LOAD = 0.05
 
 SKETCH_ROOT = Path('inputs/sketches')
 REPORTED_STRUCTURES = ('tall', 'short', 'bridge')

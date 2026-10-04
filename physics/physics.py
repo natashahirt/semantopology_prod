@@ -519,6 +519,35 @@ def sigmoid_with_constrained_mean(x, average, measure=None):
   return sigmoid(x + b)
 
 
+def pixel_gravity(forces, nelx, nely, fraction):
+  """Downward force contributed by one fully solid element.
+
+  ``fraction`` is the share of the live-load resultant that a fully solid
+  design carries as self-weight, split equally across pixels. Void adds
+  nothing because ``calculate_forces`` weights the body force by density.
+  ``0`` is off.
+  """
+  fraction = float(fraction)
+  if fraction < 0.0:
+    raise ValueError(f'gravity_load must be >= 0, got {fraction}')
+  if fraction == 0.0:
+    return 0.0
+  n_elem = int(nelx) * int(nely)
+  if n_elem <= 0:
+    return 0.0
+  total = float(_np.sum(_np.abs(_np.asarray(forces, dtype=_np.float64))))
+  return fraction * total / n_elem
+
+
+def apply_pixel_gravity(args, fraction):
+  """Write ``gravity_load`` and the matching per-element ``g`` onto ``args``."""
+  fraction = float(fraction or 0.0)
+  args['gravity_load'] = fraction
+  args['g'] = pixel_gravity(
+      args['forces'], args['nelx'], args['nely'], fraction)
+  return args
+
+
 def calculate_forces(x_phys, args):
   applied_force = args['forces']
 

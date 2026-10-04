@@ -14,7 +14,7 @@
 #SBATCH --time=06:00:00
 # mit_normal caps a base account at 96 cores per user (256 for Standard):
 # 24 concurrent tasks x 4 CPUs = 96. Raise the % only after checking the cap.
-#SBATCH --array=0-108%24
+#SBATCH --array=0-117%24
 #SBATCH --output=logs/%A_%a.out
 
 set -euo pipefail

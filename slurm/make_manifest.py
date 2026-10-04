@@ -17,6 +17,7 @@ from recipe.campaign_spec import (
     COUNTER_PROMPT,
     F1_SKETCHES,
     F3_SKETCHES,
+    GRAVITY_LOAD,
     H3_SKETCHES,
     PROMPTS,
     REPORTED_STRUCTURES,
@@ -188,6 +189,14 @@ def experiment_rows(*, include_s1b: bool) -> list[dict]:
              '--clip', prompt, *_flag('--coadapt', False)],
         ))
 
+    for key in REPORTED_STRUCTURES:
+        for prompt in PROMPTS:
+            rows.append(_row(
+                f'H5/{key}/{prompt_token(prompt)}/hybrid', 'H5', 'hybrid',
+                ['--mode', 'hybrid', *_structure_args(key),
+                 '--clip', prompt, '--gravity-load', str(GRAVITY_LOAD)],
+            ))
+
     samples = latin_hypercube(24, 5, seed=0)
     for index, unit in enumerate(samples):
         filter_width = _lerp(1.5, 4.0, unit[0])
@@ -195,19 +204,19 @@ def experiment_rows(*, include_s1b: bool) -> list[dict]:
         beta_max = _lerp(4.0, 16.0, unit[2])
         resolution_scale = 0.5 if unit[3] < 0.5 else 1.0
         seed = int(round(_lerp(0.0, 1000.0, unit[4])))
-        # The sampled beta caps the physics ramp; a static --beta-max would
-        # be overwritten by the ramp every step.
+        # Submitted Phase 2: D still samples conventional --beta-max (4–16);
+        # the campaign-wide physics ramp is separately capped at 8.
         rows.append(_row(
             f'D/tall/lhs-{index:02d}', 'D', 'conventional',
             ['--mode', 'unguided', *_structure_args('tall'),
              '--filter-width', f'{filter_width:.6g}',
              '--penal', f'{penal:.6g}',
+             '--beta-max', f'{beta_max:.6g}',
              '--resolution-scale', str(resolution_scale),
              '--seed', str(seed)],
-            physics_beta_max=beta_max,
         ))
     if include_s1b:
-        # Appended last so the original 0..108 array indices stay valid.
+        # Appended last so the original 0..117 array indices stay valid.
         rows.extend(scale_rows('S1b', 'short'))
         rows.extend(scale_rows('S1b', 'bridge'))
     return rows

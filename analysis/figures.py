@@ -108,7 +108,7 @@ def vendi_table(runs: list[dict], embeddings_path: Path, out: Path) -> None:
         'formal': lambda r: str(r.get('experiment', '')).startswith('F'),
         'semantic': lambda r: str(r.get('experiment', '')).startswith('S')
         and r.get('structure') == 'tall',
-        'hybrid': lambda r: r.get('experiment') in ('H1', 'H3', 'H4'),
+        'hybrid': lambda r: r.get('experiment') in ('H1', 'H3', 'H4', 'H5'),
     }
     tall_baseline = next(
         (r.get('compliance') for r in runs

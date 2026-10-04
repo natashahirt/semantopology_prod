@@ -63,6 +63,7 @@ def test_paper_preset_matches_the_skeleton_recipe():
     assert PAPER.anchor_weight == 1.0
     assert PAPER.deficit_weight == 0.0
     assert PAPER.physical_clip_projection_beta_max == 8.0
+    assert PAPER.gravity_load == 0.0
     assert PAPER.physical_clip_projection_sigma == 2.0
     assert PAPER.physical_clip_projection_sigma_end == 0.5
     assert PAPER.tiled_scales == ()
