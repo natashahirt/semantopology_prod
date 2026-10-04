@@ -62,8 +62,10 @@ claim. Do not add experiments that are not listed.
   Y-support on the left 70%, X-fix on the left wall; AdaptivePixel
   `resize_num=1` because 150 is not divisible by 4),
   `double_decker_bridge` (448×72, pin-roller, UDL on y=0 and y=71).
-  `three_decker_bridge` adds a middle deck at y=36 and is available as
-  `--structure bridge3` for an exploratory gate; it is not in the manifest.
+  `three_decker_bridge` adds a middle deck at y=36, and gives the top and
+  middle decks vertical rollers at both side walls (X stays fixed only at
+  the bottom-left pin). It is available as `--structure bridge3` for an
+  exploratory gate; it is not in the manifest.
 - Sketches in `inputs/sketches/`. `col3_braced.png` has columns flush with
   the domain edges. Do not regenerate.
 - `run.py` modes: `unguided`, `sketch`, `semantic`, `hybrid`, `dream_only`,

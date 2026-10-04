@@ -101,10 +101,21 @@ class ThreeDeckerBridgeTest(absltest.TestCase):
         np.testing.assert_array_equal(loaded, [0, 36, 71])
         np.testing.assert_allclose(problem.forces[:, 36, Y], -1.0 / 448)
 
+    def test_upper_decks_bear_on_end_rollers(self):
+        problem = three_decker_bridge()
+        for row in (0, 36):
+            for end in (0, -1):
+                self.assertEqual(problem.normals[end, row, Y], 1)
+                self.assertEqual(problem.normals[end, row, X], 0)
+        self.assertEqual(problem.normals[0, -1, X], 1)
+        self.assertEqual(int(problem.normals[..., X].sum()), 1)
+        self.assertTrue(np.all(problem.normals[1:-1, :-1, :] == 0))
+
     def test_factors_on_a_similar_grid(self):
         problem = three_decker_bridge(width=32, height=8)
         loaded = np.flatnonzero(np.abs(problem.forces[0, :, Y]) > 0)
         np.testing.assert_array_equal(loaded, [0, 4, 7])
+        self.assertEqual(problem.normals[-1, 4, Y], 1)
         _factors(problem)
 
 

@@ -807,12 +807,23 @@ def double_decker_bridge(width=448, height=72, density=0.3):
 def three_decker_bridge(width=448, height=72, density=0.3):
   """Pin-roller span with uniform loads on three horizontal decks.
 
-  Uses the same supports and domain as :func:`double_decker_bridge`, adding a
+  Uses the domain and base supports of :func:`double_decker_bridge`, adding a
   middle loaded row at ``height // 2``. The other decks remain at y = 0 and
   y = height - 1, immediately above the support row.
+
+  The two upper decks also bear vertically on both side walls (Y rollers at
+  each end). Without them the middle deck can only hang from the arches, and
+  the optimizer carries its small load on near-invisible hangers instead of
+  a deck. Rollers rather than pins: stacked pins on one wall would resist
+  moment and pull the design into a lopsided cantilever. X stays fixed only
+  at the bottom-left pin.
   """
   problem = double_decker_bridge(width=width, height=height, density=density)
-  problem.forces[:, height // 2, Y] = -1.0 / width
+  middle = height // 2
+  problem.forces[:, middle, Y] = -1.0 / width
+  for row in (0, middle):
+    problem.normals[0, row, Y] = 1
+    problem.normals[-1, row, Y] = 1
   problem.name = f"three_decker_bridge_{width}x{height}"
   return problem
 
