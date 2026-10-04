@@ -20,6 +20,9 @@ FERN_WORDINGS = (
     'field of ferns',
     'unfurling fern fronds',
 )
+# C1: optional control prompts. A neutral subject and a meaningless string
+# separate the effect of the prompt's meaning from generic CLIP pressure.
+CONTROL_PROMPTS = ('structure', 'qzv xlrp mnek')
 
 SKETCH_STEMS = (
     '1.jpg', '3.jpg', '6.jpg', '9.jpg', '11.jpg', '12.jpg',

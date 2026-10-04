@@ -14,6 +14,7 @@ import numpy as np
 from guidance.clip_scales import parse_clip_scales, scales_token
 from recipe.campaign_spec import (
     BLEND_RHOS,
+    CONTROL_PROMPTS,
     COUNTER_PROMPT,
     F1_SKETCHES,
     F3_SKETCHES,
@@ -239,6 +240,25 @@ def fern_wording_rows() -> list[dict]:
     return rows
 
 
+def control_prompt_rows() -> list[dict]:
+    """C1 control prompts on every structure, matched to S3."""
+    return [
+        _row(
+            f'C1/{key}/{prompt_token(prompt)}', 'C1', 'semantic',
+            ['--mode', 'semantic', *_structure_args(key), '--clip', prompt],
+        )
+        for key in REPORTED_STRUCTURES
+        for prompt in CONTROL_PROMPTS
+    ]
+
+
+# Off-table panels: flag -> (default TSV name, row builder).
+OFF_TABLE_PANELS = {
+    'fern_wording': ('fern_wording.tsv', fern_wording_rows),
+    'controls': ('control_prompts.tsv', control_prompt_rows),
+}
+
+
 def write_manifest(path: Path, rows: list[dict]) -> list[dict]:
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = ['run_id\targv_json\n']
@@ -257,14 +277,21 @@ def main(argv: list[str] | None = None) -> int:
         '--fern-wording', action='store_true',
         help='Write only the S4 fern-plural panel, never the 118-row campaign TSV.')
     parser.add_argument(
+        '--controls', action='store_true',
+        help='Write only the C1 control-prompt panel, never the 118-row campaign TSV.')
+    parser.add_argument(
         '--out', default=None)
     args = parser.parse_args(argv)
     default_campaign = _REPO / 'slurm' / 'campaign.tsv'
-    if args.fern_wording:
-        out = Path(args.out) if args.out else _REPO / 'slurm' / 'fern_wording.tsv'
+    panels = [name for name in OFF_TABLE_PANELS if getattr(args, name)]
+    if len(panels) > 1:
+        raise SystemExit('choose one off-table panel per call')
+    if panels:
+        filename, build_rows = OFF_TABLE_PANELS[panels[0]]
+        out = Path(args.out) if args.out else _REPO / 'slurm' / filename
         if out.resolve() == default_campaign.resolve():
-            raise SystemExit('refusing to write S4 over slurm/campaign.tsv')
-        rows = write_manifest(out, fern_wording_rows())
+            raise SystemExit(f'refusing to write {panels[0]} over slurm/campaign.tsv')
+        rows = write_manifest(out, build_rows())
     else:
         out = Path(args.out) if args.out else default_campaign
         rows = write_manifest(out, experiment_rows(include_s1b=args.include_s1b))

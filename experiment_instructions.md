@@ -121,6 +121,7 @@ Tokens: `tall|short|bridge`, prompt slugs
 `sketch-12`, `g|m|e|gme`, `rho-0.50`, `wend-400`, `hybrid|dream_only|coadapt-off`,
 `lhs-00`. H5 is the standard hybrid plus `--gravity-load 0.05`.
 S4 slugs: `fern_frond|many_fern_fronds|field_of_ferns|unfurling_fern_fronds`.
+C1 slugs: `structure|qzv_xlrp_mnek`.
 
 ### 0.4 Submit
 ```bash
@@ -279,6 +280,54 @@ the matching gravity-off hybrid (`H1` on tall, `H2` on short and bridge).
 Loop: `python slurm/status.py`, `python slurm/resubmit.py`, until every
 row is `DONE` or permanently failed (3 attempts, logged with a log tail).
 
+## Phase 2b — controls (off the main table)
+
+These rows answer two reviewer questions the main table leaves open: how
+much of a prompt's effect comes from its meaning, and whether a hand-set
+CLIP weight carries over between problems the way the gradient-norm
+coupling does. They run at the same recipe and code revision as Phase 2.
+Never append them to `slurm/campaign.tsv`; the 0–117 indices stay fixed.
+
+| ID | Claim | Runs |
+|---|---|---|
+| C1 | The prompt's meaning, not generic CLIP pressure, moves the design | `semantic` × {`"structure"`, `"qzv xlrp mnek"`} × {tall, short, bridge} = 6 |
+| C2 | A fixed CLIP weight does not transfer between problems | **Blocked: needs a `--clip-weight` flag that does not exist yet.** `semantic` × 3 prompts × {tall, short, bridge} at one fixed weight = 9 |
+
+**C1.** `"structure"` is a neutral subject (it becomes "a minimal ink
+drawing of a structure"). `"qzv xlrp mnek"` is a fixed meaningless string.
+Each row matches its S3 row except for the prompt.
+
+```bash
+python slurm/make_manifest.py --controls   # slurm/control_prompts.tsv, 6 rows
+sbatch --array=0-5 --export=ALL,CAMPAIGN_MANIFEST=slurm/control_prompts.tsv \
+  slurm/campaign.sbatch
+```
+
+Report each C1 row beside the S3 rows on the same structure: `final.png`,
+`physical_density.png`, `compliance`, `thresholded_compliance`, and the
+Phase 3 evaluator scores against all three campaign prompts.
+
+**C2 (do not run until the flag lands; log it as parked).** The design is
+fixed now so the comparison cannot be tuned after the fact:
+- The fixed weight `W` is the mean of the logged `clip_weight` column over
+  the steps of the three S3 tall rows. Compute it once from those
+  `run.json`/dataset outputs, log the value in `CAMPAIGN_LOG.md`, and use it
+  unchanged on every C2 row.
+- Each C2 row matches its S3 row except that the coupling is replaced by
+  the fixed weight `W`.
+- Report, per structure, the C2 vs S3 `clip_loss_raw`, `compliance`, and
+  `thresholded_compliance`, and send both `final.png` files.
+
+## Wishlist — seed replicates (only if time remains after 2b)
+
+Every Phase 2 row runs at seed 12, so the paper cannot yet report
+seed-to-seed spread. If compute and the October 9 cutoff allow, rerun the
+S3 grid (3 prompts × 3 structures) and B (unguided × 3 structures) on 4
+more seeds: 48 runs. This feeds the diversity study: it separates variation
+from the prompt from variation from the seed. There is no manifest flag
+for this yet; ask for one rather than hand-writing a TSV. Lowest priority:
+skip it rather than delay anything above.
+
 ## Phase 3 — analysis
 ```bash
 python analysis/evaluate.py
@@ -293,6 +342,8 @@ CLIP losses. Outputs land under `analysis/out/`.
 - Every manifest row is `DONE`, or permanently failed after 3 attempts with a
   logged reason.
 - The S1 gate and the H4 comparison are logged.
+- Every C1 row is `DONE` (or permanently failed), and C2 is logged as
+  parked unless the `--clip-weight` flag has landed.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

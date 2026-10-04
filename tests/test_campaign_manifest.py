@@ -5,10 +5,20 @@ from __future__ import annotations
 from dataclasses import replace
 
 from recipe.campaign import onoff, preset_from_args
-from recipe.campaign_spec import FERN_WORDINGS, GRAVITY_LOAD, PROMPTS
+from recipe.campaign_spec import (
+    CONTROL_PROMPTS,
+    FERN_WORDINGS,
+    GRAVITY_LOAD,
+    PROMPTS,
+    prompt_token,
+)
 from recipe.preset import PAPER
 from run import build_parser
-from slurm.make_manifest import experiment_rows, fern_wording_rows
+from slurm.make_manifest import (
+    control_prompt_rows,
+    experiment_rows,
+    fern_wording_rows,
+)
 
 
 def test_default_count_is_118():
@@ -167,3 +177,38 @@ def test_s4_fern_wording_is_off_the_main_table():
         assert argv.count('--physics-beta-max') == 1
         assert argv[argv.index('--physics-beta-max') + 1] == '8'
         assert argv[argv.index('--structure') + 1] == 'tall'
+
+
+def test_c1_control_prompts_match_s3_off_the_main_table():
+    campaign = experiment_rows(include_s1b=False)
+    assert all(not row['run_id'].startswith('C1/') for row in campaign)
+    s3 = {
+        row['run_id']: row['argv'] for row in campaign
+        if row['run_id'].startswith('S3/')
+    }
+
+    rows = control_prompt_rows()
+    assert len(rows) == 6
+    ids = [row['run_id'] for row in rows]
+    assert len(ids) == len(set(ids))
+    assert 'C1/tall/structure' in ids
+    assert 'C1/bridge/qzv_xlrp_mnek' in ids
+    for row in rows:
+        argv = row['argv']
+        _, structure, _ = row['run_id'].split('/')
+        assert argv[argv.index('--clip') + 1] in CONTROL_PROMPTS
+        reference = s3[f'S3/{structure}/{prompt_token(PROMPTS[0])}']
+        assert _without_identity(argv) == _without_identity(reference), row['run_id']
+
+
+def _without_identity(argv: list[str]) -> list[str]:
+    """Drop the run id, experiment and prompt so two rows' recipes compare."""
+    out, skip = [], False
+    for value in argv:
+        if skip:
+            skip = False
+        elif value in ('--run-id', '--experiment', '--clip'):
+            skip = True
+        else:
+            out.append(value)
+    return out

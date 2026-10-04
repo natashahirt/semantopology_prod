@@ -1,0 +1,7 @@
+run_id	argv_json
+C1/tall/structure	["--run-id", "C1/tall/structure", "--experiment", "C1", "--group", "semantic", "--mode", "semantic", "--structure", "tall", "--clip", "structure", "--physics-beta-max", "8"]
+C1/tall/qzv_xlrp_mnek	["--run-id", "C1/tall/qzv_xlrp_mnek", "--experiment", "C1", "--group", "semantic", "--mode", "semantic", "--structure", "tall", "--clip", "qzv xlrp mnek", "--physics-beta-max", "8"]
+C1/short/structure	["--run-id", "C1/short/structure", "--experiment", "C1", "--group", "semantic", "--mode", "semantic", "--structure", "short", "--clip", "structure", "--physics-beta-max", "8"]
+C1/short/qzv_xlrp_mnek	["--run-id", "C1/short/qzv_xlrp_mnek", "--experiment", "C1", "--group", "semantic", "--mode", "semantic", "--structure", "short", "--clip", "qzv xlrp mnek", "--physics-beta-max", "8"]
+C1/bridge/structure	["--run-id", "C1/bridge/structure", "--experiment", "C1", "--group", "semantic", "--mode", "semantic", "--structure", "bridge", "--clip", "structure", "--physics-beta-max", "8"]
+C1/bridge/qzv_xlrp_mnek	["--run-id", "C1/bridge/qzv_xlrp_mnek", "--experiment", "C1", "--group", "semantic", "--mode", "semantic", "--structure", "bridge", "--clip", "qzv xlrp mnek", "--physics-beta-max", "8"]
