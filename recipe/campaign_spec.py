@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -23,6 +24,16 @@ FERN_WORDINGS = (
 # C1: optional control prompts. A neutral subject and a meaningless string
 # separate the effect of the prompt's meaning from generic CLIP pressure.
 CONTROL_PROMPTS = ('structure', 'qzv xlrp mnek')
+
+# Post-hoc evaluators. The first keeps the unsuffixed output names.
+EVAL_MODELS = ('ViT-B/32', 'ViT-L/14')
+
+
+def eval_model_suffix(model_name: str) -> str:
+    """Output-file suffix for an evaluator; empty for the primary model."""
+    if model_name == EVAL_MODELS[0]:
+        return ''
+    return '_' + re.sub(r'[^a-z0-9]+', '_', model_name.lower()).strip('_')
 
 SKETCH_STEMS = (
     '1.jpg', '3.jpg', '6.jpg', '9.jpg', '11.jpg', '12.jpg',

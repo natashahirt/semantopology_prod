@@ -16,7 +16,12 @@ from analysis.vendi import (
     tanimoto_kernel,
     vendi,
 )
-from recipe.campaign_spec import FERN_WORDINGS, PROMPTS
+from recipe.campaign_spec import (
+    EVAL_MODELS,
+    FERN_WORDINGS,
+    PROMPTS,
+    eval_model_suffix,
+)
 from recipe.preset import prompt_slug
 
 _REPO = Path(__file__).resolve().parents[1]
@@ -74,7 +79,8 @@ def compliance_table(runs: list[dict], out: Path) -> None:
          'connected_components'])
 
 
-def cross_prompt_matrix(similarities_path: Path, out: Path) -> None:
+def cross_prompt_matrix(
+        similarities_path: Path, out: Path, suffix: str = '') -> None:
     if not similarities_path.exists():
         return
     records = json.loads(similarities_path.read_text())
@@ -100,7 +106,8 @@ def cross_prompt_matrix(similarities_path: Path, out: Path) -> None:
         for prompt, value in zip(prompts, avg):
             row[f'sim:{prompt}'] = float(value)
         rows.append(row)
-    _write_csv(out / 'tables' / 'cross_prompt_matrix.csv', rows, fieldnames)
+    _write_csv(
+        out / 'tables' / f'cross_prompt_matrix{suffix}.csv', rows, fieldnames)
 
 
 def vendi_table(runs: list[dict], embeddings_path: Path, out: Path) -> None:
@@ -254,8 +261,11 @@ def main(argv: list[str] | None = None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     runs = _load_runs(Path(args.results))
     compliance_table(runs, out)
-    cross_prompt_matrix(
-        Path(args.out) / 'evaluate' / 'similarities.json', out)
+    for model_name in EVAL_MODELS:
+        suffix = eval_model_suffix(model_name)
+        cross_prompt_matrix(
+            Path(args.out) / 'evaluate' / f'similarities{suffix}.json',
+            out, suffix=suffix)
     vendi_table(runs, Path(args.out) / 'evaluate' / 'embeddings.npy', out)
     contact_sheets(runs, out)
     fern_wording_panel(Path(args.results), out)

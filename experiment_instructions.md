@@ -48,7 +48,8 @@ claim. Do not add experiments that are not listed.
 - Build a Linux conda env named `semantopology` with Python 3.11, torch 2.2.2
   (CPU build), numpy 1.26.x, scipy, and scikit-sparse (SuiteSparse/CHOLMOD),
   plus `requirements.txt`.
-- Pre-download CLIP weights (`ViT-B/32`, `RN50`) on the login node. Set
+- Pre-download CLIP weights (`ViT-B/32`, `RN50`, and the evaluator-only
+  `ViT-L/14`) on the login node. Set
   `CLIP_CACHE` / `TORCH_HOME` in `slurm/campaign.sbatch` (the commented
   lines). Compute nodes may have no internet.
 - Uncomment the `module load` / `source activate` lines in
@@ -94,9 +95,12 @@ results/<experiment>/<structure>/<…tokens…>/attempt_<n>/
   DONE                 # written last, only on success
 logs/<jobid>_<array>.out
 analysis/out/
-  evaluate/embeddings.npy
+  evaluate/embeddings.npy               # ViT-B/32
   evaluate/similarities.json
+  evaluate/embeddings_vit_l_14.npy      # ViT-L/14
+  evaluate/similarities_vit_l_14.json
   tables/cross_prompt_matrix.csv
+  tables/cross_prompt_matrix_vit_l_14.csv
   tables/compliance.csv
   tables/vendi.csv
   figures/
@@ -305,8 +309,8 @@ sbatch --array=0-5 --export=ALL,CAMPAIGN_MANIFEST=slurm/control_prompts.tsv \
 ```
 
 Report each C1 row beside the S3 rows on the same structure: `final.png`,
-`physical_density.png`, `compliance`, `thresholded_compliance`, and the
-Phase 3 evaluator scores against all three campaign prompts.
+`physical_density.png`, `compliance`, `thresholded_compliance`, and both
+Phase 3 evaluators' scores against all three campaign prompts.
 
 **C2.** The semantic coupling weights two CLIP terms: density CLIP and
 raw-z CLIP. C2 keeps both terms and replaces each grad-matched weight with
@@ -351,9 +355,14 @@ skip it rather than delay anything above.
 python analysis/evaluate.py
 python analysis/figures.py
 ```
-Evaluator is a fixed `ViT-B/32` with a letterboxed full frame plus a 3×3
-grid of square crops (no random augmentation). Never reuse training-time
-CLIP losses. Outputs land under `analysis/out/`.
+Two evaluators score every finished run on the same deterministic views, a
+letterboxed full frame plus a 3×3 grid of square crops (no random
+augmentation): `ViT-B/32`, an independent pass on the training backbone,
+and `ViT-L/14`, which training never loads. Never reuse training-time CLIP
+losses. If the cluster rejects `ViT-L/14` (weights missing, no internet on
+the compute node), download it on the login node and rerun; do not drop it
+silently. Outputs land under `analysis/out/`. In `REPORT.md`, report each
+cross-prompt table for both evaluators, and say where they disagree.
 
 ## Definition of Done (only then hand back)
 
