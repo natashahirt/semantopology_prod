@@ -31,6 +31,9 @@ from recipe.campaign_spec import (
 
 _REPO = Path(__file__).resolve().parents[1]
 
+# Adopted campaign-wide after the projection gate (instructions section 0.5).
+PHYSICS_BETA_MAX = 8.0
+
 
 def _flag(name: str, value) -> list[str]:
     if isinstance(value, bool):
@@ -38,7 +41,13 @@ def _flag(name: str, value) -> list[str]:
     return [name, str(value)]
 
 
-def _row(run_id: str, experiment: str, group: str, argv: list[str]) -> dict:
+def _row(
+        run_id: str,
+        experiment: str,
+        group: str,
+        argv: list[str],
+        *,
+        physics_beta_max: float = PHYSICS_BETA_MAX) -> dict:
     return {
         'run_id': run_id,
         'argv': [
@@ -46,6 +55,7 @@ def _row(run_id: str, experiment: str, group: str, argv: list[str]) -> dict:
             '--experiment', experiment,
             '--group', group,
             *argv,
+            '--physics-beta-max', f'{physics_beta_max:.6g}',
         ],
     }
 
@@ -185,14 +195,16 @@ def experiment_rows(*, include_s1b: bool) -> list[dict]:
         beta_max = _lerp(4.0, 16.0, unit[2])
         resolution_scale = 0.5 if unit[3] < 0.5 else 1.0
         seed = int(round(_lerp(0.0, 1000.0, unit[4])))
+        # The sampled beta caps the physics ramp; a static --beta-max would
+        # be overwritten by the ramp every step.
         rows.append(_row(
             f'D/tall/lhs-{index:02d}', 'D', 'conventional',
             ['--mode', 'unguided', *_structure_args('tall'),
              '--filter-width', f'{filter_width:.6g}',
              '--penal', f'{penal:.6g}',
-             '--beta-max', f'{beta_max:.6g}',
              '--resolution-scale', str(resolution_scale),
              '--seed', str(seed)],
+            physics_beta_max=beta_max,
         ))
     if include_s1b:
         # Appended last so the original 0..108 array indices stay valid.

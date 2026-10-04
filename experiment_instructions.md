@@ -152,9 +152,10 @@ Optional three-deck gate (run separately; do not append to the main manifest):
 
 ```bash
 python run.py --run-id GATE/bridge3/unguided --experiment GATE \
-  --group baseline --mode unguided --structure bridge3
+  --group baseline --mode unguided --structure bridge3 --physics-beta-max 8
 python run.py --run-id GATE/bridge3/fern_fronds --experiment GATE \
-  --group semantic --mode semantic --structure bridge3 --clip "fern fronds"
+  --group semantic --mode semantic --structure bridge3 --clip "fern fronds" \
+  --physics-beta-max 8
 ```
 
 If the extra middle deck produces a clearer and structurally credible section,
@@ -190,8 +191,13 @@ the runs:
 - hybrid beta8 `clip_loss_raw` no more than 0.005 above hybrid beta0;
 - the user judges that the beta8 fern keeps its frond detail.
 
-Do not submit Phase 2 until the user has made this call. If the projection
-is adopted, it applies to every row, and finished rows are rerun.
+**Decision: adopted.** The user judged the beta8 rows (crisp floor trusses
+on tall unguided; frond detail kept on the fern hybrid) and switched the
+campaign to the projection. `make_manifest.py` now appends
+`--physics-beta-max 8` to every row; the D rows instead use their sampled
+beta (4–16) as the ramp cap. Every row in `results/` that ran without the
+ramp (check `physics_projection_beta_max` in its `run.json`) is superseded:
+move it to `results_superseded/` and rerun it. Phase 2 is cleared to submit.
 
 ## Phase 1 — smoke tests (gate)
 Run, on a compute node, one row from each of: unguided on each structure,
@@ -234,9 +240,10 @@ expected to produce bit-identical arrays.
 | H2 | Same prompts, different structures | `hybrid` × 3 prompts × {short, bridge} = 6 |
 | H3 | Sketch plus prompt | `--prompt-sketch` with {12, col3_braced, col6_grid} × 3 prompts = 9 |
 | H4 | Co-adaptation is load-bearing | `hybrid` `--coadapt off` × 3 prompts on tall = 3. Default hybrid stays **on**. |
-| D | Conventional baseline | `unguided`, 24 Latin-hypercube samples on tall |
+| D | Conventional baseline | `unguided`, 24 Latin-hypercube samples on tall over filter width, penalty, projection-ramp cap (4–16), resolution, seed |
 
-Without S1b: 109 runs. With S1b: 133.
+Without S1b: 109 runs. With S1b: 133. Every row runs the physics projection
+ramp (cap 8 unless D samples it), so every row runs the full 200 steps.
 
 **S1 gate.** Write the criterion in `CAMPAIGN_LOG.md` *before* viewing the
 results: "the {m} arm shows one butterfly-wing-venation instance per storey in

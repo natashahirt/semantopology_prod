@@ -89,4 +89,18 @@ def test_h1_manifest_resolves_to_the_hardfork_recipe():
         PAPER,
         problem_name='tall_building',
         clip_prompt='butterfly wing venation',
+        physics_projection_beta_max=8.0,
     )
+
+
+def test_every_row_ramps_the_physics_projection():
+    rows = experiment_rows(include_s1b=True)
+    for row in rows:
+        argv = row['argv']
+        assert argv.count('--physics-beta-max') == 1, row['run_id']
+        assert '--beta-max' not in argv, row['run_id']
+        cap = float(argv[argv.index('--physics-beta-max') + 1])
+        if row['run_id'].startswith('D/'):
+            assert 4.0 <= cap <= 16.0, row['run_id']
+        else:
+            assert cap == 8.0, row['run_id']
