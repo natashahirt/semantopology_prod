@@ -5,10 +5,10 @@ from __future__ import annotations
 from dataclasses import replace
 
 from recipe.campaign import onoff, preset_from_args
-from recipe.campaign_spec import GRAVITY_LOAD
+from recipe.campaign_spec import FERN_WORDINGS, GRAVITY_LOAD, PROMPTS
 from recipe.preset import PAPER
 from run import build_parser
-from slurm.make_manifest import experiment_rows
+from slurm.make_manifest import experiment_rows, fern_wording_rows
 
 
 def test_default_count_is_118():
@@ -137,3 +137,33 @@ def test_h5_is_standard_hybrid_plus_gravity():
     )
     args.device = args.device or PAPER.device
     assert preset_from_args(args).gravity_load == GRAVITY_LOAD
+
+
+def test_s4_fern_wording_is_off_the_main_table():
+    campaign = experiment_rows(include_s1b=False)
+    assert len(campaign) == 118
+    assert all(not row['run_id'].startswith('S4/') for row in campaign)
+
+    rows = fern_wording_rows()
+    assert len(rows) == 8
+    ids = [row['run_id'] for row in rows]
+    assert len(ids) == len(set(ids))
+    assert 'S4/tall/fern_frond/hybrid' in ids
+    assert 'S4/tall/many_fern_fronds/semantic' in ids
+    assert 'S4/tall/field_of_ferns/hybrid' in ids
+    assert 'S4/tall/unfurling_fern_fronds/semantic' in ids
+    assert 'S4/tall/fern_fronds/hybrid' not in ids
+    argv_blob = ' '.join(' '.join(row['argv']) for row in rows)
+    clip_texts = [
+        row['argv'][row['argv'].index('--clip') + 1] for row in rows
+    ]
+    assert PROMPTS[0] not in clip_texts
+    for prompt in FERN_WORDINGS:
+        if prompt == PROMPTS[0]:
+            continue
+        assert prompt in argv_blob
+    for row in rows:
+        argv = row['argv']
+        assert argv.count('--physics-beta-max') == 1
+        assert argv[argv.index('--physics-beta-max') + 1] == '8'
+        assert argv[argv.index('--structure') + 1] == 'tall'

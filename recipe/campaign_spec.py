@@ -12,6 +12,14 @@ from recipe.preset import prompt_slug
 
 PROMPTS = ('fern fronds', 'butterfly wing venation', 'skeletons')
 COUNTER_PROMPT = 'human skull'
+# S4: optional fern-count panel. Official campaign fern stays "fern fronds".
+FERN_WORDINGS = (
+    'fern frond',
+    'fern fronds',
+    'many fern fronds',
+    'field of ferns',
+    'unfurling fern fronds',
+)
 
 SKETCH_STEMS = (
     '1.jpg', '3.jpg', '6.jpg', '9.jpg', '11.jpg', '12.jpg',

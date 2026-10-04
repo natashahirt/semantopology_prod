@@ -1,0 +1,9 @@
+run_id	argv_json
+S4/tall/fern_frond/hybrid	["--run-id", "S4/tall/fern_frond/hybrid", "--experiment", "S4", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "fern frond", "--physics-beta-max", "8"]
+S4/tall/fern_frond/semantic	["--run-id", "S4/tall/fern_frond/semantic", "--experiment", "S4", "--group", "semantic", "--mode", "semantic", "--structure", "tall", "--clip", "fern frond", "--physics-beta-max", "8"]
+S4/tall/many_fern_fronds/hybrid	["--run-id", "S4/tall/many_fern_fronds/hybrid", "--experiment", "S4", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "many fern fronds", "--physics-beta-max", "8"]
+S4/tall/many_fern_fronds/semantic	["--run-id", "S4/tall/many_fern_fronds/semantic", "--experiment", "S4", "--group", "semantic", "--mode", "semantic", "--structure", "tall", "--clip", "many fern fronds", "--physics-beta-max", "8"]
+S4/tall/field_of_ferns/hybrid	["--run-id", "S4/tall/field_of_ferns/hybrid", "--experiment", "S4", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "field of ferns", "--physics-beta-max", "8"]
+S4/tall/field_of_ferns/semantic	["--run-id", "S4/tall/field_of_ferns/semantic", "--experiment", "S4", "--group", "semantic", "--mode", "semantic", "--structure", "tall", "--clip", "field of ferns", "--physics-beta-max", "8"]
+S4/tall/unfurling_fern_fronds/hybrid	["--run-id", "S4/tall/unfurling_fern_fronds/hybrid", "--experiment", "S4", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "unfurling fern fronds", "--physics-beta-max", "8"]
+S4/tall/unfurling_fern_fronds/semantic	["--run-id", "S4/tall/unfurling_fern_fronds/semantic", "--experiment", "S4", "--group", "semantic", "--mode", "semantic", "--structure", "tall", "--clip", "unfurling fern fronds", "--physics-beta-max", "8"]

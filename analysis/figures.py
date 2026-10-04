@@ -16,7 +16,8 @@ from analysis.vendi import (
     tanimoto_kernel,
     vendi,
 )
-from recipe.campaign_spec import PROMPTS
+from recipe.campaign_spec import FERN_WORDINGS, PROMPTS
+from recipe.preset import prompt_slug
 
 _REPO = Path(__file__).resolve().parents[1]
 
@@ -185,6 +186,65 @@ def contact_sheets(runs: list[dict], out: Path) -> None:
         plt.close(fig)
 
 
+def fern_wording_panel(results: Path, out: Path) -> None:
+    """Side-by-side tall finals for the S4 plural/count texts.
+
+    Official ``fern fronds`` is the H1/S3 column so the panel does not
+    rerun the campaign fern.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    official = PROMPTS[0]
+    modes = ('hybrid', 'semantic')
+    cells = []
+    for mode in modes:
+        row = []
+        for prompt in FERN_WORDINGS:
+            token = prompt_slug(prompt)
+            if prompt == official:
+                run_id = (
+                    f'H1/tall/{token}/hybrid' if mode == 'hybrid'
+                    else f'S3/tall/{token}'
+                )
+            else:
+                run_id = f'S4/tall/{token}/{mode}'
+            png = None
+            root = results / run_id
+            attempts = sorted(root.glob('attempt_*'))
+            for attempt in reversed(attempts):
+                candidate = attempt / 'final.png'
+                if candidate.exists() and (attempt / 'DONE').exists():
+                    png = candidate
+                    break
+            row.append((prompt, png))
+        cells.append(row)
+
+    found = [png for row in cells for _, png in row if png is not None]
+    if not found:
+        return
+
+    sample = Image.open(found[0])
+    cell_w, cell_h = sample.size
+    label_h = 36
+    fig = Image.new(
+        'RGB',
+        (cell_w * len(FERN_WORDINGS), (cell_h + label_h) * len(modes)),
+        'white',
+    )
+    draw = ImageDraw.Draw(fig)
+    font = ImageFont.load_default()
+    for r, row in enumerate(cells):
+        for c, (prompt, png) in enumerate(row):
+            x = c * cell_w
+            y = r * (cell_h + label_h)
+            draw.text((x + 8, y + 10), f'{modes[r]}: {prompt}', fill='black', font=font)
+            if png is not None:
+                fig.paste(Image.open(png).convert('RGB').resize((cell_w, cell_h)), (x, y + label_h))
+    dest = out / 'figures'
+    dest.mkdir(parents=True, exist_ok=True)
+    fig.save(dest / 's4_fern_wording.png')
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--results', default=str(_REPO / 'results'))
@@ -198,6 +258,7 @@ def main(argv: list[str] | None = None) -> int:
         Path(args.out) / 'evaluate' / 'similarities.json', out)
     vendi_table(runs, Path(args.out) / 'evaluate' / 'embeddings.npy', out)
     contact_sheets(runs, out)
+    fern_wording_panel(Path(args.results), out)
     print(f'wrote tables and figures for {len(runs)} runs -> {out}')
     return 0
 

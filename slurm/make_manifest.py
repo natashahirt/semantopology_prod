@@ -17,6 +17,7 @@ from recipe.campaign_spec import (
     COUNTER_PROMPT,
     F1_SKETCHES,
     F3_SKETCHES,
+    FERN_WORDINGS,
     GRAVITY_LOAD,
     H3_SKETCHES,
     PROMPTS,
@@ -222,8 +223,23 @@ def experiment_rows(*, include_s1b: bool) -> list[dict]:
     return rows
 
 
-def write_manifest(path: Path, *, include_s1b: bool) -> list[dict]:
-    rows = experiment_rows(include_s1b=include_s1b)
+def fern_wording_rows() -> list[dict]:
+    """S4 plural/count panel. Official ``fern fronds`` stays on H1/S3."""
+    rows: list[dict] = []
+    official = PROMPTS[0]
+    for prompt in FERN_WORDINGS:
+        if prompt == official:
+            continue
+        token = prompt_token(prompt)
+        for mode, group in (('hybrid', 'hybrid'), ('semantic', 'semantic')):
+            rows.append(_row(
+                f'S4/tall/{token}/{mode}', 'S4', group,
+                ['--mode', mode, *_structure_args('tall'), '--clip', prompt],
+            ))
+    return rows
+
+
+def write_manifest(path: Path, rows: list[dict]) -> list[dict]:
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = ['run_id\targv_json\n']
     for row in rows:
@@ -238,10 +254,21 @@ def main(argv: list[str] | None = None) -> int:
         '--include-s1b', action='store_true',
         help='Append S1b only after the butterfly-wing-venation {m} gate passes.')
     parser.add_argument(
-        '--out', default=str(_REPO / 'slurm' / 'campaign.tsv'))
+        '--fern-wording', action='store_true',
+        help='Write only the S4 fern-plural panel, never the 118-row campaign TSV.')
+    parser.add_argument(
+        '--out', default=None)
     args = parser.parse_args(argv)
-    rows = write_manifest(Path(args.out), include_s1b=args.include_s1b)
-    print(f'wrote {len(rows)} rows to {args.out}')
+    default_campaign = _REPO / 'slurm' / 'campaign.tsv'
+    if args.fern_wording:
+        out = Path(args.out) if args.out else _REPO / 'slurm' / 'fern_wording.tsv'
+        if out.resolve() == default_campaign.resolve():
+            raise SystemExit('refusing to write S4 over slurm/campaign.tsv')
+        rows = write_manifest(out, fern_wording_rows())
+    else:
+        out = Path(args.out) if args.out else default_campaign
+        rows = write_manifest(out, experiment_rows(include_s1b=args.include_s1b))
+    print(f'wrote {len(rows)} rows to {out}')
     return 0
 
 

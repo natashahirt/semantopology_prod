@@ -120,6 +120,7 @@ Tokens: `tall|short|bridge`, prompt slugs
 `fern_fronds|butterfly_wing_venation|skeletons|human_skull`,
 `sketch-12`, `g|m|e|gme`, `rho-0.50`, `wend-400`, `hybrid|dream_only|coadapt-off`,
 `lhs-00`. H5 is the standard hybrid plus `--gravity-load 0.05`.
+S4 slugs: `fern_frond|many_fern_fronds|field_of_ferns|unfurling_fern_fronds`.
 
 ### 0.4 Submit
 ```bash
@@ -157,6 +158,20 @@ python run.py --run-id GATE/bridge3/fern_fronds --experiment GATE \
   --group semantic --mode semantic --structure bridge3 --clip "fern fronds" \
   --physics-beta-max 8
 ```
+
+Optional fern-wording panel (run separately; do not append to the main
+manifest). Official campaign fern stays `"fern fronds"`. S4 only runs the
+other count/plural texts on tall, hybrid and semantic; the official column
+is H1/S3.
+
+```bash
+python slurm/make_manifest.py --fern-wording   # slurm/fern_wording.tsv
+sbatch --array=0-7 --export=ALL,CAMPAIGN_MANIFEST=slurm/fern_wording.tsv \
+  slurm/campaign.sbatch
+```
+
+Texts: `"fern frond"`, `"fern fronds"` (reuse H1/S3), `"many fern fronds"`,
+`"field of ferns"`, `"unfurling fern fronds"`.
 
 If the extra middle deck produces a clearer and structurally credible section,
 run butterfly wing venation and skeletons too, then decide whether `bridge3` replaces
