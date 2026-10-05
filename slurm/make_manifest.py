@@ -33,6 +33,7 @@ from recipe.campaign_spec import (
     SCRAMBLED_PROMPTS,
     SKETCH_ROOT,
     STRUCTURAL_PROMPTS,
+    TYPOLOGY_PROMPTS,
     VOLUME_FRACTIONS,
     VOLUME_STRUCTURES,
     WEIGHT_ENDS,
@@ -347,11 +348,27 @@ def extension_rows() -> list[dict]:
     return rows
 
 
+def typology_rows() -> list[dict]:
+    """G: the same geometric-compatibility prompts on all three structures.
+
+    Structure varies in the outer loop so tall completes first if the queue
+    is cut short, and every row is otherwise an S3 recipe. The point of the
+    panel is the comparison ACROSS structures: a prompt native to a span and
+    awkward on a tower separates compatibility from wording.
+    """
+    return [
+        _semantic(f'G/{key}/{prompt_token(prompt)}', 'G', key, prompt)
+        for key in REPORTED_STRUCTURES
+        for prompt in TYPOLOGY_PROMPTS
+    ]
+
+
 # Off-table panels: flag -> (default TSV name, row builder).
 OFF_TABLE_PANELS = {
     'fern_wording': ('fern_wording.tsv', fern_wording_rows),
     'controls': ('control_prompts.tsv', control_prompt_rows),
     'extensions': ('extensions.tsv', extension_rows),
+    'typology': ('typology.tsv', typology_rows),
 }
 
 
@@ -378,6 +395,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--extensions', action='store_true',
         help='Write only the Phase 2c panels, never the 118-row campaign TSV.')
+    parser.add_argument(
+        '--typology', action='store_true',
+        help='Write only the G geometric-compatibility panel, never the '
+             '118-row campaign TSV.')
     parser.add_argument(
         '--fixed-weight', nargs=2, type=float, metavar=('W_DENSITY', 'W_Z'),
         help='Write only the C2 fixed-weight panel at these two CLIP weights.')

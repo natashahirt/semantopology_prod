@@ -13,6 +13,7 @@ from recipe.campaign_spec import (
     FERN_WORDINGS,
     GRAVITY_LOAD,
     PROMPTS,
+    TYPOLOGY_PROMPTS,
     prompt_token,
 )
 from recipe.preset import PAPER
@@ -23,6 +24,7 @@ from slurm.make_manifest import (
     extension_rows,
     fern_wording_rows,
     fixed_weight_rows,
+    typology_rows,
 )
 
 
@@ -331,6 +333,41 @@ def test_raw_z_mixer_is_refused_with_fixed_weights(tmp_path):
         '--blend-rho-z', '0'])
     with pytest.raises(ValueError, match='grad-match only'):
         run_campaign(args, tmp_path)
+
+
+def test_typology_panel_is_s3_on_every_structure():
+    campaign = {row['run_id']: row['argv'] for row in experiment_rows(include_s1b=False)}
+    assert all(not run_id.startswith('G/') for run_id in campaign)
+
+    rows = typology_rows()
+    assert len(rows) == 18
+    ids = [row['run_id'] for row in rows]
+    assert len(ids) == len(set(ids))
+    # Structure outer, so a cut queue still leaves tall complete.
+    assert [i.split('/')[1] for i in ids[:6]] == ['tall'] * 6
+    assert 'G/tall/sedimentary_rock_layers' in ids
+    assert 'G/bridge/roman_aqueduct_arches' in ids
+    assert 'G/short/a_spiral_staircase' in ids
+    for row in rows:
+        argv = row['argv']
+        structure = row['run_id'].split('/')[1]
+        reference = campaign[f'S3/{structure}/{prompt_token(PROMPTS[0])}']
+        assert _without_identity(argv) == _without_identity(reference), row['run_id']
+        assert argv[argv.index('--clip') + 1] in TYPOLOGY_PROMPTS
+        preset = preset_from_args(build_parser().parse_args(argv))
+        assert preset.clip_weight is None, row['run_id']
+        assert preset.density == 0.3, row['run_id']
+
+
+def test_typology_prompts_are_new_to_the_campaign():
+    seen = {
+        row['argv'][row['argv'].index('--clip') + 1]
+        for row in (
+            experiment_rows(include_s1b=True) + extension_rows()
+            + fern_wording_rows() + control_prompt_rows())
+        if '--clip' in row['argv']
+    }
+    assert seen.isdisjoint(TYPOLOGY_PROMPTS)
 
 
 def _without_identity(argv: list[str]) -> list[str]:

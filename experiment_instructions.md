@@ -425,6 +425,42 @@ which seeds finished.
 Tokens: `rho-0.50`, `density-only`, `vf-0.20`, `seed-101`, and prompt slugs
 (`prompt_slug`, e.g. `a_cat`, `bone_trabeculae`).
 
+## Phase 2d — G, geometric compatibility
+
+Submit this after `extensions.tsv` drains, or alongside it if the queue has
+room. It does not depend on any Phase 2c result.
+
+```bash
+python slurm/make_manifest.py --typology   # slurm/typology.tsv, 18 rows
+sbatch --array=0-17%18 --export=ALL,CAMPAIGN_MANIFEST=slurm/typology.tsv \
+  slurm/campaign.sbatch
+```
+
+Six prompts (`TYPOLOGY_PROMPTS`) on all three structures. Every row is an S3
+row with a different prompt and nothing else changed. These prompts were
+chosen for how their geometry meets a load path, each conflicting with or
+suiting a structure in one nameable way, so the predictions below are stated
+in advance and the panel either confirms them or does not:
+
+| Prompt | Expected on tall |
+|---|---|
+| sedimentary rock layers | most expensive; horizontal layering against a tower's vertical path |
+| a solid stone wall | expensive; void-free mass spreads material thin under the volume constraint |
+| roman aqueduct arches | cheap despite looking unlike a truss; arcades carry load |
+| chainmail | cost paid in `gray_fraction`, not compliance; periodic below element scale |
+| an obelisk | material pulled to the centre, outer path starved |
+| a spiral staircase | helical organisation on a gravity-driven problem |
+
+Report `compliance` relative to the same structure's B row, `gray_fraction`,
+`connected_components`, and the own-prompt score from both evaluators.
+
+**The cross-structure comparison is the point of the panel**, so report it as
+a prompt × structure table rather than three separate lists. An arcade and a
+horizontal deck are native to a span and awkward on a tower, so if a prompt
+is cheap on bridge and expensive on tall, geometric compatibility is a
+relation between prompt and structure rather than a property of the wording.
+Say explicitly which prompts changed rank between structures.
+
 ## Phase 3 — analysis
 ```bash
 python analysis/evaluate.py
@@ -465,6 +501,8 @@ and where the physical and binary structural maps disagree.
   calibration weights are logged.
 - Every Phase 2c row except R is `DONE` (or permanently failed). R rows that
   did not finish before the cutoff are listed in `REPORT.md`.
+- Every Phase 2d (G) row is `DONE` (or permanently failed), reported as a
+  prompt × structure table with the stated predictions marked kept or broken.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

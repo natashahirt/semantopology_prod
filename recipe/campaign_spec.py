@@ -59,6 +59,20 @@ DIVERSITY_PROMPTS = (
 )
 # R: seeds beside the campaign seed (12) for the S3 grid and B.
 REPLICATE_SEEDS = (101, 202, 303, 404)
+# G: prompts chosen for how their geometry meets a load path, not for meaning.
+# Each conflicts with (or suits) a structure in one nameable way, so the
+# compliance it costs is a prediction rather than an observation: horizontal
+# layering against a tower's vertical path, void-free mass against the volume
+# constraint, an arcade that is native to a span, periodicity below element
+# scale, material pulled to the centre, and a helix on a gravity problem.
+TYPOLOGY_PROMPTS = (
+    'sedimentary rock layers',
+    'a solid stone wall',
+    'roman aqueduct arches',
+    'chainmail',
+    'an obelisk',
+    'a spiral staircase',
+)
 
 # Post-hoc evaluators. The first keeps the unsuffixed output names.
 EVAL_MODELS = ('ViT-B/32', 'ViT-L/14')
