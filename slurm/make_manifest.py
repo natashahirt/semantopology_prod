@@ -31,6 +31,8 @@ from recipe.campaign_spec import (
     LOOSE_WEIGHT_STARTS,
     NONSENSE_PROMPTS,
     NONSTRUCTURAL_PROMPTS,
+    PARAPHRASE_PROMPTS,
+    PARAPHRASE_SEEDS,
     PROMPTS,
     REPLICATE_SEEDS,
     REPORTED_STRUCTURES,
@@ -44,6 +46,7 @@ from recipe.campaign_spec import (
     WEIGHT_ENDS,
     prompt_token,
     rho_token,
+    scrambled_origin,
     seed_token,
     sketch_token,
     vf_token,
@@ -369,6 +372,36 @@ def typology_rows() -> list[dict]:
     ]
 
 
+def meaning_rows() -> list[dict]:
+    """X: does meaning survive rewording, or is it the surface form?
+
+    Two conditions at matched seeds. A paraphrase shares no word with the
+    prompt it restates; the scrambled string shares every letter and no
+    meaning. If the words' sense is what moves the geometry, paraphrase
+    designs should land near the original prompt's designs and scrambled
+    ones should not.
+
+    The scrambled rows exist in N already, but at the campaign seed only --
+    a single design cannot show whether a condition clusters, so they are
+    repeated here at the same seeds as the paraphrases.
+    """
+    rows = []
+    origins = scrambled_origin()
+    scrambles = {origin: text for text, origin in origins.items()}
+    for original, paraphrase in PARAPHRASE_PROMPTS.items():
+        for seed in PARAPHRASE_SEEDS:
+            flag = ('--seed', str(seed))
+            rows.append(_semantic(
+                f'X/tall/paraphrase/{prompt_token(paraphrase)}/'
+                f'{seed_token(seed)}',
+                'X', 'tall', paraphrase, *flag))
+            rows.append(_semantic(
+                f'X/tall/scrambled/{prompt_token(scrambles[original])}/'
+                f'{seed_token(seed)}',
+                'X', 'tall', scrambles[original], *flag))
+    return rows
+
+
 def loose_sketch_rows() -> list[dict]:
     """F2b: the braced frame and column grid with the prior loosened.
 
@@ -428,6 +461,7 @@ OFF_TABLE_PANELS = {
     'typology': ('typology.tsv', typology_rows),
     'dial_seeds': ('dial_seeds.tsv', dial_seed_rows),
     'loose_sketches': ('loose_sketches.tsv', loose_sketch_rows),
+    'meaning': ('meaning.tsv', meaning_rows),
 }
 
 
@@ -465,6 +499,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--loose-sketches', action='store_true',
         help='Write only the F2b loosened sketch-prior panel, never the '
+             '118-row campaign TSV.')
+    parser.add_argument(
+        '--meaning', action='store_true',
+        help='Write only the X paraphrase-vs-scramble panel, never the '
              '118-row campaign TSV.')
     parser.add_argument(
         '--fixed-weight', nargs=2, type=float, metavar=('W_DENSITY', 'W_Z'),

@@ -532,6 +532,46 @@ one sample rather than a trend.
 time. R's unguided tall rows carry the clustering claim in 4.5, so if the queue
 cannot take both, finish R first and say in `REPORT.md` that S2c was dropped.
 
+## Phase 2g — X, meaning against surface form
+
+Twelve rows on tall. This panel answers the one campaign question nothing
+else does, so prioritise it above G, S2c and F2b.
+
+```bash
+python slurm/make_manifest.py --meaning   # slurm/meaning.tsv, 12 rows
+sbatch --array=0-11%12 --export=ALL,CAMPAIGN_MANIFEST=slurm/meaning.tsv \
+  slurm/campaign.sbatch
+```
+
+The N panel established that compliance, grey fraction and component count
+cannot tell a meaningful prompt from a meaningless one: those scalars measure
+the cost of CLIP pressure, not fidelity. And a similarity score cannot settle
+it either, because guidance maximises a similarity — scoring the result with
+one partly guarantees the answer. This panel measures geometry instead.
+
+Two conditions at seeds 101, 202 and 303:
+
+- **paraphrase** — `bracken leaves` for `fern fronds`, `bones` for
+  `skeletons`. Each shares no word with the prompt it restates.
+- **scrambled** — `rnef dsnorf` and `ntseleosk`, the same prompts with their
+  letters permuted inside each word. Same letters, same word lengths, no
+  meaning. N already ran these, but at the campaign seed only, and one design
+  cannot show whether a condition clusters.
+
+`butterfly wing venation` is deliberately absent: it has no natural paraphrase
+sharing none of its words, and a partial overlap would forfeit the logic of
+the comparison.
+
+**Stated before the runs:** if the words' sense is what moves the geometry,
+the paraphrase designs should sit nearer the centroid of that prompt's own
+designs than the scrambled ones do, pooled across both families at
+p < 0.05. If the gap is absent or reversed, the honest reading is that CLIP is
+responding to the string rather than its sense, and the paper should say so
+rather than fall back on the similarity numbers.
+
+Note the originals need no new runs: S3 supplies the campaign seed and R all
+four replicate seeds for both prompts. That is also why R matters twice over.
+
 ## Phase 3 — analysis
 
 ### Run it early, on partial results, before the campaign finishes
@@ -571,6 +611,7 @@ python analysis/evaluate.py
 python analysis/figures.py
 python analysis/diversity.py solve
 python analysis/diversity.py report
+python analysis/specificity.py report
 ```
 Four evaluators score every finished run on the same deterministic crops, a
 letterboxed full frame plus a 3×3 grid of square crops (no random
@@ -624,6 +665,25 @@ the banded table by construction, and that is expected, not a bug. Report both
 the unbanded and the banded numbers. If the band holds too few designs to
 bootstrap, widen it with `--quality-band LOW HIGH` and say what you used.
 
+`specificity.py report` runs the two geometry-only tests behind the semantic
+claim, and consults no vision-language model. `specificity.csv` asks whether
+designs guided by one prompt cluster apart from another prompt's, with a
+label-permutation null and a leave-one-out nearest-neighbour accuracy
+reported against the chance rate implied by the label mix. Report this as
+specificity, NOT as meaning: a meaningless string has a fixed text embedding
+too, so it would also pass. `meaning.csv` is the test that separates them,
+comparing the paraphrase and scrambled conditions by distance to the centroid
+of each prompt's own designs. Read the `pooled (stratified)` row as the
+result: with three runs per condition a single family cannot return a p below
+0.05, so a per-family row at exactly 0.05 means the floor was hit, not that
+the effect is marginal.
+
+Both tests run on the geometric representation, which comes off
+`physical_density.npy` with no re-solve. The load-path version appears only
+for runs the diversity selection happened to solve; to cover the rest, run
+`python analysis/specificity.py solve` first. That is optional — the
+geometric result is the reported one.
+
 Outputs land under `analysis/out/`. In `REPORT.md`, report each cross-prompt
 table per evaluator and view, the z-minus-density evaluator gap, and
 `semantic_floor.csv` — which gives, per prompt, how much closer its own
@@ -653,6 +713,10 @@ and binary structural maps disagree.
 - Every Phase 2f (F2b) row is `DONE`, permanently failed, or explicitly
   dropped, with a verdict on which lever — end or start — loosened the prior,
   and the stated prediction marked kept or broken.
+- Every Phase 2g (X) row is `DONE` or permanently failed, with the pooled
+  paraphrase--scramble gap and its p-value reported, and the stated
+  prediction marked kept or broken. This panel is not droppable for queue
+  time: no other run answers whether meaning does the work.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

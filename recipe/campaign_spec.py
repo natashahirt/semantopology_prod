@@ -42,6 +42,24 @@ NONSENSE_PROMPTS = (
 SCRAMBLED_PROMPTS = (
     'rnef dsnorf', 'ytlurfebt gniw ntoeiavn', 'ntseleosk',
 )
+# X: meaning against surface form. A paraphrase shares no word with the
+# prompt it restates, and the scrambled string shares every letter and no
+# meaning, so the pair brackets the prompt from both sides. The paraphrase
+# was never optimized toward, so any resemblance to it has to come from the
+# geometry matching the thing named rather than the string.
+#
+# butterfly wing venation is deliberately absent: it has no natural
+# paraphrase that shares none of its words, and a partial overlap would
+# forfeit the comparison's whole logic.
+PARAPHRASE_PROMPTS = {
+    'fern fronds': 'bracken leaves',
+    'skeletons': 'bones',
+}
+
+
+def scrambled_origin() -> dict[str, str]:
+    """Scrambled string -> the prompt it was built from, pairwise by order."""
+    return dict(zip(SCRAMBLED_PROMPTS, PROMPTS))
 # L: a meaning ladder from fern fronds (S3) through tree branches (P).
 LADDER_PROMPTS = ('bracken', 'lightning', 'brick wall')
 # V: volume fractions beside the 0.3 already run by S3 and B.
@@ -63,6 +81,10 @@ REPLICATE_SEEDS = (101, 202, 303, 404)
 # rather than one trajectory. One prompt only; the dial's shape is the claim.
 DIAL_SEED_RHOS = (0.0, 0.5, 1.0)
 DIAL_SEEDS = REPLICATE_SEEDS[:3]
+# Seeds for the X panel. The originals already exist at the campaign seed
+# (S3) and at all four replicate seeds (R), so three is enough to estimate
+# within-condition spread.
+PARAPHRASE_SEEDS = REPLICATE_SEEDS[:3]
 # G: prompts chosen for how their geometry meets a load path, not for meaning.
 # Each conflicts with (or suits) a structure in one nameable way, so the
 # compliance it costs is a prediction rather than an observation: horizontal

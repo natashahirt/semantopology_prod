@@ -135,15 +135,15 @@ def comparison_set(meta: dict) -> str | None:
     return None
 
 
-def _display_path(path: Path) -> str:
+def display_path(path: Path) -> str:
     try:
         return str(path.resolve().relative_to(_REPO))
     except ValueError:
         return str(path.resolve())
 
 
-def _cache_path(attempt: Path, cache: Path) -> Path:
-    token = hashlib.sha256(_display_path(attempt).encode()).hexdigest()[:20]
+def cache_path(attempt: Path, cache: Path) -> Path:
+    token = hashlib.sha256(display_path(attempt).encode()).hexdigest()[:20]
     return cache / f'{token}.npz'
 
 
@@ -154,7 +154,7 @@ def _optional_float(value) -> float | None:
         return None
 
 
-def _read_meta(attempt: Path) -> dict:
+def read_meta(attempt: Path) -> dict:
     path = attempt / 'run.json'
     if not path.exists():
         raise FileNotFoundError(path)
@@ -185,7 +185,7 @@ def resolve_attempt(attempt: Path, destination: Path) -> dict:
     from recipe.campaign import preset_from_args
     from recipe.dream_layout import structural_params
 
-    meta = _read_meta(attempt)
+    meta = read_meta(attempt)
     preset = preset_from_args(replay_args(meta))
     env = Environment(specified_task(structural_params(preset).get_problem()))
     env.args['penal'] = preset.penal
@@ -221,7 +221,7 @@ def resolve_attempt(attempt: Path, destination: Path) -> dict:
     temporary = destination.with_suffix('.tmp.npz')
     np.savez_compressed(
         temporary,
-        attempt=_display_path(attempt),
+        attempt=display_path(attempt),
         physical_energy=physical_energy,
         binary_energy=binary_energy,
         physical_compliance=physical_compliance,
@@ -232,7 +232,7 @@ def resolve_attempt(attempt: Path, destination: Path) -> dict:
     )
     temporary.replace(destination)
     return {
-        'attempt': _display_path(attempt),
+        'attempt': display_path(attempt),
         'physical_compliance': physical_compliance,
         'binary_compliance': binary_compliance,
         'relative_error': relative_error,
@@ -240,18 +240,25 @@ def resolve_attempt(attempt: Path, destination: Path) -> dict:
     }
 
 
-def solve_all(results: Path, cache: Path, *, force: bool = False) -> list[dict]:
-    """Run every selected re-solve in a fresh interpreter."""
+def solve_all(
+        results: Path, cache: Path, *, force: bool = False,
+        select=comparison_set) -> list[dict]:
+    """Run every selected re-solve in a fresh interpreter.
+
+    `select` decides which runs are in scope: any callable returning None to
+    skip a run. The cache is keyed on the attempt path, so widening the
+    selection adds entries without invalidating existing ones.
+    """
     cache.mkdir(parents=True, exist_ok=True)
     records = []
     for attempt in walk_done(results):
         try:
-            meta = _read_meta(attempt)
+            meta = read_meta(attempt)
         except (FileNotFoundError, json.JSONDecodeError):
             continue
-        if comparison_set(meta) is None or not (attempt / 'physical_density.npy').exists():
+        if select(meta) is None or not (attempt / 'physical_density.npy').exists():
             continue
-        destination = _cache_path(attempt, cache)
+        destination = cache_path(attempt, cache)
         if destination.exists() and not force:
             with np.load(destination) as saved:
                 records.append({
@@ -268,7 +275,7 @@ def solve_all(results: Path, cache: Path, *, force: bool = False) -> list[dict]:
         completed = subprocess.run(command, cwd=_REPO, text=True, capture_output=True)
         if completed.returncode:
             records.append({
-                'attempt': _display_path(attempt),
+                'attempt': display_path(attempt),
                 'valid': False,
                 'error': completed.stderr.strip() or completed.stdout.strip(),
             })
@@ -286,7 +293,7 @@ def _embedding_lookup(evaluate_dir: Path) -> dict[str, np.ndarray]:
     if len(rows) != len(vectors):
         raise ValueError('ViT-L/14 z metadata and embeddings have different lengths')
     return {
-        _display_path(Path(row['attempt'])): vector
+        display_path(Path(row['attempt'])): vector
         for row, vector in zip(rows, vectors)
     }
 
@@ -297,12 +304,12 @@ def collect_points(results: Path, cache: Path, evaluate_dir: Path) -> list[dict]
     points = []
     for attempt in walk_done(results):
         try:
-            meta = _read_meta(attempt)
+            meta = read_meta(attempt)
         except (FileNotFoundError, json.JSONDecodeError):
             continue
         group = comparison_set(meta)
-        energy_path = _cache_path(attempt, cache)
-        key = _display_path(attempt)
+        energy_path = cache_path(attempt, cache)
+        key = display_path(attempt)
         if group is None or not energy_path.exists() or key not in embeddings:
             continue
         with np.load(energy_path) as saved:
