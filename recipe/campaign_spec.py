@@ -62,6 +62,10 @@ REPLICATE_SEEDS = (101, 202, 303, 404)
 
 # Post-hoc evaluators. The first keeps the unsuffixed output names.
 EVAL_MODELS = ('ViT-B/32', 'ViT-L/14')
+# What each evaluator looks at: the analysed physical density, or ``final.png``,
+# the sharp-ink render of the raw design z that every figure shows. The first
+# keeps the unsuffixed output names.
+EVAL_VIEWS = ('density', 'z')
 
 
 def eval_model_suffix(model_name: str) -> str:
@@ -69,6 +73,13 @@ def eval_model_suffix(model_name: str) -> str:
     if model_name == EVAL_MODELS[0]:
         return ''
     return '_' + re.sub(r'[^a-z0-9]+', '_', model_name.lower()).strip('_')
+
+
+def eval_view_suffix(view: str) -> str:
+    """Output-file suffix for an evaluator view; empty for the density view."""
+    if view not in EVAL_VIEWS:
+        raise ValueError(f'unknown evaluator view {view!r}; expected one of {EVAL_VIEWS}')
+    return '' if view == EVAL_VIEWS[0] else f'_{view}'
 
 SKETCH_STEMS = (
     '1.jpg', '3.jpg', '6.jpg', '9.jpg', '11.jpg', '12.jpg',

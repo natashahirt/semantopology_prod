@@ -8,9 +8,14 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 import torch
+from PIL import Image
 
 from analysis import evaluate
-from recipe.campaign_spec import EVAL_MODELS, eval_model_suffix
+from recipe.campaign_spec import (
+    EVAL_MODELS,
+    eval_model_suffix,
+    eval_view_suffix,
+)
 
 
 class _StubClip:
@@ -28,6 +33,8 @@ def _write_attempt(root, run_id, value):
     attempt = root / run_id / 'attempt_1'
     attempt.mkdir(parents=True)
     np.save(attempt / 'physical_density.npy', np.full((16, 8), value, np.float32))
+    Image.fromarray(np.full((16, 8), round(255 * (1 - value)), np.uint8)).save(
+        attempt / 'final.png')
     (attempt / 'run.json').write_text(json.dumps(
         {'run_id': run_id, 'prompt': 'fern fronds', 'structure': 'tall',
          'experiment': run_id.split('/')[0]}))
@@ -38,6 +45,8 @@ def test_suffixes_keep_the_primary_names():
     assert EVAL_MODELS[0] == 'ViT-B/32'
     assert eval_model_suffix('ViT-B/32') == ''
     assert eval_model_suffix('ViT-L/14') == '_vit_l_14'
+    assert eval_view_suffix('density') == ''
+    assert eval_view_suffix('z') == '_z'
 
 
 def test_every_evaluator_writes_aligned_outputs(tmp_path, monkeypatch):
@@ -58,9 +67,13 @@ def test_every_evaluator_writes_aligned_outputs(tmp_path, monkeypatch):
 
     primary = json.loads((out / 'similarities.json').read_text())
     second = json.loads((out / 'similarities_vit_l_14.json').read_text())
+    rendered = json.loads((out / 'similarities_vit_l_14_z.json').read_text())
     assert [r['run_id'] for r in primary] == [r['run_id'] for r in second]
+    assert [r['run_id'] for r in primary] == [r['run_id'] for r in rendered]
     assert {r['evaluator'] for r in primary} == {'ViT-B/32'}
     assert {r['evaluator'] for r in second} == {'ViT-L/14'}
+    assert {r['view'] for r in primary} == {'density'}
+    assert {r['view'] for r in rendered} == {'z'}
     assert set(primary[0]['similarities']) == set(evaluate.EVAL_PROMPTS)
     assert {'bracken', 'tree branches', 'brick wall'} <= set(evaluate.EVAL_PROMPTS)
     for record in primary:
@@ -68,4 +81,5 @@ def test_every_evaluator_writes_aligned_outputs(tmp_path, monkeypatch):
             record['similarities']['fern fronds'])
     assert np.load(out / 'embeddings.npy').shape == (2, 3)
     assert np.load(out / 'embeddings_vit_l_14.npy').shape == (2, 3)
+    assert np.load(out / 'embeddings_vit_l_14_z.npy').shape == (2, 3)
     assert primary[0]['attempt'].startswith(str(results))

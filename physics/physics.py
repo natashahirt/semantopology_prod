@@ -401,10 +401,17 @@ def young_modulus(x, e_0, e_min, p=3):
 
 
 def compliance(x_phys, u, ke, *, penal=3, e_min=1e-9, e_0=1):
-  # Calculates the compliance
-  # Read about how this was vectorized here:
-  # https://colab.research.google.com/drive/1PE-otq5hAMMi_q9dC6DkRvf2xzVhWVQ4
+  """Compliance: the total of `element_strain_energy`."""
+  return np.sum(element_strain_energy(
+      x_phys, u, ke, penal=penal, e_min=e_min, e_0=e_0))
 
+
+def element_strain_energy(x_phys, u, ke, *, penal=3, e_min=1e-9, e_0=1):
+  """Per-element share of compliance, ``E(x_e) u_e^T k_e u_e``, shape (nely, nelx).
+
+  Vectorization notes:
+  https://colab.research.google.com/drive/1PE-otq5hAMMi_q9dC6DkRvf2xzVhWVQ4
+  """
   # index map
   nely, nelx = x_phys.shape
   ely, elx = np.meshgrid(range(nely), range(nelx))  # x, y coords
@@ -422,8 +429,7 @@ def compliance(x_phys, u, ke, *, penal=3, e_min=1e-9, e_0=1):
   # compute x^penal * U.T @ ke @ U in a vectorized way
   ke_u = np.einsum('ij,jkl->ikl', ke, u_selected)
   ce = np.einsum('ijk,ijk->jk', u_selected, ke_u)
-  C = young_modulus(x_phys, e_0, e_min, p=penal) * ce.T
-  return np.sum(C)
+  return young_modulus(x_phys, e_0, e_min, p=penal) * ce.T
 
 
 def optimality_criteria_combine(x, dc, dv, args, max_move=0.2, eta=0.5):

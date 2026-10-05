@@ -98,15 +98,25 @@ results/<experiment>/<structure>/<…tokens…>/attempt_<n>/
   DONE                 # written last, only on success
 logs/<jobid>_<array>.out
 analysis/out/
-  evaluate/embeddings.npy               # ViT-B/32
+  evaluate/embeddings.npy               # ViT-B/32, physical density
   evaluate/similarities.json
-  evaluate/embeddings_vit_l_14.npy      # ViT-L/14
+  evaluate/embeddings_z.npy             # ViT-B/32, final.png
+  evaluate/similarities_z.json
+  evaluate/embeddings_vit_l_14.npy      # ViT-L/14, physical density
   evaluate/similarities_vit_l_14.json
+  evaluate/embeddings_vit_l_14_z.npy    # ViT-L/14, final.png
+  evaluate/similarities_vit_l_14_z.json
   tables/cross_prompt_matrix.csv
   tables/cross_prompt_matrix_vit_l_14.csv
+  tables/evaluator_view_gap_vit_l_14.csv
   tables/compliance.csv
-  tables/vendi.csv
-  figures/
+  diversity/energy/                     # cached per-element re-solves
+  diversity/tables/diversity.csv
+  diversity/tables/diversity_points.csv
+  diversity/figures/diversity_structural.png
+  diversity/figures/diversity_geometric.png
+  diversity/figures/diversity_perceptual.png
+  figures/                              # campaign overview figures
 ```
 
 `final.png` is the declared result for every mode. It is the sharp-ink render
@@ -419,15 +429,32 @@ Tokens: `rho-0.50`, `density-only`, `vf-0.20`, `seed-101`, and prompt slugs
 ```bash
 python analysis/evaluate.py
 python analysis/figures.py
+python analysis/diversity.py solve
+python analysis/diversity.py report
 ```
-Two evaluators score every finished run on the same deterministic views, a
+Two evaluators score every finished run on the same deterministic crops, a
 letterboxed full frame plus a 3×3 grid of square crops (no random
 augmentation): `ViT-B/32`, an independent pass on the training backbone,
-and `ViT-L/14`, which training never loads. Never reuse training-time CLIP
-losses. If the cluster rejects `ViT-L/14` (weights missing, no internet on
-the compute node), download it on the login node and rerun; do not drop it
-silently. Outputs land under `analysis/out/`. In `REPORT.md`, report each
-cross-prompt table for both evaluators, and say where they disagree.
+and `ViT-L/14`, which training never loads. Each evaluator scores both the
+saved physical density and `final.png`, the sharp-ink raw-z view shown to the
+reader. Never reuse training-time CLIP losses. If the cluster rejects
+`ViT-L/14` (weights missing, no internet on the compute node), download it on
+the login node and rerun; do not drop it silently.
+
+`diversity.py solve` re-solves every selected tall-building density in a
+separate process and caches its element strain energy. A failed CHOLMOD
+factorization must not be caught and retried in-process. The saved run
+compliance is one update behind the saved density, so the script accepts a
+5% relative difference and excludes larger mismatches. `diversity.py report`
+fits each PCA once on the union of sets: B plus unguided R seeds, D, M, and
+the lighter S3/P/L comparison set. It writes structural (load-path),
+geometric (physical-density), and perceptual (ViT-L/14 `final.png`) maps,
+plus a binary-structure check.
+
+Outputs land under `analysis/out/`. In `REPORT.md`, report each cross-prompt
+table for both evaluators and the z-minus-density evaluator gap. Report all
+three diversity maps, `diversity/tables/diversity.csv`, excluded re-solves,
+and where the physical and binary structural maps disagree.
 
 ## Definition of Done (only then hand back)
 

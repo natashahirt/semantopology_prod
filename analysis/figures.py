@@ -10,17 +10,13 @@ from pathlib import Path
 
 import numpy as np
 
-from analysis.vendi import (
-    downsample_binary,
-    quality_weighted_vendi,
-    tanimoto_kernel,
-    vendi,
-)
 from recipe.campaign_spec import (
     EVAL_MODELS,
+    EVAL_VIEWS,
     FERN_WORDINGS,
     PROMPTS,
     eval_model_suffix,
+    eval_view_suffix,
 )
 from recipe.preset import prompt_slug
 
@@ -110,56 +106,38 @@ def cross_prompt_matrix(
         out / 'tables' / f'cross_prompt_matrix{suffix}.csv', rows, fieldnames)
 
 
-def vendi_table(runs: list[dict], embeddings_path: Path, out: Path) -> None:
-    groups = {
-        'conventional': lambda r: r.get('experiment') == 'D',
-        'formal': lambda r: str(r.get('experiment', '')).startswith('F'),
-        'semantic': lambda r: str(r.get('experiment', '')).startswith('S')
-        and r.get('structure') == 'tall',
-        'hybrid': lambda r: r.get('experiment') in ('H1', 'H3', 'H4', 'H5'),
+def evaluator_view_gap(
+        density_path: Path, render_path: Path, out: Path, suffix: str = '') -> None:
+    """Write aligned own-prompt similarity differences between z and density."""
+    if not density_path.exists() or not render_path.exists():
+        return
+    density = {
+        row['attempt']: row for row in json.loads(density_path.read_text())
     }
-    tall_baseline = next(
-        (r.get('compliance') for r in runs
-         if r.get('experiment') == 'B' and r.get('structure') == 'tall'),
-        None)
-    # Map run_id to embedding row via evaluate order is not guaranteed;
-    # skip semantic Vendi if embeddings are missing.
-    embeddings = None
-    if embeddings_path.exists():
-        embeddings = np.load(embeddings_path)
+    rendered = {
+        row['attempt']: row for row in json.loads(render_path.read_text())
+    }
     rows = []
-    for name, matches in groups.items():
-        members = [
-            r for r in runs
-            if matches(r) and r.get('structure', 'tall') in (None, 'tall', 'tall_building')
-            and r.get('_density') is not None
-        ]
-        if name != 'conventional':
-            members = [r for r in members if r.get('structure') in ('tall', None) or r.get('experiment') != 'B']
-        if len(members) < 2:
-            continue
-        binary = np.stack([
-            downsample_binary(r['_density']).reshape(-1) for r in members
-        ])
-        formal_k = tanimoto_kernel(binary)
-        qualities = []
-        for run in members:
-            c = run.get('compliance')
-            if tall_baseline and c:
-                qualities.append(float(tall_baseline) / float(c))
-            else:
-                qualities.append(0.0)
-        quality = np.asarray(qualities)
+    for attempt in sorted(density.keys() & rendered.keys()):
+        d_row, z_row = density[attempt], rendered[attempt]
+        d_score = d_row.get('own_prompt_similarity')
+        z_score = z_row.get('own_prompt_similarity')
         rows.append({
-            'group': name,
-            'n': len(members),
-            'formal_vendi': vendi(formal_k),
-            'quality_weighted_vendi': quality_weighted_vendi(formal_k, quality),
-            'semantic_vendi': '',
+            'attempt': attempt,
+            'run_id': d_row.get('run_id'),
+            'experiment': d_row.get('experiment'),
+            'structure': d_row.get('structure'),
+            'prompt': d_row.get('prompt'),
+            'density_similarity': d_score,
+            'z_similarity': z_score,
+            'z_minus_density': (
+                None if d_score is None or z_score is None
+                else float(z_score) - float(d_score)),
         })
     _write_csv(
-        out / 'tables' / 'vendi.csv', rows,
-        ['group', 'n', 'formal_vendi', 'semantic_vendi', 'quality_weighted_vendi'])
+        out / 'tables' / f'evaluator_view_gap{suffix}.csv', rows,
+        ['attempt', 'run_id', 'experiment', 'structure', 'prompt',
+         'density_similarity', 'z_similarity', 'z_minus_density'])
 
 
 def contact_sheets(runs: list[dict], out: Path) -> None:
@@ -262,11 +240,16 @@ def main(argv: list[str] | None = None) -> int:
     runs = _load_runs(Path(args.results))
     compliance_table(runs, out)
     for model_name in EVAL_MODELS:
-        suffix = eval_model_suffix(model_name)
-        cross_prompt_matrix(
-            Path(args.out) / 'evaluate' / f'similarities{suffix}.json',
-            out, suffix=suffix)
-    vendi_table(runs, Path(args.out) / 'evaluate' / 'embeddings.npy', out)
+        for view in EVAL_VIEWS:
+            suffix = eval_model_suffix(model_name) + eval_view_suffix(view)
+            cross_prompt_matrix(
+                Path(args.out) / 'evaluate' / f'similarities{suffix}.json',
+                out, suffix=suffix)
+        model_suffix = eval_model_suffix(model_name)
+        evaluator_view_gap(
+            Path(args.out) / 'evaluate' / f'similarities{model_suffix}.json',
+            Path(args.out) / 'evaluate' / f'similarities{model_suffix}_z.json',
+            out, suffix=model_suffix)
     contact_sheets(runs, out)
     fern_wording_panel(Path(args.results), out)
     print(f'wrote tables and figures for {len(runs)} runs -> {out}')
