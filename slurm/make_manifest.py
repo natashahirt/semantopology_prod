@@ -16,19 +16,31 @@ from recipe.campaign_spec import (
     BLEND_RHOS,
     CONTROL_PROMPTS,
     COUNTER_PROMPT,
+    DIAL_STRUCTURES,
+    DIVERSITY_PROMPTS,
     F1_SKETCHES,
     F3_SKETCHES,
     FERN_WORDINGS,
     GRAVITY_LOAD,
     H3_SKETCHES,
+    LADDER_PROMPTS,
+    NONSENSE_PROMPTS,
+    NONSTRUCTURAL_PROMPTS,
     PROMPTS,
+    REPLICATE_SEEDS,
     REPORTED_STRUCTURES,
     SCALE_ARMS,
+    SCRAMBLED_PROMPTS,
     SKETCH_ROOT,
+    STRUCTURAL_PROMPTS,
+    VOLUME_FRACTIONS,
+    VOLUME_STRUCTURES,
     WEIGHT_ENDS,
     prompt_token,
     rho_token,
+    seed_token,
     sketch_token,
+    vf_token,
     wend_token,
 )
 
@@ -266,10 +278,80 @@ def fixed_weight_rows(clip_weight: float, clip_weight_z: float) -> list[dict]:
     ]
 
 
+def _semantic(run_id: str, experiment: str, structure: str, prompt: str,
+              *extra: str) -> dict:
+    """An S3-recipe semantic row plus the flags its panel varies."""
+    return _row(
+        run_id, experiment, 'semantic',
+        ['--mode', 'semantic', *_structure_args(structure), '--clip', prompt,
+         *extra],
+    )
+
+
+def _unguided(run_id: str, experiment: str, structure: str, *extra: str) -> dict:
+    """A B-recipe unguided row plus the flags its panel varies."""
+    return _row(
+        run_id, experiment, 'baseline',
+        ['--mode', 'unguided', *_structure_args(structure), *extra],
+    )
+
+
+def extension_rows() -> list[dict]:
+    """Phase 2c panels in queue order; the R seed replicates come last."""
+    rows: list[dict] = []
+
+    for key in DIAL_STRUCTURES:
+        for prompt in PROMPTS:
+            for rho in BLEND_RHOS:
+                rows.append(_semantic(
+                    f'S2b/{key}/{prompt_token(prompt)}/{rho_token(rho)}',
+                    'S2b', key, prompt, '--blend-rho', str(rho)))
+
+    for prompt in PROMPTS:
+        rows.append(_semantic(
+            f'A/tall/{prompt_token(prompt)}/density-only',
+            'A', 'tall', prompt, '--blend-rho-z', '0'))
+
+    for experiment, prompts in (
+            ('P', STRUCTURAL_PROMPTS + NONSTRUCTURAL_PROMPTS),
+            ('N', NONSENSE_PROMPTS + SCRAMBLED_PROMPTS),
+            ('L', LADDER_PROMPTS)):
+        for prompt in prompts:
+            rows.append(_semantic(
+                f'{experiment}/tall/{prompt_token(prompt)}',
+                experiment, 'tall', prompt))
+
+    for key in VOLUME_STRUCTURES:
+        for volume in VOLUME_FRACTIONS:
+            flag = ('--volume-fraction', f'{volume:.6g}')
+            rows.append(_unguided(
+                f'V/{key}/unguided/{vf_token(volume)}', 'V', key, *flag))
+            for prompt in PROMPTS:
+                rows.append(_semantic(
+                    f'V/{key}/{prompt_token(prompt)}/{vf_token(volume)}',
+                    'V', key, prompt, *flag))
+
+    for prompt in DIVERSITY_PROMPTS:
+        rows.append(_semantic(
+            f'M/tall/{prompt_token(prompt)}', 'M', 'tall', prompt))
+
+    for seed in REPLICATE_SEEDS:
+        flag = ('--seed', str(seed))
+        for key in REPORTED_STRUCTURES:
+            rows.append(_unguided(
+                f'R/{key}/unguided/{seed_token(seed)}', 'R', key, *flag))
+            for prompt in PROMPTS:
+                rows.append(_semantic(
+                    f'R/{key}/{prompt_token(prompt)}/{seed_token(seed)}',
+                    'R', key, prompt, *flag))
+    return rows
+
+
 # Off-table panels: flag -> (default TSV name, row builder).
 OFF_TABLE_PANELS = {
     'fern_wording': ('fern_wording.tsv', fern_wording_rows),
     'controls': ('control_prompts.tsv', control_prompt_rows),
+    'extensions': ('extensions.tsv', extension_rows),
 }
 
 
@@ -293,6 +375,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--controls', action='store_true',
         help='Write only the C1 control-prompt panel, never the 118-row campaign TSV.')
+    parser.add_argument(
+        '--extensions', action='store_true',
+        help='Write only the Phase 2c panels, never the 118-row campaign TSV.')
     parser.add_argument(
         '--fixed-weight', nargs=2, type=float, metavar=('W_DENSITY', 'W_Z'),
         help='Write only the C2 fixed-weight panel at these two CLIP weights.')

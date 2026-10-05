@@ -111,12 +111,18 @@ def preset_from_args(args) -> DreamLayoutPreset:
     if args.sketch:
         path = Path(args.sketch)
         sketch = str(path if path.is_absolute() else _REPO / path)
+    volume = _optional_float(getattr(args, 'volume_fraction', None))
+    if volume is None:
+        volume = spec.density
+    elif not 0.0 < volume < 1.0:
+        raise ValueError(f'--volume-fraction must be in (0, 1), got {volume}')
+    rho_z = _optional_float(getattr(args, 'blend_rho_z', None))
     return replace(
         PAPER,
         problem_name=spec.problem_name,
         width=width,
         height=height,
-        density=spec.density,
+        density=volume,
         interval=interval,
         filter_width=float(args.filter_width),
         penal=float(args.penal),
@@ -124,6 +130,7 @@ def preset_from_args(args) -> DreamLayoutPreset:
         device=args.device,
         clip_prompt=prompt,
         blend_rho=float(args.blend_rho),
+        blend_rho_z=PAPER.blend_rho_z if rho_z is None else rho_z,
         sketch_weight_end=float(args.sketch_weight_end),
         coadapt=bool(args.coadapt),
         resize_num=resize_num_for(width, height, spec.resize_num, spec.resize_scale),
@@ -360,12 +367,19 @@ def run_campaign(args, output_dir: Path) -> dict:
         raise ValueError('--clip-weight and --clip-weight-z are set together')
     if preset.clip_weight is not None and mode != 'semantic':
         raise ValueError(f'fixed CLIP weights are semantic-only, got {mode}')
+    if preset.clip_weight is not None and getattr(args, 'blend_rho_z', None) is not None:
+        raise ValueError('--blend-rho-z is grad-match only; use --clip-weight-z')
 
     density = None
     raw = None
     scaffold = None
     ds = None
-    summary: dict = {'_t0': t0, 'problem': preset.problem_name, 'seed': preset.seed}
+    summary: dict = {
+        '_t0': t0,
+        'problem': preset.problem_name,
+        'seed': preset.seed,
+        'volume_fraction_target': preset.density,
+    }
 
     needs_clip = mode in (
         'semantic', 'hybrid', 'dream_only', 'prompt_sketch')

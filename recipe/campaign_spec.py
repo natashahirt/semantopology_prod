@@ -25,6 +25,41 @@ FERN_WORDINGS = (
 # separate the effect of the prompt's meaning from generic CLIP pressure.
 CONTROL_PROMPTS = ('structure', 'qzv xlrp mnek')
 
+# Phase 2c extensions. Every prompt panel runs on tall unless noted.
+# S2b: the S2 dial on the structures S2 skipped.
+DIAL_STRUCTURES = ('short', 'bridge')
+# P: prompts whose forms are already structural vs ones that are not.
+STRUCTURAL_PROMPTS = (
+    'tree branches', 'bone trabeculae', 'spider web', 'gothic tracery',
+    'honeycomb',
+)
+NONSTRUCTURAL_PROMPTS = ('clouds', 'smoke', 'fur', 'a cat')
+# N: more meaningless strings, and each campaign prompt with its letters
+# scrambled within each word (same letters and word lengths, no meaning).
+NONSENSE_PROMPTS = (
+    'vbtq orzk plimw', 'xjeu wkqa dryv', 'gmof ztuy hcnb', 'kwyp elrj sqox',
+)
+SCRAMBLED_PROMPTS = (
+    'rnef dsnorf', 'ytlurfebt gniw ntoeiavn', 'ntseleosk',
+)
+# L: a meaning ladder from fern fronds (S3) through tree branches (P).
+LADDER_PROMPTS = ('bracken', 'lightning', 'brick wall')
+# V: volume fractions beside the 0.3 already run by S3 and B.
+VOLUME_FRACTIONS = (0.2, 0.4, 0.5)
+VOLUME_STRUCTURES = ('tall', 'bridge')
+# M: 24 varied prompts, matched in count to D's Latin-hypercube samples.
+DIVERSITY_PROMPTS = (
+    'coral reef', 'river delta', 'mangrove roots', 'lichen',
+    'seashell spiral', 'pine cone', 'dragonfly wing', 'ice crystals',
+    'flying buttresses', 'art nouveau ironwork', 'bamboo scaffolding',
+    'chain-link fence', 'stained glass window', 'woven basket',
+    'suspension bridge cables', 'lattice tower', 'circuit board', 'lace',
+    'cracked mud', 'marble veins', 'sound waves', 'spiral galaxy',
+    'barbed wire', 'neurons',
+)
+# R: seeds beside the campaign seed (12) for the S3 grid and B.
+REPLICATE_SEEDS = (101, 202, 303, 404)
+
 # Post-hoc evaluators. The first keeps the unsuffixed output names.
 EVAL_MODELS = ('ViT-B/32', 'ViT-L/14')
 
@@ -138,3 +173,11 @@ def rho_token(value: float) -> str:
 
 def wend_token(value: float) -> str:
     return f'wend-{int(value)}'
+
+
+def vf_token(value: float) -> str:
+    return f'vf-{value:.2f}'
+
+
+def seed_token(value: int) -> str:
+    return f'seed-{int(value)}'

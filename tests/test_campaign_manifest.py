@@ -9,6 +9,7 @@ import pytest
 from recipe.campaign import onoff, preset_from_args, run_campaign
 from recipe.campaign_spec import (
     CONTROL_PROMPTS,
+    DIVERSITY_PROMPTS,
     FERN_WORDINGS,
     GRAVITY_LOAD,
     PROMPTS,
@@ -19,6 +20,7 @@ from run import build_parser
 from slurm.make_manifest import (
     control_prompt_rows,
     experiment_rows,
+    extension_rows,
     fern_wording_rows,
     fixed_weight_rows,
 )
@@ -238,6 +240,96 @@ def test_fixed_weights_are_refused_outside_semantic(tmp_path):
         run_campaign(args, tmp_path)
     args = build_parser().parse_args(['--mode', 'semantic', '--clip-weight', '1'])
     with pytest.raises(ValueError, match='set together'):
+        run_campaign(args, tmp_path)
+
+
+_PANEL_FLAGS = {'--blend-rho', '--blend-rho-z', '--volume-fraction', '--seed'}
+
+
+def _without_panel_flag(argv: list[str]) -> list[str]:
+    """Drop identity and the one flag a Phase 2c panel varies."""
+    out, skip = [], False
+    for value in _without_identity(argv):
+        if skip:
+            skip = False
+        elif value in _PANEL_FLAGS:
+            skip = True
+        else:
+            out.append(value)
+    return out
+
+
+def test_extensions_are_off_the_main_table_in_queue_order():
+    rows = extension_rows()
+    assert len(rows) == 148
+    ids = [row['run_id'] for row in rows]
+    assert len(ids) == len(set(ids))
+    elsewhere = {
+        row['run_id'] for row in (
+            experiment_rows(include_s1b=True) + fern_wording_rows()
+            + control_prompt_rows() + fixed_weight_rows(1.0, 1.0))
+    }
+    assert elsewhere.isdisjoint(ids)
+    order = list(dict.fromkeys(run_id.split('/')[0] for run_id in ids))
+    assert order == ['S2b', 'A', 'P', 'N', 'L', 'V', 'M', 'R']
+    counts = {name: sum(i.startswith(name + '/') for i in ids) for name in order}
+    assert counts == {
+        'S2b': 30, 'A': 3, 'P': 9, 'N': 7, 'L': 3, 'V': 24, 'M': 24, 'R': 48}
+    assert 'P/tall/honeycomb' in ids
+    assert 'V/bridge/unguided/vf-0.20' in ids
+    assert 'R/short/skeletons/seed-404' in ids
+    assert {i.split('/')[2] for i in ids if i.startswith('M/')} == {
+        prompt_token(p) for p in DIVERSITY_PROMPTS}
+
+
+def test_extensions_change_only_their_panel_flag():
+    campaign = {row['run_id']: row['argv'] for row in experiment_rows(include_s1b=False)}
+    for row in extension_rows():
+        argv = row['argv']
+        experiment, structure = row['run_id'].split('/')[:2]
+        mode = argv[argv.index('--mode') + 1]
+        reference = campaign[
+            f'B/{structure}/unguided' if mode == 'unguided'
+            else f'S3/{structure}/{prompt_token(PROMPTS[0])}']
+        assert _without_panel_flag(argv) == _without_identity(reference), row['run_id']
+        varied = _PANEL_FLAGS.intersection(argv)
+        expected = {
+            'S2b': {'--blend-rho'}, 'A': {'--blend-rho-z'},
+            'V': {'--volume-fraction'}, 'R': {'--seed'},
+        }.get(experiment, set())
+        assert varied == expected, row['run_id']
+
+
+def test_extension_flags_reach_the_preset():
+    rows = {row['run_id']: row['argv'] for row in extension_rows()}
+
+    def preset(run_id):
+        return preset_from_args(build_parser().parse_args(rows[run_id]))
+
+    density_only = preset('A/tall/fern_fronds/density-only')
+    assert (density_only.blend_rho, density_only.blend_rho_z) == (1.0, 0.0)
+    assert preset('V/bridge/skeletons/vf-0.40').density == 0.4
+    assert preset('R/tall/unguided/seed-101').seed == 101
+    s2b = preset('S2b/bridge/fern_fronds/rho-0.00')
+    assert (s2b.blend_rho, s2b.blend_rho_z) == (0.0, PAPER.blend_rho_z)
+    for argv in rows.values():
+        assert preset_from_args(build_parser().parse_args(argv)).clip_weight is None
+
+
+def test_volume_and_raw_z_flags_default_to_the_campaign_recipe():
+    args = build_parser().parse_args(['--mode', 'semantic', '--structure', 'bridge'])
+    preset = preset_from_args(args)
+    assert preset.density == 0.3
+    assert preset.blend_rho_z == PAPER.blend_rho_z
+    with pytest.raises(ValueError, match='volume-fraction'):
+        preset_from_args(build_parser().parse_args(['--volume-fraction', '1.2']))
+
+
+def test_raw_z_mixer_is_refused_with_fixed_weights(tmp_path):
+    args = build_parser().parse_args([
+        '--mode', 'semantic', '--clip-weight', '1', '--clip-weight-z', '1',
+        '--blend-rho-z', '0'])
+    with pytest.raises(ValueError, match='grad-match only'):
         run_campaign(args, tmp_path)
 
 

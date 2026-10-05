@@ -6,6 +6,7 @@ import json
 from types import SimpleNamespace
 
 import numpy as np
+import pytest
 import torch
 
 from analysis import evaluate
@@ -61,6 +62,10 @@ def test_every_evaluator_writes_aligned_outputs(tmp_path, monkeypatch):
     assert {r['evaluator'] for r in primary} == {'ViT-B/32'}
     assert {r['evaluator'] for r in second} == {'ViT-L/14'}
     assert set(primary[0]['similarities']) == set(evaluate.EVAL_PROMPTS)
+    assert {'bracken', 'tree branches', 'brick wall'} <= set(evaluate.EVAL_PROMPTS)
+    for record in primary:
+        assert record['own_prompt_similarity'] == pytest.approx(
+            record['similarities']['fern fronds'])
     assert np.load(out / 'embeddings.npy').shape == (2, 3)
     assert np.load(out / 'embeddings_vit_l_14.npy').shape == (2, 3)
     assert primary[0]['attempt'].startswith(str(results))

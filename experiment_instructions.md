@@ -20,7 +20,8 @@ CLIP text prompt). The strength of each channel is a continuous, tunable setting
 A hybrid uses a CLIP "dream" as the formal prior, then **co-adapts** density and
 that occupancy map together during physics. Unlike image generators, every
 design is shaped by the physics gradient. Each experiment below supports one
-claim. Do not add experiments that are not listed.
+claim. Do not add experiments that are not listed (Phase 2c lists the
+extensions).
 
 ## Hard rules
 
@@ -73,6 +74,8 @@ claim. Do not add experiments that are not listed.
   plus `--prompt-sketch`, `--clip-scales {g,m,e,gme}`, `--coadapt`,
   `--blend-rho`, conventional knobs. `--clip-weight` / `--clip-weight-z`
   (semantic only, set together) replace grad-match with fixed weights for C2.
+  `--blend-rho-z` (grad-match only; default 0.75) weights raw-z CLIP for A.
+  `--volume-fraction` (default 0.3 from the structure) sets the target for V.
 - CLIP modules are one centered 64×64 tile per tall-building storey, two
   centered 50×50 tiles per short-building storey, and full-depth square
   panels for the bridge. Element crops remain square and sit inside each
@@ -340,15 +343,77 @@ Report, per structure, C2 vs S3 `clip_loss_raw`, `compliance`,
 files. Either outcome is a result: the claim is that the tall calibration
 is right on tall and wrong (too strong or too weak) elsewhere.
 
-## Wishlist — seed replicates (only if time remains after 2b)
+## Phase 2c — extensions (off the main table)
 
-Every Phase 2 row runs at seed 12, so the paper cannot yet report
-seed-to-seed spread. If compute and the October 9 cutoff allow, rerun the
-S3 grid (3 prompts × 3 structures) and B (unguided × 3 structures) on 4
-more seeds: 48 runs. This feeds the diversity study: it separates variation
-from the prompt from variation from the seed. There is no manifest flag
-for this yet; ask for one rather than hand-writing a TSV. Lowest priority:
-skip it rather than delay anything above.
+Phase 2 and C1 worked, so these rows sharpen the paper's two claims: how
+much leeway a prompt gets depends on the structure, and prompting spans
+more of the design space than tuning the conventional knobs. All of them
+live in one manifest, `slurm/extensions.tsv`, in priority order, so the
+array index is the queue order and the seed replicates run last. Same
+recipe and code revision rules as Phase 2. Never append them to
+`slurm/campaign.tsv`.
+
+| ID | Claim | Runs |
+|---|---|---|
+| S2b | The dial's slope (the leeway) depends on the structure | S2 on {short, bridge}: 3 prompts × `blend_rho` {0, 0.25, 0.5, 0.75, 1.0} × 2 = 30 |
+| A | Which CLIP term carries the style | density-CLIP only (`--blend-rho-z 0`) × 3 prompts on tall = 3 |
+| P | Prompts that suit the physics cost less | 9 prompts on tall: structural {tree branches, bone trabeculae, spider web, gothic tracery, honeycomb}, non-structural {clouds, smoke, fur, a cat} |
+| N | Is the C1 face specific to one string? | 7 prompts on tall: 4 more random strings, plus the 3 campaign prompts with their letters scrambled within each word |
+| L | Nearby meanings give nearby designs | 3 prompts on tall: {bracken, lightning, brick wall} |
+| V | More material, more leeway | `--volume-fraction` {0.2, 0.4, 0.5} × {3 prompts, unguided} × {tall, bridge} = 24 |
+| M | Prompts span more designs than parameter tuning | 24 varied prompts on tall, matched in count to D |
+| R | Variation from the prompt vs from the seed | S3 grid and B on seeds {101, 202, 303, 404}: 12 × 4 = 48 |
+
+148 rows in total.
+
+```bash
+python slurm/make_manifest.py --extensions   # slurm/extensions.tsv, 148 rows
+sbatch --array=0-147%24 --export=ALL,CAMPAIGN_MANIFEST=slurm/extensions.tsv \
+  slurm/campaign.sbatch
+```
+
+Every semantic row matches its S3 row except for the prompt, plus the one
+flag its panel varies. Every V and R unguided row matches its B row except
+for `--volume-fraction` or `--seed`. Do not tune anything per row.
+
+**S2b.** As in S2, `blend_rho` scales only density CLIP. Raw-z CLIP stays at
+0.75 in every row, so the `rho-0.00` arm is a raw-z-only run, not an
+unprompted one; B is the unprompted reference. Report a per-structure
+curve: x = `compliance` relative to that structure's B row, y = the Phase 3
+score for the row's own prompt, both evaluators, with S2 (tall) on the same
+axes.
+
+**A.** The full term pairing is already on the table: both terms is S3 tall,
+raw-z only is S2 `rho-0.00`, neither is B. A adds the missing arm, density
+CLIP only. Report the four arms side by side per prompt: `final.png`,
+`physical_density.png`, `gray_fraction`, `compliance`, and both evaluator
+scores.
+
+**P, N, L.** All on tall, beside S3 tall and C1 tall.
+- P: report `compliance` relative to B tall, and the prompt's own score,
+  ranked, with the structural and non-structural groups marked.
+- N: say whether the C1 face recurs, and for which strings.
+- L: the ladder runs fern fronds (S3), bracken, tree branches (P),
+  lightning, brick wall (L). Report its rows and columns of the cross-prompt
+  matrix for both evaluators.
+
+**V.** The 0.3 arm is already S3 and B on each structure. Report compliance
+relative to the unguided row at the same volume fraction. Check that each
+`run.json` `volume_fraction` matches its target, and log any row more than
+0.01 off.
+
+**M.** One seed (12), 24 prompts listed in `recipe/campaign_spec.py`
+(`DIVERSITY_PROMPTS`). These are compared with D's 24 Latin-hypercube
+samples for design-space coverage. The coverage measure is still being
+defined; for now just make sure both sets finish and are scored by both
+evaluators.
+
+**R.** Lowest priority, last in the queue. If the October 9 cutoff is close,
+cancel the remaining R tasks rather than delay anything else, and log
+which seeds finished.
+
+Tokens: `rho-0.50`, `density-only`, `vf-0.20`, `seed-101`, and prompt slugs
+(`prompt_slug`, e.g. `a_cat`, `bone_trabeculae`).
 
 ## Phase 3 — analysis
 ```bash
@@ -371,6 +436,8 @@ cross-prompt table for both evaluators, and say where they disagree.
 - The S1 gate and the H4 comparison are logged.
 - Every C1 and C2 row is `DONE` (or permanently failed), and the C2
   calibration weights are logged.
+- Every Phase 2c row except R is `DONE` (or permanently failed). R rows that
+  did not finish before the cutoff are listed in `REPORT.md`.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

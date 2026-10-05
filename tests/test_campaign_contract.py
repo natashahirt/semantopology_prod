@@ -135,6 +135,17 @@ def test_fixed_weights_reach_the_physics_optimizer():
     assert campaign._mean(ds, 'clip_weight') == 7.0
 
 
+def test_zero_raw_z_mixer_drops_only_the_raw_z_term():
+    from dataclasses import replace
+    from recipe.preset import PAPER
+
+    ds = campaign._run_physics(
+        _tiny_semantic_model(), replace(PAPER, max_iterations=2, blend_rho_z=0.0))
+    assert ds.attrs['blend_mode'] == 'grad_match'
+    assert campaign._mean(ds, 'blend_clip_raw_z_weight') is None
+    assert campaign._mean(ds, 'clip_weight') > 0.0
+
+
 def test_grad_match_logs_the_raw_z_weight_c2_calibrates_from():
     from dataclasses import replace
     from recipe.preset import PAPER

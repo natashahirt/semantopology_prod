@@ -27,12 +27,16 @@ from guidance.loss_clip import (
 from recipe.campaign_spec import (
     COUNTER_PROMPT,
     EVAL_MODELS,
+    LADDER_PROMPTS,
     PROMPTS,
     eval_model_suffix,
 )
 
 _REPO = Path(__file__).resolve().parents[1]
-EVAL_PROMPTS = (*PROMPTS, COUNTER_PROMPT)
+# The L ladder runs fern fronds -> bracken -> tree branches -> lightning ->
+# brick wall, so its rungs are scored as columns too.
+LADDER = (PROMPTS[0], LADDER_PROMPTS[0], 'tree branches', *LADDER_PROMPTS[1:])
+EVAL_PROMPTS = tuple(dict.fromkeys((*PROMPTS, COUNTER_PROMPT, *LADDER)))
 
 
 def _load_density(attempt: Path) -> np.ndarray | None:
@@ -106,17 +110,26 @@ def score_runs(runs, model_name: str, device) -> tuple[list[dict], list[np.ndarr
     """Similarity rows and pooled embeddings for one evaluator model."""
     clip_model, _ = _load_clip_model(model_name, device)
     text = _encode_texts(clip_model, list(EVAL_PROMPTS), device).cpu().numpy()
+    # Each run is also scored against its own prompt (P, N, L and M use
+    # prompts outside EVAL_PROMPTS); every distinct prompt is encoded once.
+    own_prompts = sorted({meta['prompt'] for _, _, meta in runs if meta.get('prompt')})
+    own_text = dict(zip(own_prompts, (
+        _encode_texts(clip_model, own_prompts, device).cpu().numpy()
+        if own_prompts else [])))
     rows, embeddings = [], []
     for attempt, density, meta in runs:
         vector = embed_density(density, clip_model, device)
+        prompt = meta.get('prompt')
         rows.append({
             'attempt': _display_path(attempt),
             'run_id': meta.get('run_id'),
-            'prompt': meta.get('prompt'),
+            'prompt': prompt,
             'structure': meta.get('structure'),
             'experiment': meta.get('experiment'),
             'evaluator': model_name,
             'similarities': dict(zip(EVAL_PROMPTS, (vector @ text.T).tolist())),
+            'own_prompt_similarity': (
+                float(vector @ own_text[prompt]) if prompt in own_text else None),
         })
         embeddings.append(vector)
     return rows, embeddings
