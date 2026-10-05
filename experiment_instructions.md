@@ -533,6 +533,39 @@ time. R's unguided tall rows carry the clustering claim in 4.5, so if the queue
 cannot take both, finish R first and say in `REPORT.md` that S2c was dropped.
 
 ## Phase 3 — analysis
+
+### Run it early, on partial results, before the campaign finishes
+
+Do this now, as soon as any panel has finished rows. Do not wait for a
+complete campaign. None of these scripts has ever run against real campaign
+output, so the first full run is also their first integration test — and if
+that run is on the last day, a failure has nowhere to go.
+
+```bash
+python analysis/evaluate.py --models ViT-B/32   # one evaluator, fastest check
+python analysis/figures.py
+python analysis/diversity.py solve
+python analysis/diversity.py report
+```
+
+Half-empty tables are the expected outcome and are not a failure. What this
+pass is for is the questions that only real data answers:
+
+- Do the two LAION checkpoints load on a compute node, or only on the login
+  node? Run the full `evaluate.py` once the single-evaluator pass works.
+- How long does one `diversity.py solve` re-solve take, and how many designs
+  does the 5% compliance check exclude? If the exclusion rate is high the
+  tolerance is wrong, and that is better known now.
+- Does any re-solve hit a CHOLMOD factorization failure? Each design is
+  solved in its own subprocess precisely so one failure cannot poison the
+  rest, but that path has never been exercised on cluster data.
+- Does `diversity.py report` have enough designs per comparison set to
+  bootstrap, and does the quality band hold anything at all?
+
+Report what broke and what it cost in `REPORT.md`, then re-run Phase 3
+normally when the campaign completes. A fix found here is cheap; the same fix
+found on 9 October is not.
+
 ```bash
 python analysis/evaluate.py
 python analysis/figures.py
