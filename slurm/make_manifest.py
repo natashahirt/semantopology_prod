@@ -16,6 +16,8 @@ from recipe.campaign_spec import (
     BLEND_RHOS,
     CONTROL_PROMPTS,
     COUNTER_PROMPT,
+    DIAL_SEED_RHOS,
+    DIAL_SEEDS,
     DIAL_STRUCTURES,
     DIVERSITY_PROMPTS,
     F1_SKETCHES,
@@ -363,12 +365,32 @@ def typology_rows() -> list[dict]:
     ]
 
 
+def dial_seed_rows() -> list[dict]:
+    """S2c: the density dial at extra seeds, so 4.1's curve becomes a band.
+
+    One prompt on tall at three dial settings and three seeds beside the
+    campaign seed. The campaign already holds the fourth seed at each of
+    these settings, so the panel turns one trajectory into four and shows
+    whether the dial's shape survives reinitialization.
+    """
+    return [
+        _semantic(
+            f'S2c/tall/{prompt_token(PROMPTS[0])}/{rho_token(rho)}/'
+            f'{seed_token(seed)}',
+            'S2c', 'tall', PROMPTS[0],
+            '--blend-rho', str(rho), '--seed', str(seed))
+        for seed in DIAL_SEEDS
+        for rho in DIAL_SEED_RHOS
+    ]
+
+
 # Off-table panels: flag -> (default TSV name, row builder).
 OFF_TABLE_PANELS = {
     'fern_wording': ('fern_wording.tsv', fern_wording_rows),
     'controls': ('control_prompts.tsv', control_prompt_rows),
     'extensions': ('extensions.tsv', extension_rows),
     'typology': ('typology.tsv', typology_rows),
+    'dial_seeds': ('dial_seeds.tsv', dial_seed_rows),
 }
 
 
@@ -399,6 +421,10 @@ def main(argv: list[str] | None = None) -> int:
         '--typology', action='store_true',
         help='Write only the G geometric-compatibility panel, never the '
              '118-row campaign TSV.')
+    parser.add_argument(
+        '--dial-seeds', action='store_true',
+        help='Write only the S2c dial-by-seed panel, never the 118-row '
+             'campaign TSV.')
     parser.add_argument(
         '--fixed-weight', nargs=2, type=float, metavar=('W_DENSITY', 'W_Z'),
         help='Write only the C2 fixed-weight panel at these two CLIP weights.')

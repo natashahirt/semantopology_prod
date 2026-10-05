@@ -59,6 +59,10 @@ DIVERSITY_PROMPTS = (
 )
 # R: seeds beside the campaign seed (12) for the S3 grid and B.
 REPLICATE_SEEDS = (101, 202, 303, 404)
+# S2c: the density dial re-run at more seeds, so the 4.1 curve is a band
+# rather than one trajectory. One prompt only; the dial's shape is the claim.
+DIAL_SEED_RHOS = (0.0, 0.5, 1.0)
+DIAL_SEEDS = REPLICATE_SEEDS[:3]
 # G: prompts chosen for how their geometry meets a load path, not for meaning.
 # Each conflicts with (or suits) a structure in one nameable way, so the
 # compliance it costs is a prediction rather than an observation: horizontal
@@ -74,8 +78,41 @@ TYPOLOGY_PROMPTS = (
     'a spiral staircase',
 )
 
-# Post-hoc evaluators. The first keeps the unsuffixed output names.
-EVAL_MODELS = ('ViT-B/32', 'ViT-L/14')
+# Post-hoc evaluators, ordered as a ladder of independence from the backbone
+# training guides with. ViT-B/32 (OpenAI) IS that backbone, scored under a
+# protocol training never uses. ViT-L/14 (OpenAI) is a scale training never
+# loads. The LAION pair changes the training corpus, and convnext_base_w
+# changes the architecture family as well, so a prompt ranking that survives
+# all four is not an artifact of one model's idiosyncrasies. The first keeps
+# the unsuffixed output names.
+EVAL_MODELS = (
+    'ViT-B/32',
+    'ViT-L/14',
+    'ViT-B-32/laion2b_s34b_b79k',
+    'convnext_base_w/laion2b_s13b_b82k',
+)
+# Evaluator name -> (backend, architecture, pretrained tag). The OpenAI models
+# load through the `clip` package; the rest through `open_clip`, whose native
+# tokenizer needs no extra dependency. A SigLIP evaluator would additionally
+# require `transformers`, which this environment does not have.
+EVAL_BACKENDS = {
+    'ViT-B/32': ('clip', 'ViT-B/32', None),
+    'ViT-L/14': ('clip', 'ViT-L/14', None),
+    'ViT-B-32/laion2b_s34b_b79k': (
+        'open_clip', 'ViT-B-32', 'laion2b_s34b_b79k'),
+    'convnext_base_w/laion2b_s13b_b82k': (
+        'open_clip', 'convnext_base_w', 'laion2b_s13b_b82k'),
+}
+
+
+def eval_backend(model_name: str) -> tuple[str, str, str | None]:
+    """Backend, architecture and pretrained tag for an evaluator name."""
+    try:
+        return EVAL_BACKENDS[model_name]
+    except KeyError:
+        raise ValueError(
+            f'unknown evaluator {model_name!r}; expected one of '
+            f'{tuple(EVAL_BACKENDS)}') from None
 # What each evaluator looks at: the analysed physical density, or ``final.png``,
 # the sharp-ink render of the raw design z that every figure shows. The first
 # keeps the unsuffixed output names.

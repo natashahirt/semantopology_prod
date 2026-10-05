@@ -27,10 +27,19 @@ _GRID = (32, 16)
 _SET_ORDER = (
     'unguided seeds',
     'parameter sweep',
+    'volume sweep',
     'ours',
     'semantic prompts',
 )
+# Everything a conventional pipeline can reach by turning its own knobs. The
+# union answers the objection that each baseline set is individually narrow
+# only because it varies one thing at a time.
+_CONVENTIONAL = ('unguided seeds', 'parameter sweep', 'volume sweep')
+_UNION = 'conventional union'
 _MEASURES = ('structural', 'geometric', 'perceptual')
+# Quality is a compliance ratio against the unguided baseline, so it only
+# means anything between designs that were given the same material budget.
+_QUALITY_VOLUME = 0.3
 
 
 def block_reduce(field: np.ndarray, shape: tuple[int, int], reduction: str) -> np.ndarray:
@@ -115,6 +124,10 @@ def comparison_set(meta: dict) -> str | None:
         return 'unguided seeds'
     if experiment == 'D':
         return 'parameter sweep'
+    # Only the unguided volume rows widen the baseline; the prompted ones would
+    # mix a different material budget into 'ours'.
+    if experiment == 'V' and prompt is None:
+        return 'volume sweep'
     if experiment == 'M':
         return 'ours'
     if experiment in ('S3', 'P', 'L'):
@@ -132,6 +145,13 @@ def _display_path(path: Path) -> str:
 def _cache_path(attempt: Path, cache: Path) -> Path:
     token = hashlib.sha256(_display_path(attempt).encode()).hexdigest()[:20]
     return cache / f'{token}.npz'
+
+
+def _optional_float(value) -> float | None:
+    try:
+        return None if value is None else float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _read_meta(attempt: Path) -> dict:
@@ -299,6 +319,7 @@ def collect_points(results: Path, cache: Path, evaluate_dir: Path) -> list[dict]
             'experiment': meta.get('experiment'),
             'set': group,
             'resolution_scale': float(meta.get('cli', {}).get('resolution_scale', 1.0)),
+            'volume_target': _optional_float(meta.get('volume_fraction_target')),
             'compliance': compliance,
             'structural': load_path_map(energy).reshape(-1),
             'structural_binary': load_path_map(binary_energy).reshape(-1),
@@ -331,7 +352,47 @@ def _baseline_compliance(points: list[dict]) -> float:
     return float(np.mean(values))
 
 
-def summarize(points: list[dict], measure: str) -> tuple[list[dict], list[dict], np.ndarray]:
+def quality(point: dict, baseline: float) -> float | None:
+    """Compliance ratio against the baseline, or None where it is meaningless.
+
+    A coarse run and a run on a different material budget are both excluded:
+    neither is commensurable with the full-resolution unguided reference.
+    """
+    if point['resolution_scale'] != 1.0:
+        return None
+    target = point['volume_target']
+    if target is not None and abs(target - _QUALITY_VOLUME) > 1e-6:
+        return None
+    return baseline / point['compliance']
+
+
+def quality_band(points: list[dict], low: float, high: float) -> list[dict]:
+    """Keep only designs whose quality falls inside ``[low, high]``.
+
+    This answers the charge that a wider spread is just a worse one: inside a
+    common band every set is held to the same structural performance, so what
+    is left to compare is how much shape variety each one buys at that
+    performance. Designs with no comparable quality are dropped.
+    """
+    baseline = _baseline_compliance(points)
+    kept = []
+    for point in points:
+        value = quality(point, baseline)
+        if value is not None and low <= value <= high:
+            kept.append(point)
+    return kept
+
+
+def _set_indices(points: list[dict], group: str) -> list[int]:
+    """Row indices for a comparison set, or for the conventional union."""
+    if group == _UNION:
+        return [i for i, p in enumerate(points) if p['set'] in _CONVENTIONAL]
+    return [i for i, p in enumerate(points) if p['set'] == group]
+
+
+def summarize(
+        points: list[dict], measure: str,
+        band: str = 'all') -> tuple[list[dict], list[dict], np.ndarray]:
     """Fit joint PCA and return per-set summaries and per-design coordinates."""
     values = np.stack([point[measure] for point in points])
     scores, components, variance = fit_pca(values)
@@ -343,29 +404,31 @@ def summarize(points: list[dict], measure: str) -> tuple[list[dict], list[dict],
             'run_id': point['run_id'],
             'set': point['set'],
             'measure': measure,
+            'band': band,
             'pc1': scores[index, 0],
             'pc2': scores[index, 1],
         })
-    for group in _SET_ORDER:
-        indices = [i for i, point in enumerate(points) if point['set'] == group]
+    for group in (*_SET_ORDER, _UNION):
+        indices = _set_indices(points, group)
         if not indices:
             continue
         mean, low, high = bootstrap_mean_distance(values[indices])
-        quality = [
-            baseline / points[i]['compliance'] for i in indices
-            if points[i]['resolution_scale'] == 1.0
+        qualities = [
+            value for value in (quality(points[i], baseline) for i in indices)
+            if value is not None
         ]
         table.append({
             'set': group,
             'measure': measure,
+            'band': band,
             'n': len(indices),
             'mean_pairwise_distance': mean,
             'ci95_low': low,
             'ci95_high': high,
             'pc1_variance': variance[0],
             'pc2_variance': variance[1],
-            'mean_quality': float(np.mean(quality)) if quality else '',
-            'quality_n': len(quality),
+            'mean_quality': float(np.mean(qualities)) if qualities else '',
+            'quality_n': len(qualities),
         })
     return table, coordinates, components
 
@@ -375,7 +438,8 @@ def _plot_map(points: list[dict], coordinates: list[dict], measure: str, path: P
     from matplotlib.offsetbox import AnnotationBbox, OffsetImage
     from PIL import Image
 
-    palette = dict(zip(_SET_ORDER, ('#4c78a8', '#f58518', '#54a24b', '#b279a2')))
+    palette = dict(zip(
+        _SET_ORDER, ('#4c78a8', '#f58518', '#9d755d', '#54a24b', '#b279a2')))
     figure, axis = plt.subplots(figsize=(8, 6))
     for group in _SET_ORDER:
         rows = [(p, c) for p, c in zip(points, coordinates) if p['set'] == group]
@@ -430,37 +494,51 @@ def _plot_components(
     plt.close(figure)
 
 
-def report(results: Path, cache: Path, evaluate_dir: Path, out: Path) -> None:
-    points = collect_points(results, cache, evaluate_dir)
-    if len(points) < 2:
-        raise ValueError('at least two aligned, valid designs are required')
+def _summarize_measures(
+        points: list[dict], out: Path, band: str,
+        figures: bool) -> tuple[list[dict], list[dict]]:
+    """Every measure, including the binary variant, for one set of designs."""
     table_rows, coordinate_rows = [], []
-    for measure in _MEASURES:
-        table, coordinates, components = summarize(points, measure)
+    for measure in (*_MEASURES, 'structural_binary'):
+        table, coordinates, components = summarize(points, measure, band)
         table_rows.extend(table)
         coordinate_rows.extend(coordinates)
-        _plot_map(points, coordinates, measure, out / 'figures' / f'diversity_{measure}.png')
+        if not figures:
+            continue
+        _plot_map(
+            points, coordinates, measure,
+            out / 'figures' / f'diversity_{measure}.png')
         if measure in ('structural', 'geometric'):
             _plot_components(
                 points, measure, components,
                 out / 'figures' / f'diversity_{measure}_components.png')
-    binary_table, binary_coordinates, _ = summarize(points, 'structural_binary')
-    for row in binary_table:
-        row['measure'] = 'structural_binary'
-    for row in binary_coordinates:
-        row['measure'] = 'structural_binary'
-    table_rows.extend(binary_table)
-    coordinate_rows.extend(binary_coordinates)
-    _plot_map(
-        points, binary_coordinates, 'structural_binary',
-        out / 'figures' / 'diversity_structural_binary.png')
+    return table_rows, coordinate_rows
+
+
+def report(
+        results: Path, cache: Path, evaluate_dir: Path, out: Path,
+        band: tuple[float, float] | None = None) -> None:
+    points = collect_points(results, cache, evaluate_dir)
+    if len(points) < 2:
+        raise ValueError('at least two aligned, valid designs are required')
+    table_rows, coordinate_rows = _summarize_measures(points, out, 'all', True)
+    if band is not None:
+        label = f'quality {band[0]:.2f}-{band[1]:.2f}'
+        banded = quality_band(points, *band)
+        if len(banded) < 2:
+            raise ValueError(f'{label} holds {len(banded)} designs; widen it')
+        # The band is a table-only comparison: the unbanded maps stay the
+        # figures, so a reader is never shown a PCA fit on a filtered subset.
+        rows, coordinates = _summarize_measures(banded, out, label, False)
+        table_rows.extend(rows)
+        coordinate_rows.extend(coordinates)
     _write_csv(
         out / 'tables' / 'diversity.csv', table_rows,
-        ['set', 'measure', 'n', 'mean_pairwise_distance', 'ci95_low', 'ci95_high',
-         'pc1_variance', 'pc2_variance', 'mean_quality', 'quality_n'])
+        ['set', 'measure', 'band', 'n', 'mean_pairwise_distance', 'ci95_low',
+         'ci95_high', 'pc1_variance', 'pc2_variance', 'mean_quality', 'quality_n'])
     _write_csv(
         out / 'tables' / 'diversity_points.csv', coordinate_rows,
-        ['attempt', 'run_id', 'set', 'measure', 'pc1', 'pc2'])
+        ['attempt', 'run_id', 'set', 'measure', 'band', 'pc1', 'pc2'])
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -477,6 +555,13 @@ def main(argv: list[str] | None = None) -> int:
         '--evaluate', type=Path, default=_REPO / 'analysis' / 'out' / 'evaluate')
     report_parser.add_argument(
         '--out', type=Path, default=_REPO / 'analysis' / 'out' / 'diversity')
+    report_parser.add_argument(
+        '--quality-band', type=float, nargs=2, metavar=('LOW', 'HIGH'),
+        default=(0.75, 1.05),
+        help='also summarize every set inside this quality range')
+    report_parser.add_argument(
+        '--no-quality-band', dest='quality_band', action='store_const',
+        const=None, help='skip the quality-matched table')
     one = subparsers.add_parser('resolve-one')
     one.add_argument('--attempt', type=Path, required=True)
     one.add_argument('--destination', type=Path, required=True)
@@ -487,7 +572,8 @@ def main(argv: list[str] | None = None) -> int:
         records = solve_all(args.results, args.cache, force=args.force)
         print(json.dumps(records, indent=2))
     else:
-        report(args.results, args.cache, args.evaluate, args.out)
+        band = None if args.quality_band is None else tuple(args.quality_band)
+        report(args.results, args.cache, args.evaluate, args.out, band)
     return 0
 
 

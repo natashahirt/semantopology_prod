@@ -23,6 +23,7 @@ from figures import (
     write_comparison,
     write_progress_gif,
 )
+from guidance.blend import GRAD_MATCH_WEIGHT_MAX
 from guidance.clip_scales import parse_clip_scales
 from guidance.loss_semantic_prior import (
     CoadaptiveMask,
@@ -247,6 +248,20 @@ def _mean(ds, name: str) -> float | None:
     values = np.asarray(ds[name].values, dtype=np.float64).reshape(-1)
     values = values[np.isfinite(values)]
     return float(values.mean()) if values.size else None
+
+
+def _peak(ds, name: str) -> float | None:
+    """Finite maximum of a per-step column, or None when it was not logged.
+
+    Recorded alongside the mean because the grad-match weight is capped at
+    `GRAD_MATCH_WEIGHT_MAX`: a mean with headroom can still hide steps that
+    ran against the ceiling, where the coupling is no longer the stated rule.
+    """
+    if name not in ds:
+        return None
+    values = np.asarray(ds[name].values, dtype=np.float64).reshape(-1)
+    values = values[np.isfinite(values)]
+    return float(values.max()) if values.size else None
 
 
 def _gray_fraction(density: np.ndarray) -> float:
@@ -484,6 +499,11 @@ def run_campaign(args, output_dir: Path) -> dict:
             'clip_raw_z_weight_mean': (
                 preset.clip_weight_z if fixed
                 else _mean(ds, 'blend_clip_raw_z_weight')),
+            'clip_weight_max': _peak(ds, 'clip_weight'),
+            'clip_raw_z_weight_max': (
+                preset.clip_weight_z if fixed
+                else _peak(ds, 'blend_clip_raw_z_weight')),
+            'clip_weight_cap': GRAD_MATCH_WEIGHT_MAX,
         })
     return _write_contract(
         output_dir, args=args, preset=preset, density=density, raw=raw,

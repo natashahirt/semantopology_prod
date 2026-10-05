@@ -13,6 +13,7 @@ from PIL import Image
 from analysis import evaluate
 from recipe.campaign_spec import (
     EVAL_MODELS,
+    eval_backend,
     eval_model_suffix,
     eval_view_suffix,
 )
@@ -49,6 +50,22 @@ def test_suffixes_keep_the_primary_names():
     assert eval_view_suffix('z') == '_z'
 
 
+def test_evaluator_ladder_leaves_the_openai_family():
+    """Two of the evaluators share neither training data nor, for one, architecture."""
+    backends = {name: eval_backend(name) for name in EVAL_MODELS}
+    assert backends['ViT-B/32'] == ('clip', 'ViT-B/32', None)
+    assert backends['ViT-L/14'][0] == 'clip'
+    independent = [name for name, spec in backends.items() if spec[0] == 'open_clip']
+    assert len(independent) == 2
+    assert all('laion' in backends[name][2] for name in independent)
+    # One holds the architecture fixed to isolate training data; the other does not.
+    architectures = {backends[name][1] for name in independent}
+    assert 'ViT-B-32' in architectures
+    assert len(architectures) == 2
+    with pytest.raises(ValueError, match='unknown evaluator'):
+        eval_backend('ViT-H/14')
+
+
 def test_every_evaluator_writes_aligned_outputs(tmp_path, monkeypatch):
     offsets = {'ViT-B/32': 0.0, 'ViT-L/14': 1.0}
     monkeypatch.setattr(
@@ -63,7 +80,10 @@ def test_every_evaluator_writes_aligned_outputs(tmp_path, monkeypatch):
     _write_attempt(results, 'C1/tall/structure', 0.8)
     out = tmp_path / 'evaluate'
 
-    assert evaluate.main(['--results', str(results), '--out', str(out)]) == 0
+    # Only the stubbed `clip` backends; the open_clip ladder needs real weights.
+    assert evaluate.main([
+        '--results', str(results), '--out', str(out),
+        '--models', 'ViT-B/32', 'ViT-L/14']) == 0
 
     primary = json.loads((out / 'similarities.json').read_text())
     second = json.loads((out / 'similarities_vit_l_14.json').read_text())

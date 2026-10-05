@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -10,7 +12,10 @@ from analysis.diversity import (
     comparison_set,
     geometric_map,
     load_path_map,
+    quality,
+    quality_band,
     replay_args,
+    summarize,
 )
 from physics import physics
 from physics.api import Environment, specified_task
@@ -108,7 +113,73 @@ def test_legacy_run_arguments_are_recovered_from_manifest(tmp_path):
         ({'experiment': 'P', 'structure': 'tall', 'prompt': 'honeycomb'},
          'semantic prompts'),
         ({'experiment': 'M', 'structure': 'bridge', 'prompt': 'lace'}, None),
+        ({'experiment': 'V', 'structure': 'tall', 'prompt': None},
+         'volume sweep'),
+        ({'experiment': 'V', 'structure': 'tall', 'prompt': 'fern fronds'},
+         None),
     ],
 )
 def test_comparison_set(meta, expected):
     assert comparison_set(meta) == expected
+
+
+def _point(group, compliance, *, volume=0.3, experiment='M', offset=0.0):
+    """A minimal collect_points row: two features one step apart per set."""
+    return {
+        'attempt': f'{group}/{compliance}/{offset}',
+        'run_id': f'{group}-{compliance}',
+        'prompt': None,
+        'experiment': experiment,
+        'set': group,
+        'resolution_scale': 1.0,
+        'volume_target': volume,
+        'compliance': compliance,
+        'structural': np.array([offset, 1.0 - offset]),
+        'structural_binary': np.array([offset, 1.0 - offset]),
+        'geometric': np.array([offset, 1.0 - offset]),
+        'perceptual': np.array([offset, 1.0 - offset]),
+        'image': Path('missing.png'),
+    }
+
+
+def test_quality_skips_runs_on_a_different_material_budget():
+    """A 0.2-volume design cannot be scored against the 0.3 baseline."""
+    baseline = 60.0
+    assert quality(_point('ours', 60.0), baseline) == pytest.approx(1.0)
+    assert quality(_point('ours', 30.0), baseline) == pytest.approx(2.0)
+    assert quality(_point('volume sweep', 30.0, volume=0.2), baseline) is None
+    coarse = _point('ours', 60.0)
+    coarse['resolution_scale'] = 0.5
+    assert quality(coarse, baseline) is None
+
+
+def test_quality_band_keeps_only_the_matched_designs():
+    points = [
+        _point('unguided seeds', 60.0, experiment='B'),
+        _point('ours', 62.0, offset=0.4),
+        _point('ours', 200.0, offset=0.8),
+        _point('volume sweep', 45.0, volume=0.2, experiment='V'),
+    ]
+    kept = quality_band(points, 0.8, 1.05)
+    # The 200-compliance design is too weak and the 0.2-volume one has no
+    # comparable quality at all, so neither survives the band.
+    assert [point['compliance'] for point in kept] == [60.0, 62.0]
+
+
+def test_conventional_union_is_the_pooled_baseline():
+    points = [
+        _point('unguided seeds', 60.0, experiment='B'),
+        _point('unguided seeds', 60.0, offset=0.05, experiment='B'),
+        _point('parameter sweep', 70.0, offset=0.5, experiment='D'),
+        _point('ours', 65.0, offset=0.9),
+        _point('ours', 66.0, offset=0.95),
+    ]
+    table, _, _ = summarize(points, 'structural')
+    by_set = {row['set']: row for row in table}
+    assert by_set['conventional union']['n'] == 3
+    assert by_set['unguided seeds']['n'] == 2
+    # Pooling two narrow baselines widens them; that is the objection the
+    # union exists to answer, so it must actually be measured.
+    assert (by_set['conventional union']['mean_pairwise_distance']
+            > by_set['unguided seeds']['mean_pairwise_distance'])
+    assert all(row['band'] == 'all' for row in table)

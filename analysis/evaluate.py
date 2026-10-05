@@ -35,6 +35,7 @@ from recipe.campaign_spec import (
     EVAL_VIEWS,
     LADDER_PROMPTS,
     PROMPTS,
+    eval_backend,
     eval_model_suffix,
     eval_view_suffix,
 )
@@ -70,6 +71,63 @@ def _load_render(attempt: Path) -> np.ndarray | None:
 _VIEW_LOADERS = {'density': _load_density, 'z': _load_render}
 
 
+class _OpenAIEvaluator:
+    """``clip`` package backend: the models training itself can load."""
+
+    def __init__(self, model_name: str, device):
+        model, _ = _load_clip_model(model_name, device)
+        self._model = model
+        self._device = device
+        self.resolution = int(model.visual.input_resolution)
+        self.pixel_mean = CLIP_PIXEL_MEAN
+        self.pixel_std = CLIP_PIXEL_STD
+
+    def encode_image(self, batch: torch.Tensor) -> torch.Tensor:
+        return self._model.encode_image(batch).float()
+
+    def encode_text(self, texts) -> torch.Tensor:
+        return _encode_texts(self._model, list(texts), self._device)
+
+
+class _OpenClipEvaluator:
+    """``open_clip`` backend, carrying each checkpoint's own preprocessing.
+
+    Resolution and normalization come from the model's preprocess config
+    rather than CLIP's constants, because these checkpoints do not all share
+    them: convnext_base_w is 256 pixels where the ViTs are 224.
+    """
+
+    def __init__(self, architecture: str, pretrained: str, device):
+        import open_clip
+
+        model = open_clip.create_model(
+            architecture, pretrained=pretrained, device=device)
+        self._model = model.eval().requires_grad_(False)
+        self._device = device
+        self._tokenizer = open_clip.get_tokenizer(architecture)
+        config = open_clip.get_model_preprocess_cfg(model)
+        size = config['size']
+        self.resolution = int(size[0] if isinstance(size, (tuple, list)) else size)
+        self.pixel_mean = tuple(config['mean'])
+        self.pixel_std = tuple(config['std'])
+
+    def encode_image(self, batch: torch.Tensor) -> torch.Tensor:
+        return self._model.encode_image(batch).float()
+
+    @torch.no_grad()
+    def encode_text(self, texts) -> torch.Tensor:
+        tokens = self._tokenizer(list(texts)).to(self._device)
+        return F.normalize(self._model.encode_text(tokens).float(), dim=-1)
+
+
+def load_evaluator(model_name: str, device):
+    """Build the evaluator for one name in ``EVAL_MODELS``."""
+    backend, architecture, pretrained = eval_backend(model_name)
+    if backend == 'clip':
+        return _OpenAIEvaluator(architecture, device)
+    return _OpenClipEvaluator(architecture, pretrained, device)
+
+
 def _grid_crops(image: torch.Tensor, size: int, n: int = 3) -> torch.Tensor:
     """n x n square crops covering the letterboxed view."""
     _, _, height, width = image.shape
@@ -87,18 +145,18 @@ def _grid_crops(image: torch.Tensor, size: int, n: int = 3) -> torch.Tensor:
         stacked, size=(size, size), mode='bilinear', align_corners=False)
 
 
-def embed_field(field: np.ndarray, clip_model, device) -> np.ndarray:
+def embed_field(field: np.ndarray, evaluator, device) -> np.ndarray:
     """Unit embedding of a [0, 1] grayscale field: full frame and 3x3 crops, pooled."""
     field = torch.from_numpy(np.clip(field, 0.0, 1.0)).float()
     image = field.view(1, 1, *field.shape[-2:]).repeat(1, 3, 1, 1).to(device)
-    size = int(clip_model.visual.input_resolution)
+    size = int(evaluator.resolution)
     full = letterbox_to_square(image, size)
     crops = _grid_crops(image, size, n=3)
     batch = torch.cat([full, crops], dim=0)
-    mean = torch.tensor(CLIP_PIXEL_MEAN, device=device).view(1, 3, 1, 1)
-    std = torch.tensor(CLIP_PIXEL_STD, device=device).view(1, 3, 1, 1)
+    mean = torch.tensor(evaluator.pixel_mean, device=device).view(1, 3, 1, 1)
+    std = torch.tensor(evaluator.pixel_std, device=device).view(1, 3, 1, 1)
     with torch.no_grad():
-        z = clip_model.encode_image((batch - mean) / std).float()
+        z = evaluator.encode_image((batch - mean) / std)
         z = F.normalize(z, dim=-1)
         pooled = F.normalize(z.mean(dim=0, keepdim=True), dim=-1)
     return pooled.cpu().numpy()[0]
@@ -132,19 +190,19 @@ def _load_runs(
 
 
 def score_runs(
-        runs, clip_model, model_name: str, device,
+        runs, evaluator, model_name: str, device,
         view: str = 'density') -> tuple[list[dict], list[np.ndarray]]:
     """Similarity rows and pooled embeddings for one evaluator model and view."""
-    text = _encode_texts(clip_model, list(EVAL_PROMPTS), device).cpu().numpy()
+    text = evaluator.encode_text(EVAL_PROMPTS).cpu().numpy()
     # Each run is also scored against its own prompt (P, N, L and M use
     # prompts outside EVAL_PROMPTS); every distinct prompt is encoded once.
     own_prompts = sorted({meta['prompt'] for _, _, meta in runs if meta.get('prompt')})
     own_text = dict(zip(own_prompts, (
-        _encode_texts(clip_model, own_prompts, device).cpu().numpy()
+        evaluator.encode_text(own_prompts).cpu().numpy()
         if own_prompts else [])))
     rows, embeddings = [], []
     for attempt, field, meta in runs:
-        vector = embed_field(field, clip_model, device)
+        vector = embed_field(field, evaluator, device)
         prompt = meta.get('prompt')
         rows.append({
             'attempt': _display_path(attempt),
@@ -177,9 +235,9 @@ def main(argv: list[str] | None = None) -> int:
     attempts = walk_done(Path(args.results))
     runs_by_view = {view: _load_runs(attempts, view) for view in args.views}
     for model_name in args.models:
-        clip_model, _ = _load_clip_model(model_name, device)
+        evaluator = load_evaluator(model_name, device)
         for view, runs in runs_by_view.items():
-            rows, embeddings = score_runs(runs, clip_model, model_name, device, view)
+            rows, embeddings = score_runs(runs, evaluator, model_name, device, view)
             suffix = eval_model_suffix(model_name) + eval_view_suffix(view)
             if embeddings:
                 np.save(out / f'embeddings{suffix}.npy', np.stack(embeddings))

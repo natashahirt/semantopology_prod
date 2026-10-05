@@ -9,6 +9,8 @@ import pytest
 from recipe.campaign import onoff, preset_from_args, run_campaign
 from recipe.campaign_spec import (
     CONTROL_PROMPTS,
+    DIAL_SEED_RHOS,
+    DIAL_SEEDS,
     DIVERSITY_PROMPTS,
     FERN_WORDINGS,
     GRAVITY_LOAD,
@@ -20,6 +22,7 @@ from recipe.preset import PAPER
 from run import build_parser
 from slurm.make_manifest import (
     control_prompt_rows,
+    dial_seed_rows,
     experiment_rows,
     extension_rows,
     fern_wording_rows,
@@ -368,6 +371,25 @@ def test_typology_prompts_are_new_to_the_campaign():
         if '--clip' in row['argv']
     }
     assert seen.isdisjoint(TYPOLOGY_PROMPTS)
+
+
+def test_dial_seed_panel_reruns_the_dial_at_new_seeds():
+    rows = dial_seed_rows()
+    assert len(rows) == len(DIAL_SEEDS) * len(DIAL_SEED_RHOS) == 9
+    ids = [row['run_id'] for row in rows]
+    assert len(ids) == len(set(ids))
+    # The campaign seed is deliberately absent: S2 already ran the dial there,
+    # so these rows are the extra trajectories that turn the curve into a band.
+    assert 12 not in DIAL_SEEDS
+    campaign = {row['run_id'] for row in experiment_rows(include_s1b=False)}
+    assert all(run_id not in campaign for run_id in ids)
+    for row in rows:
+        argv = row['argv']
+        assert argv[argv.index('--clip') + 1] == PROMPTS[0]
+        assert float(argv[argv.index('--blend-rho') + 1]) in DIAL_SEED_RHOS
+        assert int(argv[argv.index('--seed') + 1]) in DIAL_SEEDS
+        preset = preset_from_args(build_parser().parse_args(argv))
+        assert preset.clip_weight is None, row['run_id']
 
 
 def _without_identity(argv: list[str]) -> list[str]:

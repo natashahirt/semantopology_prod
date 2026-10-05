@@ -106,10 +106,13 @@ analysis/out/
   evaluate/similarities_vit_l_14.json
   evaluate/embeddings_vit_l_14_z.npy    # ViT-L/14, final.png
   evaluate/similarities_vit_l_14_z.json
-  tables/cross_prompt_matrix.csv
-  tables/cross_prompt_matrix_vit_l_14.csv
+  evaluate/*_vit_b_32_laion2b_s34b_b79k*       # LAION ViT-B-32, both views
+  evaluate/*_convnext_base_w_laion2b_s13b_b82k*  # LAION ConvNeXt, both views
+  tables/cross_prompt_matrix.csv        # one per evaluator x view
+  tables/semantic_floor.csv             # one per evaluator x view
   tables/evaluator_view_gap_vit_l_14.csv
   tables/compliance.csv
+  tables/weight_headroom.csv
   diversity/energy/                     # cached per-element re-solves
   diversity/tables/diversity.csv
   diversity/tables/diversity_points.csv
@@ -461,6 +464,32 @@ is cheap on bridge and expensive on tall, geometric compatibility is a
 relation between prompt and structure rather than a property of the wording.
 Say explicitly which prompts changed rank between structures.
 
+## Phase 2e — S2c, the dial at more seeds
+
+Nine rows, cheapest panel in the campaign. Submit it whenever the queue has
+room; nothing depends on it.
+
+```bash
+python slurm/make_manifest.py --dial-seeds   # slurm/dial_seeds.tsv, 9 rows
+sbatch --array=0-8%9 --export=ALL,CAMPAIGN_MANIFEST=slurm/dial_seeds.tsv \
+  slurm/campaign.sbatch
+```
+
+`fern fronds` on tall at ρ ∈ {0, 0.5, 1} and seeds 101, 202, 303. S2 already
+ran these three dial settings at the campaign seed, so together they give four
+trajectories. The claim being tested is that the dial's *shape* survives
+reinitialization: compliance and gray fraction should rise monotonically with ρ
+in every seed, with the steepest step between 0.5 and 1.
+
+Report it as a band — per ρ, the mean and range across the four seeds — and say
+whether the monotonicity holds in all four or only on average. A single seed
+reordering the dial is worth stating plainly; it would mean the 4.1 curve is
+one sample rather than a trend.
+
+**Scheduling.** These nine rows and the tail of R compete for the same queue
+time. R's unguided tall rows carry the clustering claim in 4.5, so if the queue
+cannot take both, finish R first and say in `REPORT.md` that S2c was dropped.
+
 ## Phase 3 — analysis
 ```bash
 python analysis/evaluate.py
@@ -468,29 +497,70 @@ python analysis/figures.py
 python analysis/diversity.py solve
 python analysis/diversity.py report
 ```
-Two evaluators score every finished run on the same deterministic crops, a
+Four evaluators score every finished run on the same deterministic crops, a
 letterboxed full frame plus a 3×3 grid of square crops (no random
-augmentation): `ViT-B/32`, an independent pass on the training backbone,
-and `ViT-L/14`, which training never loads. Each evaluator scores both the
-saved physical density and `final.png`, the sharp-ink raw-z view shown to the
-reader. Never reuse training-time CLIP losses. If the cluster rejects
-`ViT-L/14` (weights missing, no internet on the compute node), download it on
-the login node and rerun; do not drop it silently.
+augmentation). They form a ladder away from the backbone guidance uses:
+`ViT-B/32` (OpenAI) is that backbone under a protocol training never uses;
+`ViT-L/14` (OpenAI) is a scale training never loads;
+`ViT-B-32/laion2b_s34b_b79k` holds the architecture fixed and changes the
+training corpus; `convnext_base_w/laion2b_s13b_b82k` changes both. The last
+two load through `open_clip` and use each checkpoint's own input resolution
+and pixel normalization, not CLIP's. Each evaluator scores both the saved
+physical density and `final.png`, the sharp-ink raw-z view shown to the
+reader. Never reuse training-time CLIP losses.
+
+The point of the ladder is a claim that survives it: report where the prompt
+ranking agrees across all four and where it does not. A ranking that holds
+only on `ViT-B/32` is a property of that model, not of the designs.
+
+The weights must exist on disk before the job runs. On the login node, where
+there is internet:
+
+```bash
+python -c "import open_clip; [open_clip.create_model(a, pretrained=p) for a, p in
+  (('ViT-B-32','laion2b_s34b_b79k'),('convnext_base_w','laion2b_s13b_b82k'))]"
+python -c "import clip; clip.load('ViT-L/14', device='cpu')"
+```
+
+If an evaluator still cannot load on the compute node, run the rest with
+`--models` and say in `REPORT.md` which one was dropped; do not drop it
+silently. A SigLIP evaluator was considered and left out: its tokenizer needs
+`transformers`, which this environment does not have.
 
 `diversity.py solve` re-solves every selected tall-building density in a
 separate process and caches its element strain energy. A failed CHOLMOD
 factorization must not be caught and retried in-process. The saved run
 compliance is one update behind the saved density, so the script accepts a
 5% relative difference and excludes larger mismatches. `diversity.py report`
-fits each PCA once on the union of sets: B plus unguided R seeds, D, M, and
-the lighter S3/P/L comparison set. It writes structural (load-path),
-geometric (physical-density), and perceptual (ViT-L/14 `final.png`) maps,
-plus a binary-structure check.
+fits each PCA once on the union of sets: B plus unguided R seeds, D, the
+unguided V volume rows, M, and the lighter S3/P/L comparison set. It writes
+structural (load-path), geometric (physical-density), and perceptual
+(ViT-L/14 `final.png`) maps, plus a binary-structure check.
+
+`diversity.csv` carries two defences of the diversity claim beside the raw
+spread. The `conventional union` row pools every set a conventional pipeline
+can reach by turning its own knobs — seeds, parameters, volume — so a reader
+cannot object that each baseline is narrow only because it varies one thing
+at a time. The second `band` value (default `quality 0.75-1.05`) repeats every
+set inside a common quality range, which answers the charge that a wider
+spread is just a worse one. Quality is a compliance ratio against the unguided
+baseline, so it is only defined at the 0.3 budget: the volume rows drop out of
+the banded table by construction, and that is expected, not a bug. Report both
+the unbanded and the banded numbers. If the band holds too few designs to
+bootstrap, widen it with `--quality-band LOW HIGH` and say what you used.
 
 Outputs land under `analysis/out/`. In `REPORT.md`, report each cross-prompt
-table for both evaluators and the z-minus-density evaluator gap. Report all
-three diversity maps, `diversity/tables/diversity.csv`, excluded re-solves,
-and where the physical and binary structural maps disagree.
+table per evaluator and view, the z-minus-density evaluator gap, and
+`semantic_floor.csv` — which gives, per prompt, how much closer its own
+designs sit to it than designs guided by a meaningless string or not guided at
+all. That gap is the semantic claim; the mechanical scalars cannot make it,
+because compliance and gray fraction move the same way under a nonsense
+prompt. Also report `weight_headroom.csv`: the grad-matched weight is
+truncated at 2000, so state whether any run reached it. Runs recorded before
+`clip_weight_max` was logged leave that column empty — say so rather than
+reading the mean as a maximum. Report all three diversity maps,
+`diversity/tables/diversity.csv`, excluded re-solves, and where the physical
+and binary structural maps disagree.
 
 ## Definition of Done (only then hand back)
 
@@ -503,6 +573,8 @@ and where the physical and binary structural maps disagree.
   did not finish before the cutoff are listed in `REPORT.md`.
 - Every Phase 2d (G) row is `DONE` (or permanently failed), reported as a
   prompt × structure table with the stated predictions marked kept or broken.
+- Every Phase 2e (S2c) row is `DONE`, permanently failed, or explicitly
+  dropped for queue time, with the dial reported as a four-seed band.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

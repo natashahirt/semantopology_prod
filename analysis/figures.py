@@ -10,15 +10,23 @@ from pathlib import Path
 
 import numpy as np
 
+from guidance.blend import GRAD_MATCH_WEIGHT_MAX
 from recipe.campaign_spec import (
+    CONTROL_PROMPTS,
     EVAL_MODELS,
     EVAL_VIEWS,
     FERN_WORDINGS,
+    NONSENSE_PROMPTS,
     PROMPTS,
+    SCRAMBLED_PROMPTS,
     eval_model_suffix,
     eval_view_suffix,
 )
 from recipe.preset import prompt_slug
+
+# Prompts carrying no meaning: the floor any similarity claim must clear.
+MEANINGLESS_PROMPTS = frozenset(
+    NONSENSE_PROMPTS + SCRAMBLED_PROMPTS + (CONTROL_PROMPTS[1],))
 
 _REPO = Path(__file__).resolve().parents[1]
 
@@ -104,6 +112,94 @@ def cross_prompt_matrix(
         rows.append(row)
     _write_csv(
         out / 'tables' / f'cross_prompt_matrix{suffix}.csv', rows, fieldnames)
+
+
+def semantic_floor(
+        similarities_path: Path, out: Path, suffix: str = '') -> None:
+    """Similarity to each prompt, split by what guided the design.
+
+    The mechanical scalars cannot tell a meaningful prompt from a meaningless
+    one -- compliance and gray fraction measure the cost of CLIP pressure, not
+    fidelity. This is where that distinction has to show up instead: for each
+    prompt, how much closer its own designs sit to it than designs pushed by a
+    meaningless string, or not pushed at all. A small gap would mean the
+    similarity is reporting generic CLIP pressure rather than the words.
+    """
+    if not similarities_path.exists():
+        return
+    records = json.loads(similarities_path.read_text())
+    classes = {'own': [], 'meaningless': [], 'other prompt': [], 'unguided': []}
+    rows = []
+    for prompt in PROMPTS:
+        scores = {key: [] for key in classes}
+        for record in records:
+            value = (record.get('similarities') or {}).get(prompt)
+            if value is None:
+                continue
+            guide = record.get('prompt')
+            if guide is None:
+                key = 'unguided'
+            elif guide == prompt:
+                key = 'own'
+            elif guide in MEANINGLESS_PROMPTS:
+                key = 'meaningless'
+            else:
+                key = 'other prompt'
+            scores[key].append(float(value))
+        row = {'prompt': prompt}
+        for key, values in scores.items():
+            row[f'{key}_mean'] = float(np.mean(values)) if values else None
+            row[f'{key}_n'] = len(values)
+        own, floor = row['own_mean'], row['meaningless_mean']
+        row['own_minus_meaningless'] = (
+            None if own is None or floor is None else own - floor)
+        row['own_minus_unguided'] = (
+            None if own is None or row['unguided_mean'] is None
+            else own - row['unguided_mean'])
+        rows.append(row)
+    _write_csv(
+        out / 'tables' / f'semantic_floor{suffix}.csv', rows,
+        ['prompt'] + [f'{key}_{field}' for key in classes for field in ('mean', 'n')]
+        + ['own_minus_meaningless', 'own_minus_unguided'])
+
+
+def weight_headroom(runs: list[dict], out: Path) -> None:
+    """Grad-matched CLIP weights against the cap that would silently clip them.
+
+    `GradNormEma.weight` truncates the gradient ratio at
+    `GRAD_MATCH_WEIGHT_MAX`, so a run that spent steps at the ceiling was not
+    actually running the coupling the method claims. Runs recorded before the
+    per-step maximum was logged leave those columns empty; the mean is then
+    only a lower bound on how close the run came.
+    """
+    rows = []
+    for run in runs:
+        if run.get('coupling') is None:
+            continue
+        mean = run.get('clip_weight_mean')
+        peak = run.get('clip_weight_max')
+        cap = float(run.get('clip_weight_cap') or GRAD_MATCH_WEIGHT_MAX)
+        rows.append({
+            'run_id': run.get('run_id'),
+            'experiment': run.get('experiment'),
+            'structure': run.get('structure'),
+            'prompt': run.get('prompt'),
+            'coupling': run.get('coupling'),
+            'clip_weight_mean': mean,
+            'clip_weight_max': peak,
+            'clip_raw_z_weight_mean': run.get('clip_raw_z_weight_mean'),
+            'clip_raw_z_weight_max': run.get('clip_raw_z_weight_max'),
+            'cap': cap,
+            'mean_fraction_of_cap': None if mean is None else float(mean) / cap,
+            'max_fraction_of_cap': None if peak is None else float(peak) / cap,
+            'at_cap': None if peak is None else bool(float(peak) >= cap - 1e-6),
+        })
+    _write_csv(
+        out / 'tables' / 'weight_headroom.csv', rows,
+        ['run_id', 'experiment', 'structure', 'prompt', 'coupling',
+         'clip_weight_mean', 'clip_weight_max', 'clip_raw_z_weight_mean',
+         'clip_raw_z_weight_max', 'cap', 'mean_fraction_of_cap',
+         'max_fraction_of_cap', 'at_cap'])
 
 
 def evaluator_view_gap(
@@ -239,12 +335,13 @@ def main(argv: list[str] | None = None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     runs = _load_runs(Path(args.results))
     compliance_table(runs, out)
+    weight_headroom(runs, out)
     for model_name in EVAL_MODELS:
         for view in EVAL_VIEWS:
             suffix = eval_model_suffix(model_name) + eval_view_suffix(view)
-            cross_prompt_matrix(
-                Path(args.out) / 'evaluate' / f'similarities{suffix}.json',
-                out, suffix=suffix)
+            similarities = Path(args.out) / 'evaluate' / f'similarities{suffix}.json'
+            cross_prompt_matrix(similarities, out, suffix=suffix)
+            semantic_floor(similarities, out, suffix=suffix)
         model_suffix = eval_model_suffix(model_name)
         evaluator_view_gap(
             Path(args.out) / 'evaluate' / f'similarities{model_suffix}.json',
