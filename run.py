@@ -54,6 +54,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         '--sketch-weight-end', type=float, default=PAPER.sketch_weight_end)
     parser.add_argument(
+        '--sketch-weight-start', type=float, default=PAPER.sketch_weight_start,
+        help='Sketch prior weight on the coarsest AdaptivePixel grid, where '
+             'topology is decided. The weight ramps from here to '
+             '--sketch-weight-end at full resolution.')
+    parser.add_argument(
         '--prompt-sketch', action='store_true',
         help='Sketch occupancy plus a CLIP prompt (no dream).')
     parser.add_argument('--blend-rho', type=float, default=PAPER.blend_rho)

@@ -464,6 +464,48 @@ is cheap on bridge and expensive on tall, geometric compatibility is a
 relation between prompt and structure rather than a property of the wording.
 Say explicitly which prompts changed rank between structures.
 
+## Phase 2f — F2b, loosening a rigid sketch prior
+
+Ten rows on tall. Submit whenever there is queue room; nothing depends on it.
+
+```bash
+python slurm/make_manifest.py --loose-sketches  # slurm/loose_sketches.tsv, 10 rows
+sbatch --array=0-9%10 --export=ALL,CAMPAIGN_MANIFEST=slurm/loose_sketches.tsv \
+  slurm/campaign.sbatch
+```
+
+`col3_braced.png` and `col6_grid.png` come out rigid in F3 and H3 — the design
+keeps the sketch's own geometry instead of negotiating with it. Both have only
+ever run at the default `sketch_weight_end` of 400, and `WEIGHT_ENDS` holds
+only one rung below that, so the campaign has never actually tested a loose
+prior on its two most regular sketches.
+
+The prior is a ramp: `sketch_weight` runs from `sketch_weight_start` (4000) on
+the coarsest AdaptivePixel grid to `sketch_weight_end` at full resolution. Two
+levers can cause rigidity and the panel separates them.
+
+- **End ladder** (8 rows): both sketches at end ∈ {0, 50, 100, 200}. `wend-0`
+  keeps the full coarse-grid prior and lets it decay to nothing, so the sketch
+  sets the global posture and physics finishes the design unconstrained.
+- **Start sweep** (2 rows): `col3_braced` at start ∈ {1000, 2000}, end left at
+  the default 400. New flag `--sketch-weight-start`.
+
+**Stated before the runs, so the outcome can be judged rather than narrated:**
+the coarse grid is where AdaptivePixel settles topology, so if the braced
+pattern is locked in there, loosening the end can only thin the members, not
+rearrange them. The prediction is that the end ladder changes member thickness
+and gray fraction while leaving the connected-component count and the brace
+pattern essentially intact, and that the start sweep is what actually changes
+the topology. If instead the end ladder reorganizes the structure, that
+prediction is wrong and the rigidity was never about the coarse grid — say so
+plainly.
+
+Report, per row: compliance, gray fraction, connected components, and a visual
+call on whether the sketch's geometry survived. Then say which lever moved the
+design, because that is the finding, not the individual images. Note that
+`wend-0` is not the same run as F1's `--sketch-weight off` arm: that one has no
+prior at any stage, while this one has the full prior at the coarse grid.
+
 ## Phase 2e — S2c, the dial at more seeds
 
 Nine rows, cheapest panel in the campaign. Submit it whenever the queue has
@@ -575,6 +617,9 @@ and binary structural maps disagree.
   prompt × structure table with the stated predictions marked kept or broken.
 - Every Phase 2e (S2c) row is `DONE`, permanently failed, or explicitly
   dropped for queue time, with the dial reported as a four-seed band.
+- Every Phase 2f (F2b) row is `DONE`, permanently failed, or explicitly
+  dropped, with a verdict on which lever — end or start — loosened the prior,
+  and the stated prediction marked kept or broken.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

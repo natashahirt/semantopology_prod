@@ -26,6 +26,9 @@ from recipe.campaign_spec import (
     GRAVITY_LOAD,
     H3_SKETCHES,
     LADDER_PROMPTS,
+    LOOSE_SKETCHES,
+    LOOSE_WEIGHT_ENDS,
+    LOOSE_WEIGHT_STARTS,
     NONSENSE_PROMPTS,
     NONSTRUCTURAL_PROMPTS,
     PROMPTS,
@@ -45,6 +48,7 @@ from recipe.campaign_spec import (
     sketch_token,
     vf_token,
     wend_token,
+    wstart_token,
 )
 
 _REPO = Path(__file__).resolve().parents[1]
@@ -365,6 +369,38 @@ def typology_rows() -> list[dict]:
     ]
 
 
+def loose_sketch_rows() -> list[dict]:
+    """F2b: the braced frame and column grid with the prior loosened.
+
+    Both sketches have only ever run at the default end of 400, in F3 and
+    H3, where they come out rigid -- the design keeps the sketch's own
+    geometry. Two levers could be responsible and they are swept separately.
+    The end ladder relaxes the prior at full resolution. The start sweep
+    relaxes it on the coarsest grid instead, which is where AdaptivePixel
+    settles topology: if the braced pattern is already locked in there, no
+    end weight can loosen it, and only the start rows will move.
+    """
+    rows = []
+    for stem in LOOSE_SKETCHES:
+        for end in LOOSE_WEIGHT_ENDS:
+            rows.append(_row(
+                f'F2b/tall/{sketch_token(stem)}/{wend_token(end)}',
+                'F2b', 'formal',
+                ['--mode', 'sketch', *_structure_args('tall'),
+                 '--sketch', str(SKETCH_ROOT / stem),
+                 '--sketch-weight-end', str(end)],
+            ))
+    for start in LOOSE_WEIGHT_STARTS:
+        rows.append(_row(
+            f'F2b/tall/{sketch_token(LOOSE_SKETCHES[0])}/{wstart_token(start)}',
+            'F2b', 'formal',
+            ['--mode', 'sketch', *_structure_args('tall'),
+             '--sketch', str(SKETCH_ROOT / LOOSE_SKETCHES[0]),
+             '--sketch-weight-start', str(start)],
+        ))
+    return rows
+
+
 def dial_seed_rows() -> list[dict]:
     """S2c: the density dial at extra seeds, so 4.1's curve becomes a band.
 
@@ -391,6 +427,7 @@ OFF_TABLE_PANELS = {
     'extensions': ('extensions.tsv', extension_rows),
     'typology': ('typology.tsv', typology_rows),
     'dial_seeds': ('dial_seeds.tsv', dial_seed_rows),
+    'loose_sketches': ('loose_sketches.tsv', loose_sketch_rows),
 }
 
 
@@ -425,6 +462,10 @@ def main(argv: list[str] | None = None) -> int:
         '--dial-seeds', action='store_true',
         help='Write only the S2c dial-by-seed panel, never the 118-row '
              'campaign TSV.')
+    parser.add_argument(
+        '--loose-sketches', action='store_true',
+        help='Write only the F2b loosened sketch-prior panel, never the '
+             '118-row campaign TSV.')
     parser.add_argument(
         '--fixed-weight', nargs=2, type=float, metavar=('W_DENSITY', 'W_Z'),
         help='Write only the C2 fixed-weight panel at these two CLIP weights.')

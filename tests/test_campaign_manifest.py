@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from types import SimpleNamespace
 
 import pytest
 
+from model.model_base import Model
 from recipe.campaign import onoff, preset_from_args, run_campaign
 from recipe.campaign_spec import (
     CONTROL_PROMPTS,
@@ -14,6 +16,8 @@ from recipe.campaign_spec import (
     DIVERSITY_PROMPTS,
     FERN_WORDINGS,
     GRAVITY_LOAD,
+    LOOSE_WEIGHT_ENDS,
+    LOOSE_WEIGHT_STARTS,
     PROMPTS,
     TYPOLOGY_PROMPTS,
     prompt_token,
@@ -27,6 +31,7 @@ from slurm.make_manifest import (
     extension_rows,
     fern_wording_rows,
     fixed_weight_rows,
+    loose_sketch_rows,
     typology_rows,
 )
 
@@ -390,6 +395,50 @@ def test_dial_seed_panel_reruns_the_dial_at_new_seeds():
         assert int(argv[argv.index('--seed') + 1]) in DIAL_SEEDS
         preset = preset_from_args(build_parser().parse_args(argv))
         assert preset.clip_weight is None, row['run_id']
+
+
+def test_loose_sketch_panel_sweeps_both_ends_of_the_ramp():
+    rows = loose_sketch_rows()
+    assert len(rows) == 10
+    ids = [row['run_id'] for row in rows]
+    assert len(ids) == len(set(ids))
+    campaign = {row['run_id'] for row in experiment_rows(include_s1b=False)}
+    assert all(run_id not in campaign for run_id in ids)
+    # Every rung is looser than the default the rigid runs used, which is the
+    # whole point: WEIGHT_ENDS only has one value below it.
+    assert all(end < PAPER.sketch_weight_end for end in LOOSE_WEIGHT_ENDS)
+    assert all(start < PAPER.sketch_weight_start for start in LOOSE_WEIGHT_STARTS)
+
+    presets = {}
+    for row in rows:
+        args = build_parser().parse_args(row['argv'])
+        args.sketch_init = onoff(args.sketch_init)
+        args.sketch_weight = onoff(args.sketch_weight)
+        args.coadapt = onoff(args.coadapt or 'off')
+        args.device = args.device or PAPER.device
+        presets[row['run_id']] = preset_from_args(args)
+
+    # The end ladder moves only the end; the start rows move only the start.
+    end_row = presets['F2b/tall/sketch-col3_braced/wend-0']
+    assert end_row.sketch_weight_end == 0.0
+    assert end_row.sketch_weight_start == PAPER.sketch_weight_start
+    start_row = presets['F2b/tall/sketch-col3_braced/wstart-1000']
+    assert start_row.sketch_weight_start == 1000.0
+    assert start_row.sketch_weight_end == PAPER.sketch_weight_end
+    assert all(preset.use_sketch_weight for preset in presets.values())
+
+
+def test_decaying_to_zero_releases_the_prior_at_full_resolution():
+    """`wend-0` keeps the coarse-grid prior and ends with none at all."""
+    model = SimpleNamespace(
+        sketch_weight_start=4000.0, sketch_weight_end=0.0,
+        resize_num=4, resizes=0)
+    at = Model.sketch_weight_at.__get__(model)
+    assert at() == 4000.0
+    model.resizes = 2
+    assert at() == 2000.0
+    model.resizes = 4
+    assert at() == 0.0
 
 
 def _without_identity(argv: list[str]) -> list[str]:
