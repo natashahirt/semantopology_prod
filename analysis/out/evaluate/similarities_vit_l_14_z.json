@@ -6900,6 +6900,66 @@
     "own_prompt_similarity": 0.22649535536766052
   },
   {
+    "attempt": "results/X/tall/paraphrase/bones/seed-404/attempt_1",
+    "run_id": "X/tall/paraphrase/bones/seed-404",
+    "prompt": "bones",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.1895057111978531,
+      "butterfly wing venation": 0.19644476473331451,
+      "skeletons": 0.24971312284469604,
+      "human skull": 0.21219933032989502,
+      "bracken": 0.19147489964962006,
+      "tree branches": 0.23886168003082275,
+      "lightning": 0.1679229438304901,
+      "brick wall": 0.17904753983020782
+    },
+    "own_prompt_similarity": 0.2380419224500656
+  },
+  {
+    "attempt": "results/X/tall/paraphrase/bones/seed-505/attempt_1",
+    "run_id": "X/tall/paraphrase/bones/seed-505",
+    "prompt": "bones",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.18366239964962006,
+      "butterfly wing venation": 0.20059868693351746,
+      "skeletons": 0.25259870290756226,
+      "human skull": 0.21149477362632751,
+      "bracken": 0.18629756569862366,
+      "tree branches": 0.21513433754444122,
+      "lightning": 0.16893377900123596,
+      "brick wall": 0.17875197529792786
+    },
+    "own_prompt_similarity": 0.23957446217536926
+  },
+  {
+    "attempt": "results/X/tall/paraphrase/bones/seed-606/attempt_1",
+    "run_id": "X/tall/paraphrase/bones/seed-606",
+    "prompt": "bones",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.18035462498664856,
+      "butterfly wing venation": 0.2034631371498108,
+      "skeletons": 0.23647761344909668,
+      "human skull": 0.20534701645374298,
+      "bracken": 0.18790385127067566,
+      "tree branches": 0.21616174280643463,
+      "lightning": 0.162613183259964,
+      "brick wall": 0.1738193929195404
+    },
+    "own_prompt_similarity": 0.2288707047700882
+  },
+  {
     "attempt": "results/X/tall/paraphrase/bracken_leaves/seed-101/attempt_1",
     "run_id": "X/tall/paraphrase/bracken_leaves/seed-101",
     "prompt": "bracken leaves",
@@ -6958,6 +7018,66 @@
       "brick wall": 0.16008278727531433
     },
     "own_prompt_similarity": 0.2693914771080017
+  },
+  {
+    "attempt": "results/X/tall/paraphrase/bracken_leaves/seed-404/attempt_1",
+    "run_id": "X/tall/paraphrase/bracken_leaves/seed-404",
+    "prompt": "bracken leaves",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.27616119384765625,
+      "butterfly wing venation": 0.2257082164287567,
+      "skeletons": 0.201340913772583,
+      "human skull": 0.17552566528320312,
+      "bracken": 0.23366308212280273,
+      "tree branches": 0.2303735762834549,
+      "lightning": 0.1739220917224884,
+      "brick wall": 0.16633428633213043
+    },
+    "own_prompt_similarity": 0.2733007073402405
+  },
+  {
+    "attempt": "results/X/tall/paraphrase/bracken_leaves/seed-505/attempt_1",
+    "run_id": "X/tall/paraphrase/bracken_leaves/seed-505",
+    "prompt": "bracken leaves",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.2694949507713318,
+      "butterfly wing venation": 0.21339164674282074,
+      "skeletons": 0.18501794338226318,
+      "human skull": 0.16348505020141602,
+      "bracken": 0.23010218143463135,
+      "tree branches": 0.21451066434383392,
+      "lightning": 0.16225554049015045,
+      "brick wall": 0.15884605050086975
+    },
+    "own_prompt_similarity": 0.26401591300964355
+  },
+  {
+    "attempt": "results/X/tall/paraphrase/bracken_leaves/seed-606/attempt_1",
+    "run_id": "X/tall/paraphrase/bracken_leaves/seed-606",
+    "prompt": "bracken leaves",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.2778054475784302,
+      "butterfly wing venation": 0.20982670783996582,
+      "skeletons": 0.1888551414012909,
+      "human skull": 0.15766671299934387,
+      "bracken": 0.23850002884864807,
+      "tree branches": 0.22308269143104553,
+      "lightning": 0.16578978300094604,
+      "brick wall": 0.14870452880859375
+    },
+    "own_prompt_similarity": 0.2694038152694702
   },
   {
     "attempt": "results/X/tall/scrambled/ntseleosk/seed-101/attempt_1",
@@ -7020,6 +7140,66 @@
     "own_prompt_similarity": 0.20180752873420715
   },
   {
+    "attempt": "results/X/tall/scrambled/ntseleosk/seed-404/attempt_1",
+    "run_id": "X/tall/scrambled/ntseleosk/seed-404",
+    "prompt": "ntseleosk",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.18436646461486816,
+      "butterfly wing venation": 0.1831749975681305,
+      "skeletons": 0.18307381868362427,
+      "human skull": 0.17752015590667725,
+      "bracken": 0.17814815044403076,
+      "tree branches": 0.21356408298015594,
+      "lightning": 0.18696503341197968,
+      "brick wall": 0.18852803111076355
+    },
+    "own_prompt_similarity": 0.2442794293165207
+  },
+  {
+    "attempt": "results/X/tall/scrambled/ntseleosk/seed-505/attempt_1",
+    "run_id": "X/tall/scrambled/ntseleosk/seed-505",
+    "prompt": "ntseleosk",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.16113193333148956,
+      "butterfly wing venation": 0.17479753494262695,
+      "skeletons": 0.19680777192115784,
+      "human skull": 0.20014014840126038,
+      "bracken": 0.18089014291763306,
+      "tree branches": 0.18904227018356323,
+      "lightning": 0.16446766257286072,
+      "brick wall": 0.17115139961242676
+    },
+    "own_prompt_similarity": 0.2559068500995636
+  },
+  {
+    "attempt": "results/X/tall/scrambled/ntseleosk/seed-606/attempt_1",
+    "run_id": "X/tall/scrambled/ntseleosk/seed-606",
+    "prompt": "ntseleosk",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.15726685523986816,
+      "butterfly wing venation": 0.1731812208890915,
+      "skeletons": 0.18729689717292786,
+      "human skull": 0.1941714584827423,
+      "bracken": 0.1629268079996109,
+      "tree branches": 0.18773379921913147,
+      "lightning": 0.15024083852767944,
+      "brick wall": 0.17817232012748718
+    },
+    "own_prompt_similarity": 0.2794806957244873
+  },
+  {
     "attempt": "results/X/tall/scrambled/rnef_dsnorf/seed-101/attempt_1",
     "run_id": "X/tall/scrambled/rnef_dsnorf/seed-101",
     "prompt": "rnef dsnorf",
@@ -7078,5 +7258,65 @@
       "brick wall": 0.17290422320365906
     },
     "own_prompt_similarity": 0.23898427188396454
+  },
+  {
+    "attempt": "results/X/tall/scrambled/rnef_dsnorf/seed-404/attempt_1",
+    "run_id": "X/tall/scrambled/rnef_dsnorf/seed-404",
+    "prompt": "rnef dsnorf",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.18057510256767273,
+      "butterfly wing venation": 0.19141608476638794,
+      "skeletons": 0.1963156759738922,
+      "human skull": 0.18829332292079926,
+      "bracken": 0.17818990349769592,
+      "tree branches": 0.1801115870475769,
+      "lightning": 0.1668718457221985,
+      "brick wall": 0.19098958373069763
+    },
+    "own_prompt_similarity": 0.25284886360168457
+  },
+  {
+    "attempt": "results/X/tall/scrambled/rnef_dsnorf/seed-505/attempt_1",
+    "run_id": "X/tall/scrambled/rnef_dsnorf/seed-505",
+    "prompt": "rnef dsnorf",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.21763348579406738,
+      "butterfly wing venation": 0.19230841100215912,
+      "skeletons": 0.18443086743354797,
+      "human skull": 0.16667473316192627,
+      "bracken": 0.21389314532279968,
+      "tree branches": 0.23972535133361816,
+      "lightning": 0.168146550655365,
+      "brick wall": 0.17301155626773834
+    },
+    "own_prompt_similarity": 0.21715550124645233
+  },
+  {
+    "attempt": "results/X/tall/scrambled/rnef_dsnorf/seed-606/attempt_1",
+    "run_id": "X/tall/scrambled/rnef_dsnorf/seed-606",
+    "prompt": "rnef dsnorf",
+    "structure": "tall",
+    "experiment": "X",
+    "evaluator": "ViT-L/14",
+    "view": "z",
+    "similarities": {
+      "fern fronds": 0.20337240397930145,
+      "butterfly wing venation": 0.1877412497997284,
+      "skeletons": 0.19204646348953247,
+      "human skull": 0.17005151510238647,
+      "bracken": 0.19380977749824524,
+      "tree branches": 0.21936315298080444,
+      "lightning": 0.16668105125427246,
+      "brick wall": 0.1691652536392212
+    },
+    "own_prompt_similarity": 0.23938636481761932
   }
 ]
