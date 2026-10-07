@@ -82,9 +82,15 @@ REPLICATE_SEEDS = (101, 202, 303, 404)
 DIAL_SEED_RHOS = (0.0, 0.5, 1.0)
 DIAL_SEEDS = REPLICATE_SEEDS[:3]
 # Seeds for the X panel. The originals already exist at the campaign seed
-# (S3) and at all four replicate seeds (R), so three is enough to estimate
-# within-condition spread.
+# (S3) and at all four replicate seeds (R), so the panel only needs enough
+# seeds per condition to estimate within-condition spread.
 PARAPHRASE_SEEDS = REPLICATE_SEEDS[:3]
+# A second wave of X seeds, submitted after the first came back. Three per
+# condition caps a family's own permutation test at p = 1/C(7,3) = 0.03, so
+# both families landed exactly on that floor and only the pooled test could
+# resolve the effect. Doubling the seeds takes the per-family floor to
+# 1/C(13,6) = 0.0006, which lets each family stand on its own.
+PARAPHRASE_SEEDS_EXTRA = (404, 505, 606)
 # G: prompts chosen for how their geometry meets a load path, not for meaning.
 # Each conflicts with (or suits) a structure in one nameable way, so the
 # compliance it costs is a prediction rather than an observation: horizontal

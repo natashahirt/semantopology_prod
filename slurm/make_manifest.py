@@ -33,6 +33,7 @@ from recipe.campaign_spec import (
     NONSTRUCTURAL_PROMPTS,
     PARAPHRASE_PROMPTS,
     PARAPHRASE_SEEDS,
+    PARAPHRASE_SEEDS_EXTRA,
     PROMPTS,
     REPLICATE_SEEDS,
     REPORTED_STRUCTURES,
@@ -405,11 +406,28 @@ def meaning_rows() -> list[dict]:
     a single design cannot show whether a condition clusters, so they are
     repeated here at the same seeds as the paraphrases.
     """
+    return _meaning_rows_at(PARAPHRASE_SEEDS)
+
+
+def meaning_seed_rows() -> list[dict]:
+    """X, second wave: the same two conditions at three further seeds.
+
+    The first wave ran three seeds per condition, which caps a family's own
+    permutation test at p = 0.03 -- both families hit exactly that floor, so
+    only the pooled test could resolve the effect. These rows take each
+    family past needing the pooling. Kept as a separate manifest so the
+    finished rows are not resubmitted.
+    """
+    return _meaning_rows_at(PARAPHRASE_SEEDS_EXTRA)
+
+
+def _meaning_rows_at(seeds: tuple[int, ...]) -> list[dict]:
+    """Paraphrase and scrambled rows for each paraphrased family, per seed."""
     rows = []
     origins = scrambled_origin()
     scrambles = {origin: text for text, origin in origins.items()}
     for original, paraphrase in PARAPHRASE_PROMPTS.items():
-        for seed in PARAPHRASE_SEEDS:
+        for seed in seeds:
             flag = ('--seed', str(seed))
             rows.append(_semantic(
                 f'X/tall/paraphrase/{prompt_token(paraphrase)}/'
@@ -482,6 +500,7 @@ OFF_TABLE_PANELS = {
     'dial_seeds': ('dial_seeds.tsv', dial_seed_rows),
     'loose_sketches': ('loose_sketches.tsv', loose_sketch_rows),
     'meaning': ('meaning.tsv', meaning_rows),
+    'meaning_seeds': ('meaning_seeds.tsv', meaning_seed_rows),
     'sketch_weight_low': ('sketch_weight_low.tsv', sketch_weight_low_rows),
 }
 
@@ -524,6 +543,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--meaning', action='store_true',
         help='Write only the X paraphrase-vs-scramble panel, never the '
+             '118-row campaign TSV.')
+    parser.add_argument(
+        '--meaning-seeds', action='store_true',
+        help="Write only the X panel's second wave of seeds, never the "
              '118-row campaign TSV.')
     parser.add_argument(
         '--fixed-weight', nargs=2, type=float, metavar=('W_DENSITY', 'W_Z'),

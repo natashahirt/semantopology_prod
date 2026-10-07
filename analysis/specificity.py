@@ -1,11 +1,24 @@
 """Does the prompt do the work, and is it the meaning or the surface form?
 
-Two tests, both run on geometry rather than on a similarity score. This is
-the point: guidance maximises a CLIP similarity, so judging it by a CLIP
-similarity partly guarantees the answer. Nothing here consults a
-vision-language model.
+Two tests, neither scored by a similarity to the guiding text. That is the
+point: guidance maximises a CLIP similarity, so judging it by a CLIP
+similarity partly guarantees the answer.
 
-`specificity` asks whether a prompt imposes a repeatable geometry. Designs
+Both tests run over a representation of the design, in two variants that
+trade circularity against sensitivity:
+
+- `geometric`, the physical density map. Consults no model at all, but
+  measures where material sits, which a prompt turns out not to pin down --
+  seeds under one prompt scatter about as widely as the prompted set as a
+  whole. Expect it to be insensitive, and read a null here as "the prompt
+  does not fix the layout" rather than "the prompt did nothing".
+- `perceptual`, ViT-L/14 image embeddings of the render. This is a model,
+  so say so; it is not the model guidance climbs (ViT-B/32), it never sees
+  the prompt, and no text is involved anywhere in the test. For a claim
+  about appearance it is the sensitive instrument, and the residual
+  circularity is only whatever two CLIP image encoders share.
+
+`specificity` asks whether a prompt imposes a repeatable design. Designs
 guided by the same prompt at different seeds should resemble each other more
 than they resemble designs guided by a different prompt, and a permutation
 null says whether the margin could be chance. Note what this does NOT show:
@@ -16,7 +29,7 @@ passes too. It establishes specificity, not meaning.
 with the prompt it restates, and a scrambled string shares every letter and
 no meaning. Neither was optimised toward, so if the paraphrase designs land
 nearer the original prompt's designs than the scrambled ones do, the sense of
-the words is what moved the geometry rather than their characters.
+the words is what moved the design rather than their characters.
 """
 
 from __future__ import annotations
@@ -33,12 +46,14 @@ import numpy as np
 from analysis.diversity import (
     cache_path,
     display_path,
+    embedding_lookup,
     geometric_map,
     load_path_map,
+    normalize_rows,
     read_meta,
 )
 from analysis.evaluate import walk_done
-from recipe.campaign_spec import PARAPHRASE_PROMPTS, scrambled_origin
+from recipe.campaign_spec import PARAPHRASE_PROMPTS, PROMPTS, scrambled_origin
 
 _REPO = Path(__file__).resolve().parents[1]
 _PERMUTATIONS = 10_000
@@ -62,25 +77,33 @@ def prompt_condition(meta: dict) -> tuple[str, str] | None:
     experiment = meta.get('experiment')
     origins = scrambled_origin()
     paraphrases = {value: key for key, value in PARAPHRASE_PROMPTS.items()}
-    # Only the unmodified recipe counts as an original: a dial or weight arm
-    # would confound the comparison with a different coupling.
-    if experiment in ('S3', 'R') and prompt in PARAPHRASE_PROMPTS:
+    # Every campaign prompt is an original, including the one with no
+    # paraphrase: specificity wants all the families it can get, and
+    # `meaning` drops a family that lacks a contrast condition. Only the
+    # unmodified recipe counts, since a dial or weight arm would confound the
+    # comparison with a different coupling.
+    if experiment in ('S3', 'R') and prompt in PROMPTS:
         return prompt, 'original'
     if prompt in paraphrases:
         return paraphrases[prompt], 'paraphrase'
-    if prompt in origins and origins[prompt] in PARAPHRASE_PROMPTS:
+    if prompt in origins:
         return origins[prompt], 'scrambled'
     return None
 
 
-def collect_designs(results: Path, cache: Path | None = None) -> list[dict]:
-    """Geometric maps for every in-scope run, plus load paths where cached.
+def collect_designs(
+        results: Path, cache: Path | None = None,
+        evaluate_dir: Path | None = None) -> list[dict]:
+    """Every in-scope run's design vectors, in whichever measures are available.
 
-    The geometric map comes straight off `physical_density.npy`, so this
-    needs no re-solve. The load-path map needs `diversity.py solve` to have
-    covered the run, which its own selection may not have; those runs simply
-    carry no structural vector.
+    The geometric map comes straight off `physical_density.npy`, so it needs
+    no re-solve and is always present. The perceptual vector needs
+    `evaluate.py` to have scored the run; the load-path map needs a
+    `solve` to have covered it, which the diversity selection may not have.
+    A run missing either simply carries no vector for that measure, and the
+    tests skip a measure that too few designs share.
     """
+    embeddings = {} if evaluate_dir is None else embedding_lookup(evaluate_dir)
     designs = []
     for attempt in walk_done(results):
         try:
@@ -92,9 +115,10 @@ def collect_designs(results: Path, cache: Path | None = None) -> list[dict]:
         if scope is None or not density_path.exists():
             continue
         family, condition = scope
+        key = display_path(attempt)
         density = np.asarray(np.load(density_path)).squeeze()
         design = {
-            'attempt': display_path(attempt),
+            'attempt': key,
             'run_id': meta.get('run_id'),
             'prompt': meta.get('prompt'),
             'family': family,
@@ -102,6 +126,8 @@ def collect_designs(results: Path, cache: Path | None = None) -> list[dict]:
             'seed': meta.get('cli', {}).get('seed'),
             'geometric': geometric_map(density).reshape(-1),
         }
+        if key in embeddings:
+            design['perceptual'] = np.asarray(embeddings[key], dtype=float)
         if cache is not None:
             energy = cache_path(attempt, cache)
             if energy.exists():
@@ -110,6 +136,15 @@ def collect_designs(results: Path, cache: Path | None = None) -> list[dict]:
                         design['structural'] = load_path_map(
                             np.asarray(saved['physical_energy'])).reshape(-1)
         designs.append(design)
+    # Cosine distance is what these embeddings are meant to be read in, and
+    # normalising after selection keeps it independent of which runs are in
+    # scope. Diversity normalises its own, separate selection the same way.
+    perceptual = [d for d in designs if 'perceptual' in d]
+    if perceptual:
+        normalized = normalize_rows(
+            np.stack([d['perceptual'] for d in perceptual]))
+        for design, vector in zip(perceptual, normalized):
+            design['perceptual'] = vector
     return designs
 
 
@@ -210,7 +245,10 @@ def meaning(designs: list[dict], measure: str) -> list[dict]:
             for condition in _CONDITIONS
             if any(design['condition'] == condition for design in rows)
         }
-        if 'original' not in by_condition:
+        # A family needs both contrast conditions to say anything: butterfly
+        # wing venation has a scramble but no word-disjoint paraphrase, so it
+        # counts as a family for `specificity` and drops out here.
+        if not {'original', 'paraphrase', 'scrambled'} <= by_condition.keys():
             continue
         centroid = by_condition['original'].mean(axis=0)
         row = {'measure': measure, 'test': 'meaning', 'family': family}
@@ -218,16 +256,15 @@ def meaning(designs: list[dict], measure: str) -> list[dict]:
             row[f'{condition}_distance'] = float(
                 np.linalg.norm(values - centroid, axis=1).mean())
             row[f'{condition}_n'] = int(len(values))
-        if {'paraphrase', 'scrambled'} <= by_condition.keys():
-            row['scrambled_minus_paraphrase'] = (
-                row['scrambled_distance'] - row['paraphrase_distance'])
-            contrast = np.concatenate(
-                [by_condition['paraphrase'], by_condition['scrambled']])
-            labels = np.array(
-                ['paraphrase'] * row['paraphrase_n']
-                + ['scrambled'] * row['scrambled_n'])
-            distances = np.linalg.norm(contrast - centroid, axis=1)
-            row['p_value'] = _distance_gap_p_value(distances, labels)
+        row['scrambled_minus_paraphrase'] = (
+            row['scrambled_distance'] - row['paraphrase_distance'])
+        contrast = np.concatenate(
+            [by_condition['paraphrase'], by_condition['scrambled']])
+        labels = np.array(
+            ['paraphrase'] * row['paraphrase_n']
+            + ['scrambled'] * row['scrambled_n'])
+        distances = np.linalg.norm(contrast - centroid, axis=1)
+        row['p_value'] = _distance_gap_p_value(distances, labels)
         results.append(row)
     return results
 
@@ -317,11 +354,25 @@ def _write_csv(path: Path, rows: list[dict]) -> None:
             writer.writerow({key: row.get(key) for key in fields})
 
 
-def report(results: Path, cache: Path, out: Path) -> dict:
-    designs = collect_designs(results, cache)
-    measures = ['geometric']
-    if any('structural' in design for design in designs):
-        measures.append('structural')
+def usable_measures(designs: list[dict], minimum: int = 4) -> list[str]:
+    """Measures enough designs share to be worth testing.
+
+    Ordered most to least sensitive for a claim about appearance, which is
+    also least to most circular, so the headline row comes first and the
+    model-free check follows it. `minimum` matches the smallest set
+    `specificity` will act on, which keeps a measure covering one or two
+    runs out of the tables entirely rather than emitting a degenerate row.
+    """
+    return [
+        measure for measure in ('perceptual', 'geometric', 'structural')
+        if sum(measure in design for design in designs) >= minimum
+    ]
+
+
+def report(results: Path, cache: Path, out: Path,
+           evaluate_dir: Path | None = None) -> dict:
+    designs = collect_designs(results, cache, evaluate_dir)
+    measures = usable_measures(designs)
     specificity_rows = [
         row for row in (specificity(designs, m) for m in measures)
         if row is not None
@@ -355,6 +406,9 @@ def main(argv: list[str] | None = None) -> int:
     common.add_argument(
         '--cache', type=Path,
         default=_REPO / 'analysis' / 'out' / 'diversity' / 'energy')
+    common.add_argument(
+        '--evaluate', type=Path,
+        default=_REPO / 'analysis' / 'out' / 'evaluate')
     # Optional: the geometric test needs no re-solve, so `solve` only buys
     # the structural measure on runs the diversity selection left out.
     solve = subparsers.add_parser('solve', parents=[common])
@@ -371,7 +425,8 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(records, indent=2))
     else:
         print(json.dumps(
-            report(args.results, args.cache, args.out), indent=2, default=float))
+            report(args.results, args.cache, args.out, args.evaluate),
+            indent=2, default=float))
     return 0
 
 

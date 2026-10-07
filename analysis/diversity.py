@@ -289,7 +289,7 @@ def solve_all(
     return records
 
 
-def _embedding_lookup(evaluate_dir: Path) -> dict[str, np.ndarray]:
+def embedding_lookup(evaluate_dir: Path) -> dict[str, np.ndarray]:
     suffix = '_vit_l_14_z'
     rows_path = evaluate_dir / f'similarities{suffix}.json'
     vectors_path = evaluate_dir / f'embeddings{suffix}.npy'
@@ -305,7 +305,7 @@ def _embedding_lookup(evaluate_dir: Path) -> dict[str, np.ndarray]:
 
 def collect_points(results: Path, cache: Path, evaluate_dir: Path) -> list[dict]:
     """Load aligned features and quality data for valid selected runs."""
-    embeddings = _embedding_lookup(evaluate_dir)
+    embeddings = embedding_lookup(evaluate_dir)
     points = []
     for attempt in walk_done(results):
         try:

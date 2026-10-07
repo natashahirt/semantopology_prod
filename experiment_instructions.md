@@ -589,6 +589,29 @@ rather than fall back on the similarity numbers.
 Note the originals need no new runs: S3 supplies the campaign seed and R all
 four replicate seeds for both prompts. That is also why R matters twice over.
 
+## Phase 2h — X, second wave of seeds
+
+Twelve more rows on tall, same two conditions as Phase 2g at three further
+seeds. Submit these; they are the last runs the paper needs.
+
+```bash
+python slurm/make_manifest.py --meaning-seeds   # slurm/meaning_seeds.tsv, 12 rows
+sbatch --array=0-11%12 --export=ALL,CAMPAIGN_MANIFEST=slurm/meaning_seeds.tsv \
+  slurm/campaign.sbatch
+```
+
+The first wave worked: pooled over both families the paraphrase lands nearer
+the original prompt's designs than the scramble does, at p = 0.0008 in the
+perceptual measure. But each family on its own returned p = 0.030, which is
+exactly the floor a permutation can reach with three paraphrase and four
+scrambled designs — both families were pinned at the smallest p available
+rather than measured. Six seeds per condition takes that floor to 0.0006 and
+lets each family stand without the pooling.
+
+This is a separate manifest from `meaning.tsv` so the finished rows are not
+resubmitted. Do not merge the two files; the run ids are disjoint by design
+and a test enforces it.
+
 ## Phase 3 — analysis
 
 ### Run it early, on partial results, before the campaign finishes
@@ -682,24 +705,45 @@ the banded table by construction, and that is expected, not a bug. Report both
 the unbanded and the banded numbers. If the band holds too few designs to
 bootstrap, widen it with `--quality-band LOW HIGH` and say what you used.
 
-`specificity.py report` runs the two geometry-only tests behind the semantic
-claim, and consults no vision-language model. `specificity.csv` asks whether
-designs guided by one prompt cluster apart from another prompt's, with a
-label-permutation null and a leave-one-out nearest-neighbour accuracy
-reported against the chance rate implied by the label mix. Report this as
-specificity, NOT as meaning: a meaningless string has a fixed text embedding
-too, so it would also pass. `meaning.csv` is the test that separates them,
-comparing the paraphrase and scrambled conditions by distance to the centroid
-of each prompt's own designs. Read the `pooled (stratified)` row as the
-result: with three runs per condition a single family cannot return a p below
-0.05, so a per-family row at exactly 0.05 means the floor was hit, not that
-the effect is marginal.
+`specificity.py report` runs the two tests behind the semantic claim. Neither
+scores a design by its similarity to the guiding prompt, which is the point:
+guidance maximises such a similarity, so judging the result with one partly
+guarantees the answer.
 
-Both tests run on the geometric representation, which comes off
-`physical_density.npy` with no re-solve. The load-path version appears only
-for runs the diversity selection happened to solve; to cover the rest, run
-`python analysis/specificity.py solve` first. That is optional — the
-geometric result is the reported one.
+Each test runs in up to three representations, and the table reports them in
+the order `usable_measures` returns — most sensitive first, which is also
+most circular first:
+
+- `perceptual`, ViT-L/14 image embeddings of the render. A model, so say so;
+  but not the model guidance climbs (ViT-B/32), and no text enters the test
+  at any point. For a claim about appearance this is the sensitive
+  instrument and the headline row.
+- `geometric`, the physical density map. Consults no model whatsoever, so a
+  positive result here is the strongest answer to the circularity worry. It
+  measures where material sits, which a prompt constrains far more weakly
+  than it constrains appearance, so expect smaller margins.
+- `structural`, the re-solved load path. Only present for runs a `solve`
+  covered; a measure too few designs share is dropped rather than reported.
+
+`specificity.csv` asks whether designs guided by one prompt cluster apart
+from another prompt's, with a label-permutation null and a leave-one-out
+nearest-neighbour accuracy against the chance rate implied by the label mix
+(three prompts, so about 0.33, not 0.5). Report this as specificity, NOT as
+meaning: a meaningless string has a fixed text embedding too, so it would
+also pass.
+
+`meaning.csv` is the test that separates them, comparing the paraphrase and
+scrambled conditions by distance to the centroid of each prompt's own
+designs. `butterfly wing venation` appears in `specificity.csv` but not here:
+it has no word-disjoint paraphrase, and a family missing a contrast condition
+is dropped rather than printed with blank columns. Once Phase 2h lands, read
+the per-family rows directly; before it, read `pooled (stratified)`, because
+three runs per condition floors a family's own p at 0.03.
+
+To fill in the structural measure, run `python analysis/specificity.py solve`
+first. That is optional — the perceptual and geometric results are the
+reported ones, and the energy cache built for the diversity selection does
+not cover these runs.
 
 Outputs land under `analysis/out/`. In `REPORT.md`, report each cross-prompt
 table per evaluator and view, the z-minus-density evaluator gap, and
@@ -734,6 +778,8 @@ and binary structural maps disagree.
   paraphrase--scramble gap and its p-value reported, and the stated
   prediction marked kept or broken. This panel is not droppable for queue
   time: no other run answers whether meaning does the work.
+- Every Phase 2h row is `DONE` or permanently failed, and `meaning.csv`
+  reports each family's own p-value alongside the pooled one.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

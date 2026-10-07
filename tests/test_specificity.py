@@ -12,6 +12,7 @@ from analysis.specificity import (
     permutation_test,
     prompt_condition,
     specificity,
+    usable_measures,
 )
 from recipe.campaign_spec import (
     PARAPHRASE_PROMPTS,
@@ -47,6 +48,22 @@ def test_paraphrases_share_no_word_with_what_they_restate():
     assert set(PARAPHRASE_PROMPTS) < set(PROMPTS)
 
 
+def test_every_campaign_prompt_is_a_family_for_specificity():
+    """Regression: scoping originals to the paraphrased families cost a third.
+
+    `specificity` labels designs by prompt, so each prompt it cannot see is
+    a label removed -- which both drops its designs and raises the chance
+    rate the accuracy is judged against. Keying the scope on
+    PARAPHRASE_PROMPTS silently restricted it to two families and turned a
+    real effect into a null.
+    """
+    for prompt in PROMPTS:
+        for experiment in ('S3', 'R'):
+            assert prompt_condition({
+                'structure': 'tall', 'experiment': experiment,
+                'prompt': prompt}) == (prompt, 'original'), prompt
+
+
 @pytest.mark.parametrize(
     ('meta', 'expected'),
     [
@@ -60,9 +77,14 @@ def test_paraphrases_share_no_word_with_what_they_restate():
          ('fern fronds', 'scrambled')),
         ({'structure': 'tall', 'experiment': 'N', 'prompt': 'ntseleosk'},
          ('skeletons', 'scrambled')),
-        # Not a paraphrased family, so out of scope even though it scrambles.
+        # In scope even with no paraphrase to contrast against: it is still a
+        # family for `specificity`, and `meaning` drops it on its own.
+        ({'structure': 'tall', 'experiment': 'S3',
+          'prompt': 'butterfly wing venation'},
+         ('butterfly wing venation', 'original')),
         ({'structure': 'tall', 'experiment': 'N',
-          'prompt': 'ytlurfebt gniw ntoeiavn'}, None),
+          'prompt': 'ytlurfebt gniw ntoeiavn'},
+         ('butterfly wing venation', 'scrambled')),
         # A dial arm is a different coupling, not an 'original'.
         ({'structure': 'tall', 'experiment': 'S2', 'prompt': 'fern fronds'},
          None),
@@ -190,16 +212,47 @@ def test_pooling_needs_more_than_one_family():
     assert meaning_pooled(designs, 'geometric') is None
 
 
-def test_meaning_reports_no_contrast_without_both_conditions():
+def test_meaning_drops_a_family_with_only_one_contrast_condition():
+    """Half a contrast is not a weak result, it is not a result.
+
+    Reporting a distance with no comparison invites reading it as one, so a
+    family missing either condition leaves the table rather than appearing
+    with blank columns.
+    """
     designs = [
         _design('skeletons', 'original', [0.0, 0.0]),
         _design('skeletons', 'paraphrase', [1.0, 1.0]),
     ]
-    row = meaning(designs, 'geometric')[0]
-    assert 'scrambled_minus_paraphrase' not in row
-    assert 'p_value' not in row
+    assert meaning(designs, 'geometric') == []
 
 
 def test_meaning_skips_a_family_with_no_originals_to_centre_on():
     designs = [_design('skeletons', 'paraphrase', [1.0, 1.0])]
     assert meaning(designs, 'geometric') == []
+
+
+def test_usable_measures_puts_the_sensitive_one_first():
+    """Order is sensitivity, which is also inverse circularity.
+
+    The perceptual measure answers an appearance claim and leads; the
+    model-free geometric check follows it rather than replacing it.
+    """
+    designs = [
+        {'geometric': np.zeros(2), 'perceptual': np.zeros(2),
+         'structural': np.zeros(2)}
+        for _ in range(4)
+    ]
+    assert usable_measures(designs) == [
+        'perceptual', 'geometric', 'structural']
+
+
+def test_usable_measures_drops_a_measure_too_few_designs_share():
+    """A measure covering one run must not reach the tables.
+
+    The energy cache is built for a different selection, so it can cover a
+    single design here. Tested at one because that is what actually
+    happened, and the degenerate row it produced read as a real result.
+    """
+    designs = [{'geometric': np.zeros(2)} for _ in range(4)]
+    designs[0]['structural'] = np.zeros(2)
+    assert usable_measures(designs) == ['geometric']

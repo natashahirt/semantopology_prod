@@ -18,6 +18,8 @@ from recipe.campaign_spec import (
     GRAVITY_LOAD,
     LOOSE_WEIGHT_ENDS,
     LOOSE_WEIGHT_STARTS,
+    PARAPHRASE_SEEDS,
+    PARAPHRASE_SEEDS_EXTRA,
     PROMPTS,
     SKETCH_WEIGHT_LOW_ENDS,
     SKETCH_WEIGHT_LOW_START,
@@ -34,6 +36,8 @@ from slurm.make_manifest import (
     fern_wording_rows,
     fixed_weight_rows,
     loose_sketch_rows,
+    meaning_rows,
+    meaning_seed_rows,
     sketch_weight_low_rows,
     typology_rows,
 )
@@ -398,6 +402,29 @@ def test_dial_seed_panel_reruns_the_dial_at_new_seeds():
         assert int(argv[argv.index('--seed') + 1]) in DIAL_SEEDS
         preset = preset_from_args(build_parser().parse_args(argv))
         assert preset.clip_weight is None, row['run_id']
+
+
+def test_meaning_seed_panel_adds_seeds_without_resubmitting_the_first_wave():
+    """A second wave must not re-run finished rows.
+
+    The two waves live in separate manifests precisely so the first one's
+    completed designs are not recomputed into fresh attempt directories, so
+    the run ids have to be disjoint.
+    """
+    first = meaning_rows()
+    second = meaning_seed_rows()
+    assert len(second) == len(PARAPHRASE_SEEDS_EXTRA) * 2 * 2 == 12
+    ids = [row['run_id'] for row in second]
+    assert len(ids) == len(set(ids))
+    assert not {row['run_id'] for row in first} & set(ids)
+    assert not set(PARAPHRASE_SEEDS) & set(PARAPHRASE_SEEDS_EXTRA)
+    # Pooling existed to clear the per-family floor that three seeds per
+    # condition imposes; six per condition is what makes a family standalone.
+    assert len(PARAPHRASE_SEEDS) + len(PARAPHRASE_SEEDS_EXTRA) == 6
+    for row in second:
+        argv = row['argv']
+        assert int(argv[argv.index('--seed') + 1]) in PARAPHRASE_SEEDS_EXTRA
+        assert row['run_id'].startswith('X/tall/')
 
 
 def test_loose_sketch_panel_sweeps_both_ends_of_the_ramp():
