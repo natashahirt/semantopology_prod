@@ -1,0 +1,42 @@
+{
+  "prompt": "skeletons",
+  "problem": "double_decker_bridge",
+  "slug": "skeletons",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 275.0937805175781,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 93.47393798828125,
+  "clip_loss_raw": 0.4154590368270874,
+  "dream_clip_loss": 0.4156859517097473,
+  "volume_actual": 0.30974082341269843,
+  "mean_physical_density": 0.30000001192092896,
+  "mass_on_scaffold": 0.5719508626365196,
+  "validity": {
+    "component_count": 8.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.019203296435298677,
+    "spanning_mass_fraction": 0.9807967035647013,
+    "mean_physical_density": 0.30000001192092896
+  },
+  "load_on_solid_fraction": 0.9866369710467706,
+  "thresholded_compliance": 5723815.621540122,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    8,
+    32
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 375.7345409318805,
+  "physics_seconds": 11775.446575938258,
+  "total_seconds": 12164.155356767587,
+  "git_commit": "0ec53850130b0ad5f5b1f0c039497906418a09c6-dirty",
+  "gate": null
+}

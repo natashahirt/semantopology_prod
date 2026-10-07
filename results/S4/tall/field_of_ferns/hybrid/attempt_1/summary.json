@@ -1,0 +1,42 @@
+{
+  "prompt": "field of ferns",
+  "problem": "tall_building",
+  "slug": "field_of_ferns",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 90.92945098876953,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 64.03926086425781,
+  "clip_loss_raw": 0.3610786199569702,
+  "dream_clip_loss": 0.41780030727386475,
+  "volume_actual": 0.360504150390625,
+  "mean_physical_density": 0.30000001192092896,
+  "mass_on_scaffold": 0.7850318452359983,
+  "validity": {
+    "component_count": 6.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.024340714101893847,
+    "spanning_mass_fraction": 0.9756592858981061,
+    "mean_physical_density": 0.30000001192092896
+  },
+  "load_on_solid_fraction": 0.8790697674418605,
+  "thresholded_compliance": 1397191.9031517564,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.4999999701976776,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 251.01223492994905,
+  "physics_seconds": 6557.616081268992,
+  "total_seconds": 6818.275113913231,
+  "git_commit": "0ec53850130b0ad5f5b1f0c039497906418a09c6-dirty",
+  "gate": null
+}

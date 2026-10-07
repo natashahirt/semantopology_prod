@@ -195,10 +195,27 @@ sbatch --array=0-7 --export=ALL,CAMPAIGN_MANIFEST=slurm/fern_wording.tsv \
 Texts: `"fern frond"`, `"fern fronds"` (reuse H1/S3), `"many fern fronds"`,
 `"field of ferns"`, `"unfurling fern fronds"`.
 
+Optional low sketch-weight panel (run separately; do not append to the main
+manifest, and do not change the 4000→400 default). Sketch 12 on tall, init
+and weight both on, coarse weight 200, fine-grid ends {0, 10, 40, 100, 200}.
+
+```bash
+python slurm/make_manifest.py --sketch-weight-low   # slurm/sketch_weight_low.tsv
+sbatch --array=0-4 --export=ALL,CAMPAIGN_MANIFEST=slurm/sketch_weight_low.tsv \
+  slurm/campaign.sbatch
+```
+
 If the extra middle deck produces a clearer and structurally credible section,
 run butterfly wing venation and skeletons too, then decide whether `bridge3` replaces
 `bridge` in the reported prompt × structure figure. Do not report both as
-independent evidence without accounting for the selection gate.
+independent evidence without accounting for the selection gate. Those two
+semantic rows are `slurm/bridge3_prompts.tsv` (fern is already
+`GATE/bridge3/fern_fronds/beta8`):
+
+```bash
+sbatch --array=0-1 --export=ALL,CAMPAIGN_MANIFEST=slurm/bridge3_prompts.tsv \
+  slurm/campaign.sbatch
+```
 
 ### 0.5 Projection gate (run before Phase 2; the user decides)
 

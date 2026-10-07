@@ -39,6 +39,8 @@ from recipe.campaign_spec import (
     SCALE_ARMS,
     SCRAMBLED_PROMPTS,
     SKETCH_ROOT,
+    SKETCH_WEIGHT_LOW_ENDS,
+    SKETCH_WEIGHT_LOW_START,
     STRUCTURAL_PROMPTS,
     TYPOLOGY_PROMPTS,
     VOLUME_FRACTIONS,
@@ -243,6 +245,24 @@ def experiment_rows(*, include_s1b: bool) -> list[dict]:
         # Appended last so the original 0..117 array indices stay valid.
         rows.extend(scale_rows('S1b', 'short'))
         rows.extend(scale_rows('S1b', 'bridge'))
+    return rows
+
+
+def sketch_weight_low_rows() -> list[dict]:
+    """F2b dial on sketch 12. Start 200, ends 0–200. Not a campaign row."""
+    stem = '12.jpg'
+    token = sketch_token(stem)
+    start = SKETCH_WEIGHT_LOW_START
+    rows = []
+    for end in SKETCH_WEIGHT_LOW_ENDS:
+        rows.append(_row(
+            f'F2b/tall/{token}/{wstart_token(start)}/{wend_token(end)}',
+            'F2b', 'formal',
+            ['--mode', 'sketch', *_structure_args('tall'),
+             '--sketch', str(SKETCH_ROOT / stem),
+             '--sketch-weight-start', str(start),
+             '--sketch-weight-end', str(end)],
+        ))
     return rows
 
 
@@ -462,6 +482,7 @@ OFF_TABLE_PANELS = {
     'dial_seeds': ('dial_seeds.tsv', dial_seed_rows),
     'loose_sketches': ('loose_sketches.tsv', loose_sketch_rows),
     'meaning': ('meaning.tsv', meaning_rows),
+    'sketch_weight_low': ('sketch_weight_low.tsv', sketch_weight_low_rows),
 }
 
 
@@ -507,6 +528,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--fixed-weight', nargs=2, type=float, metavar=('W_DENSITY', 'W_Z'),
         help='Write only the C2 fixed-weight panel at these two CLIP weights.')
+    parser.add_argument(
+        '--sketch-weight-low', action='store_true',
+        help='Write only the F2b low sketch-weight panel, never the campaign TSV.')
     parser.add_argument(
         '--out', default=None)
     args = parser.parse_args(argv)

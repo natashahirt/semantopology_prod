@@ -1,0 +1,352 @@
+attempt,run_id,experiment,structure,prompt,density_similarity,z_similarity,z_minus_density
+results/A/tall/butterfly_wing_venation/density-only/attempt_1,A/tall/butterfly_wing_venation/density-only,A,tall,butterfly wing venation,0.24288834631443024,0.21053265035152435,-0.032355695962905884
+results/A/tall/fern_fronds/density-only/attempt_1,A/tall/fern_fronds/density-only,A,tall,fern fronds,0.1941625028848648,0.20722545683383942,0.01306295394897461
+results/A/tall/skeletons/density-only/attempt_1,A/tall/skeletons/density-only,A,tall,skeletons,0.21011047065258026,0.20978505909442902,-0.0003254115581512451
+results/B/bridge/unguided/attempt_4,B/bridge/unguided,B,bridge,,,,
+results/B/short/unguided/attempt_3,B/short/unguided,B,short,,,,
+results/B/tall/unguided/attempt_3,B/tall/unguided,B,tall,,,,
+results/C1/bridge/qzv_xlrp_mnek/attempt_1,C1/bridge/qzv_xlrp_mnek,C1,bridge,qzv xlrp mnek,0.1872192770242691,0.18527908623218536,-0.0019401907920837402
+results/C1/bridge/structure/attempt_1,C1/bridge/structure,C1,bridge,structure,0.22511160373687744,0.24453838169574738,0.019426777958869934
+results/C1/short/qzv_xlrp_mnek/attempt_1,C1/short/qzv_xlrp_mnek,C1,short,qzv xlrp mnek,0.20186768472194672,0.22413891553878784,0.022271230816841125
+results/C1/short/structure/attempt_1,C1/short/structure,C1,short,structure,0.23177385330200195,0.25558269023895264,0.023808836936950684
+results/C1/tall/qzv_xlrp_mnek/attempt_1,C1/tall/qzv_xlrp_mnek,C1,tall,qzv xlrp mnek,0.2423264980316162,0.21956312656402588,-0.022763371467590332
+results/C1/tall/structure/attempt_1,C1/tall/structure,C1,tall,structure,0.22948172688484192,0.24380290508270264,0.014321178197860718
+results/C2/bridge/butterfly_wing_venation/attempt_1,C2/bridge/butterfly_wing_venation,C2,bridge,butterfly wing venation,0.21126163005828857,0.23284879326820374,0.02158716320991516
+results/C2/bridge/fern_fronds/attempt_1,C2/bridge/fern_fronds,C2,bridge,fern fronds,0.18428446352481842,0.20049011707305908,0.01620565354824066
+results/C2/bridge/skeletons/attempt_1,C2/bridge/skeletons,C2,bridge,skeletons,0.19439615309238434,0.20259855687618256,0.008202403783798218
+results/C2/short/butterfly_wing_venation/attempt_1,C2/short/butterfly_wing_venation,C2,short,butterfly wing venation,0.28683948516845703,0.29234522581100464,0.005505740642547607
+results/C2/short/fern_fronds/attempt_1,C2/short/fern_fronds,C2,short,fern fronds,0.24321679770946503,0.2655169665813446,0.022300168871879578
+results/C2/short/skeletons/attempt_1,C2/short/skeletons,C2,short,skeletons,0.2573031187057495,0.25841349363327026,0.001110374927520752
+results/C2/tall/butterfly_wing_venation/attempt_1,C2/tall/butterfly_wing_venation,C2,tall,butterfly wing venation,0.24738897383213043,0.287441611289978,0.040052637457847595
+results/C2/tall/fern_fronds/attempt_1,C2/tall/fern_fronds,C2,tall,fern fronds,0.24144326150417328,0.26986122131347656,0.028417959809303284
+results/C2/tall/skeletons/attempt_1,C2/tall/skeletons,C2,tall,skeletons,0.2604213356971741,0.2499634027481079,-0.010457932949066162
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,D,tall,,,,
+results/D/tall/lhs-01/attempt_1,D/tall/lhs-01,D,tall,,,,
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,D,tall,,,,
+results/D/tall/lhs-03/attempt_1,D/tall/lhs-03,D,tall,,,,
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,D,tall,,,,
+results/D/tall/lhs-05/attempt_1,D/tall/lhs-05,D,tall,,,,
+results/D/tall/lhs-06/attempt_1,D/tall/lhs-06,D,tall,,,,
+results/D/tall/lhs-07/attempt_1,D/tall/lhs-07,D,tall,,,,
+results/D/tall/lhs-08/attempt_1,D/tall/lhs-08,D,tall,,,,
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,D,tall,,,,
+results/D/tall/lhs-10/attempt_1,D/tall/lhs-10,D,tall,,,,
+results/D/tall/lhs-11/attempt_1,D/tall/lhs-11,D,tall,,,,
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,D,tall,,,,
+results/D/tall/lhs-13/attempt_1,D/tall/lhs-13,D,tall,,,,
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,D,tall,,,,
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,D,tall,,,,
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,D,tall,,,,
+results/D/tall/lhs-17/attempt_1,D/tall/lhs-17,D,tall,,,,
+results/D/tall/lhs-18/attempt_1,D/tall/lhs-18,D,tall,,,,
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,D,tall,,,,
+results/D/tall/lhs-20/attempt_1,D/tall/lhs-20,D,tall,,,,
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,D,tall,,,,
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,D,tall,,,,
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,D,tall,,,,
+results/F1/tall/sketch-12/both/attempt_1,F1/tall/sketch-12/both,F1,tall,,,,
+results/F1/tall/sketch-12/init/attempt_1,F1/tall/sketch-12/init,F1,tall,,,,
+results/F1/tall/sketch-12/weight/attempt_1,F1/tall/sketch-12/weight,F1,tall,,,,
+results/F1/tall/sketch-3/both/attempt_1,F1/tall/sketch-3/both,F1,tall,,,,
+results/F1/tall/sketch-3/init/attempt_1,F1/tall/sketch-3/init,F1,tall,,,,
+results/F1/tall/sketch-3/weight/attempt_1,F1/tall/sketch-3/weight,F1,tall,,,,
+results/F2/tall/sketch-12/wend-1200/attempt_1,F2/tall/sketch-12/wend-1200,F2,tall,,,,
+results/F2/tall/sketch-12/wend-200/attempt_1,F2/tall/sketch-12/wend-200,F2,tall,,,,
+results/F2/tall/sketch-12/wend-2000/attempt_1,F2/tall/sketch-12/wend-2000,F2,tall,,,,
+results/F2/tall/sketch-12/wend-400/attempt_1,F2/tall/sketch-12/wend-400,F2,tall,,,,
+results/F2/tall/sketch-12/wend-800/attempt_1,F2/tall/sketch-12/wend-800,F2,tall,,,,
+results/F2b/tall/sketch-12/wstart-200/wend-0/attempt_1,F2b/tall/sketch-12/wstart-200/wend-0,F2b,tall,,,,
+results/F2b/tall/sketch-12/wstart-200/wend-10/attempt_1,F2b/tall/sketch-12/wstart-200/wend-10,F2b,tall,,,,
+results/F2b/tall/sketch-12/wstart-200/wend-100/attempt_1,F2b/tall/sketch-12/wstart-200/wend-100,F2b,tall,,,,
+results/F2b/tall/sketch-12/wstart-200/wend-200/attempt_1,F2b/tall/sketch-12/wstart-200/wend-200,F2b,tall,,,,
+results/F2b/tall/sketch-12/wstart-200/wend-40/attempt_1,F2b/tall/sketch-12/wstart-200/wend-40,F2b,tall,,,,
+results/F2b/tall/sketch-col3_braced/wend-0/attempt_1,F2b/tall/sketch-col3_braced/wend-0,F2b,tall,,,,
+results/F2b/tall/sketch-col3_braced/wend-100/attempt_1,F2b/tall/sketch-col3_braced/wend-100,F2b,tall,,,,
+results/F2b/tall/sketch-col3_braced/wend-200/attempt_1,F2b/tall/sketch-col3_braced/wend-200,F2b,tall,,,,
+results/F2b/tall/sketch-col3_braced/wend-50/attempt_1,F2b/tall/sketch-col3_braced/wend-50,F2b,tall,,,,
+results/F2b/tall/sketch-col3_braced/wstart-1000/attempt_1,F2b/tall/sketch-col3_braced/wstart-1000,F2b,tall,,,,
+results/F2b/tall/sketch-col3_braced/wstart-2000/attempt_1,F2b/tall/sketch-col3_braced/wstart-2000,F2b,tall,,,,
+results/F2b/tall/sketch-col6_grid/wend-0/attempt_1,F2b/tall/sketch-col6_grid/wend-0,F2b,tall,,,,
+results/F2b/tall/sketch-col6_grid/wend-100/attempt_1,F2b/tall/sketch-col6_grid/wend-100,F2b,tall,,,,
+results/F2b/tall/sketch-col6_grid/wend-200/attempt_1,F2b/tall/sketch-col6_grid/wend-200,F2b,tall,,,,
+results/F2b/tall/sketch-col6_grid/wend-50/attempt_1,F2b/tall/sketch-col6_grid/wend-50,F2b,tall,,,,
+results/F3/tall/sketch-1/attempt_3,F3/tall/sketch-1,F3,tall,,,,
+results/F3/tall/sketch-11/attempt_1,F3/tall/sketch-11,F3,tall,,,,
+results/F3/tall/sketch-12/attempt_1,F3/tall/sketch-12,F3,tall,,,,
+results/F3/tall/sketch-3/attempt_1,F3/tall/sketch-3,F3,tall,,,,
+results/F3/tall/sketch-6/attempt_1,F3/tall/sketch-6,F3,tall,,,,
+results/F3/tall/sketch-9/attempt_1,F3/tall/sketch-9,F3,tall,,,,
+results/F3/tall/sketch-col2/attempt_1,F3/tall/sketch-col2,F3,tall,,,,
+results/F3/tall/sketch-col3/attempt_1,F3/tall/sketch-col3,F3,tall,,,,
+results/F3/tall/sketch-col3_braced/attempt_1,F3/tall/sketch-col3_braced,F3,tall,,,,
+results/F3/tall/sketch-col6_grid/attempt_1,F3/tall/sketch-col6_grid,F3,tall,,,,
+results/G/bridge/a_solid_stone_wall/attempt_1,G/bridge/a_solid_stone_wall,G,bridge,a solid stone wall,0.18238379061222076,0.18936815857887268,0.0069843679666519165
+results/G/bridge/a_spiral_staircase/attempt_1,G/bridge/a_spiral_staircase,G,bridge,a spiral staircase,0.17970003187656403,0.20666837692260742,0.026968345046043396
+results/G/bridge/an_obelisk/attempt_1,G/bridge/an_obelisk,G,bridge,an obelisk,0.19212932884693146,0.20882564783096313,0.016696318984031677
+results/G/bridge/chainmail/attempt_1,G/bridge/chainmail,G,bridge,chainmail,0.1777932196855545,0.19501177966594696,0.017218559980392456
+results/G/bridge/roman_aqueduct_arches/attempt_1,G/bridge/roman_aqueduct_arches,G,bridge,roman aqueduct arches,0.17520758509635925,0.19009938836097717,0.01489180326461792
+results/G/bridge/sedimentary_rock_layers/attempt_1,G/bridge/sedimentary_rock_layers,G,bridge,sedimentary rock layers,0.18637754023075104,0.1810392290353775,-0.005338311195373535
+results/G/short/a_solid_stone_wall/attempt_1,G/short/a_solid_stone_wall,G,short,a solid stone wall,0.16135895252227783,0.2342798113822937,0.07292085886001587
+results/G/short/a_spiral_staircase/attempt_1,G/short/a_spiral_staircase,G,short,a spiral staircase,0.19324909150600433,0.24230915307998657,0.04906006157398224
+results/G/short/an_obelisk/attempt_1,G/short/an_obelisk,G,short,an obelisk,0.19959384202957153,0.22219887375831604,0.022605031728744507
+results/G/short/chainmail/attempt_1,G/short/chainmail,G,short,chainmail,0.19482013583183289,0.23836824297904968,0.0435481071472168
+results/G/short/roman_aqueduct_arches/attempt_1,G/short/roman_aqueduct_arches,G,short,roman aqueduct arches,0.17314493656158447,0.2002568393945694,0.027111902832984924
+results/G/short/sedimentary_rock_layers/attempt_1,G/short/sedimentary_rock_layers,G,short,sedimentary rock layers,0.17124709486961365,0.22902333736419678,0.05777624249458313
+results/G/tall/a_solid_stone_wall/attempt_1,G/tall/a_solid_stone_wall,G,tall,a solid stone wall,0.18872815370559692,0.23763610422611237,0.04890795052051544
+results/G/tall/a_spiral_staircase/attempt_1,G/tall/a_spiral_staircase,G,tall,a spiral staircase,0.22844283282756805,0.2752555012702942,0.046812668442726135
+results/G/tall/an_obelisk/attempt_1,G/tall/an_obelisk,G,tall,an obelisk,0.23282451927661896,0.26289474964141846,0.0300702303647995
+results/G/tall/chainmail/attempt_1,G/tall/chainmail,G,tall,chainmail,0.1934225857257843,0.23771855235099792,0.04429596662521362
+results/G/tall/roman_aqueduct_arches/attempt_1,G/tall/roman_aqueduct_arches,G,tall,roman aqueduct arches,0.23409168422222137,0.28540530800819397,0.051313623785972595
+results/G/tall/sedimentary_rock_layers/attempt_1,G/tall/sedimentary_rock_layers,G,tall,sedimentary rock layers,0.1877201497554779,0.2230217307806015,0.035301581025123596
+results/GATE/bridge3/butterfly_wing_venation/beta8/attempt_1,GATE/bridge3/butterfly_wing_venation/beta8,GATE,bridge3,butterfly wing venation,0.232665553689003,0.2602100670337677,0.02754451334476471
+results/GATE/bridge3/fern_fronds/attempt_1,GATE/bridge3/fern_fronds,GATE,bridge3,fern fronds,0.18143276870250702,0.19482289254665375,0.013390123844146729
+results/GATE/bridge3/fern_fronds/beta8/attempt_2,GATE/bridge3/fern_fronds/beta8,GATE,bridge3,fern fronds,0.16853958368301392,0.2034078687429428,0.034868285059928894
+results/GATE/bridge3/skeletons/beta8/attempt_1,GATE/bridge3/skeletons/beta8,GATE,bridge3,skeletons,0.20360098779201508,0.22627359628677368,0.022672608494758606
+results/GATE/bridge3/unguided/attempt_1,GATE/bridge3/unguided,GATE,bridge3,,,,
+results/GATE/bridge3/unguided/beta8/attempt_2,GATE/bridge3/unguided/beta8,GATE,bridge3,,,,
+results/GATE/bridge3/unguided/beta8/deck-init/attempt_1,GATE/bridge3/unguided/beta8/deck-init,GATE,bridge3,,,,
+results/GATE/projection/tall/fern_fronds/hybrid/beta0/attempt_1,GATE/projection/tall/fern_fronds/hybrid/beta0,GATE,tall,fern fronds,0.2500918507575989,0.2779940664768219,0.027902215719223022
+results/GATE/projection/tall/fern_fronds/hybrid/beta8/attempt_1,GATE/projection/tall/fern_fronds/hybrid/beta8,GATE,tall,fern fronds,0.22790049016475677,0.27148592472076416,0.043585434556007385
+results/GATE/projection/tall/unguided/beta0/attempt_1,GATE/projection/tall/unguided/beta0,GATE,tall,,,,
+results/GATE/projection/tall/unguided/beta8/attempt_1,GATE/projection/tall/unguided/beta8,GATE,tall,,,,
+results/H1/tall/butterfly_wing_venation/hybrid/attempt_1,H1/tall/butterfly_wing_venation/hybrid,H1,tall,butterfly wing venation,0.21723635494709015,0.2700505554676056,0.05281420052051544
+results/H1/tall/fern_fronds/hybrid/attempt_2,H1/tall/fern_fronds/hybrid,H1,tall,fern fronds,0.22790049016475677,0.27148592472076416,0.043585434556007385
+results/H1/tall/skeletons/hybrid/attempt_1,H1/tall/skeletons/hybrid,H1,tall,skeletons,0.24893707036972046,0.25443148612976074,0.005494415760040283
+results/H2/bridge/butterfly_wing_venation/hybrid/attempt_1,H2/bridge/butterfly_wing_venation/hybrid,H2,bridge,butterfly wing venation,0.22377710044384003,0.2375306785106659,0.013753578066825867
+results/H2/bridge/fern_fronds/hybrid/attempt_1,H2/bridge/fern_fronds/hybrid,H2,bridge,fern fronds,0.18225473165512085,0.21090620756149292,0.02865147590637207
+results/H2/bridge/skeletons/hybrid/attempt_1,H2/bridge/skeletons/hybrid,H2,bridge,skeletons,0.21079877018928528,0.23874671757221222,0.02794794738292694
+results/H2/short/butterfly_wing_venation/hybrid/attempt_1,H2/short/butterfly_wing_venation/hybrid,H2,short,butterfly wing venation,0.2500913739204407,0.2575385272502899,0.007447153329849243
+results/H2/short/fern_fronds/hybrid/attempt_1,H2/short/fern_fronds/hybrid,H2,short,fern fronds,0.2394533008337021,0.26456090807914734,0.02510760724544525
+results/H2/short/skeletons/hybrid/attempt_1,H2/short/skeletons/hybrid,H2,short,skeletons,0.2571600675582886,0.26407164335250854,0.006911575794219971
+results/H3/tall/sketch-12/butterfly_wing_venation/attempt_1,H3/tall/sketch-12/butterfly_wing_venation,H3,tall,butterfly wing venation,0.2382889986038208,0.2643504738807678,0.02606147527694702
+results/H3/tall/sketch-12/fern_fronds/attempt_1,H3/tall/sketch-12/fern_fronds,H3,tall,fern fronds,0.2356865108013153,0.257988840341568,0.022302329540252686
+results/H3/tall/sketch-12/skeletons/attempt_1,H3/tall/sketch-12/skeletons,H3,tall,skeletons,0.21738822758197784,0.21077561378479004,-0.006612613797187805
+results/H3/tall/sketch-col3_braced/butterfly_wing_venation/attempt_1,H3/tall/sketch-col3_braced/butterfly_wing_venation,H3,tall,butterfly wing venation,0.22089332342147827,0.23977592587471008,0.01888260245323181
+results/H3/tall/sketch-col3_braced/fern_fronds/attempt_1,H3/tall/sketch-col3_braced/fern_fronds,H3,tall,fern fronds,0.2370004951953888,0.25259602069854736,0.01559552550315857
+results/H3/tall/sketch-col3_braced/skeletons/attempt_1,H3/tall/sketch-col3_braced/skeletons,H3,tall,skeletons,0.2357562780380249,0.24371352791786194,0.007957249879837036
+results/H3/tall/sketch-col6_grid/butterfly_wing_venation/attempt_1,H3/tall/sketch-col6_grid/butterfly_wing_venation,H3,tall,butterfly wing venation,0.21181528270244598,0.21545039117336273,0.003635108470916748
+results/H3/tall/sketch-col6_grid/fern_fronds/attempt_1,H3/tall/sketch-col6_grid/fern_fronds,H3,tall,fern fronds,0.21539552509784698,0.2228696197271347,0.00747409462928772
+results/H3/tall/sketch-col6_grid/skeletons/attempt_1,H3/tall/sketch-col6_grid/skeletons,H3,tall,skeletons,0.24807552993297577,0.23793983459472656,-0.010135695338249207
+results/H4/tall/butterfly_wing_venation/coadapt-off/attempt_1,H4/tall/butterfly_wing_venation/coadapt-off,H4,tall,butterfly wing venation,0.2252269983291626,0.2416049838066101,0.01637798547744751
+results/H4/tall/fern_fronds/coadapt-off/attempt_1,H4/tall/fern_fronds/coadapt-off,H4,tall,fern fronds,0.23632855713367462,0.2870219945907593,0.050693437457084656
+results/H4/tall/skeletons/coadapt-off/attempt_1,H4/tall/skeletons/coadapt-off,H4,tall,skeletons,0.25286829471588135,0.25717031955718994,0.004302024841308594
+results/H5/bridge/butterfly_wing_venation/hybrid/attempt_1,H5/bridge/butterfly_wing_venation/hybrid,H5,bridge,butterfly wing venation,0.2163996696472168,0.23745374381542206,0.02105407416820526
+results/H5/bridge/fern_fronds/hybrid/attempt_1,H5/bridge/fern_fronds/hybrid,H5,bridge,fern fronds,0.17157979309558868,0.20129959285259247,0.029719799757003784
+results/H5/bridge/skeletons/hybrid/attempt_1,H5/bridge/skeletons/hybrid,H5,bridge,skeletons,0.19282403588294983,0.20756499469280243,0.0147409588098526
+results/H5/short/butterfly_wing_venation/hybrid/attempt_1,H5/short/butterfly_wing_venation/hybrid,H5,short,butterfly wing venation,0.241814523935318,0.2470608949661255,0.005246371030807495
+results/H5/short/fern_fronds/hybrid/attempt_1,H5/short/fern_fronds/hybrid,H5,short,fern fronds,0.2387746274471283,0.27660951018333435,0.037834882736206055
+results/H5/short/skeletons/hybrid/attempt_1,H5/short/skeletons/hybrid,H5,short,skeletons,0.2643708884716034,0.2532751262187958,-0.011095762252807617
+results/H5/tall/butterfly_wing_venation/hybrid/attempt_1,H5/tall/butterfly_wing_venation/hybrid,H5,tall,butterfly wing venation,0.22143948078155518,0.25701823830604553,0.035578757524490356
+results/H5/tall/fern_fronds/hybrid/attempt_1,H5/tall/fern_fronds/hybrid,H5,tall,fern fronds,0.23051737248897552,0.2827473282814026,0.05222995579242706
+results/H5/tall/skeletons/hybrid/attempt_1,H5/tall/skeletons/hybrid,H5,tall,skeletons,0.2650424838066101,0.2599349021911621,-0.005107581615447998
+results/L/tall/bracken/attempt_1,L/tall/bracken,L,tall,bracken,0.20166681706905365,0.226681649684906,0.025014832615852356
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,L,tall,brick wall,0.1771971881389618,0.2211540937423706,0.043956905603408813
+results/L/tall/lightning/attempt_1,L/tall/lightning,L,tall,lightning,0.19096863269805908,0.19469520449638367,0.003726571798324585
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,M,tall,art nouveau ironwork,0.2162625640630722,0.2546924352645874,0.0384298712015152
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,M,tall,bamboo scaffolding,0.2567307949066162,0.28319650888442993,0.02646571397781372
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,M,tall,barbed wire,0.27781403064727783,0.25847768783569336,-0.019336342811584473
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,M,tall,chain-link fence,0.22979140281677246,0.27381613850593567,0.04402473568916321
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,M,tall,circuit board,0.24721375107765198,0.2680436372756958,0.020829886198043823
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,M,tall,coral reef,0.19316962361335754,0.232661634683609,0.039492011070251465
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,M,tall,cracked mud,0.23214082419872284,0.2545449733734131,0.022404149174690247
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,M,tall,dragonfly wing,0.2169698178768158,0.24746720492839813,0.030497387051582336
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,M,tall,flying buttresses,0.24513018131256104,0.28217029571533203,0.037040114402770996
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,M,tall,ice crystals,0.19504673779010773,0.19468927383422852,-0.0003574639558792114
+results/M/tall/lace/attempt_1,M/tall/lace,M,tall,lace,0.20610949397087097,0.23759306967258453,0.03148357570171356
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,M,tall,lattice tower,0.260202556848526,0.30437013506889343,0.04416757822036743
+results/M/tall/lichen/attempt_1,M/tall/lichen,M,tall,lichen,0.2209482491016388,0.21714748442173004,-0.0038007646799087524
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,M,tall,mangrove roots,0.2319776862859726,0.21559199690818787,-0.01638568937778473
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,M,tall,marble veins,0.20593661069869995,0.23104731738567352,0.025110706686973572
+results/M/tall/neurons/attempt_1,M/tall/neurons,M,tall,neurons,0.27853718400001526,0.27712282538414,-0.0014143586158752441
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,M,tall,pine cone,0.26947611570358276,0.258541464805603,-0.010934650897979736
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,M,tall,river delta,0.21011078357696533,0.2537517547607422,0.043640971183776855
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,M,tall,seashell spiral,0.21474096179008484,0.24364987015724182,0.028908908367156982
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,M,tall,sound waves,0.21650566160678864,0.2324315309524536,0.015925869345664978
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,M,tall,spiral galaxy,0.2058262825012207,0.23177461326122284,0.025948330760002136
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,M,tall,stained glass window,0.22276031970977783,0.24495214223861694,0.02219182252883911
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,M,tall,suspension bridge cables,0.23972395062446594,0.2690103054046631,0.029286354780197144
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,M,tall,woven basket,0.24603459239006042,0.25326108932495117,0.007226496934890747
+results/N/tall/gmof_ztuy_hcnb/attempt_1,N/tall/gmof_ztuy_hcnb,N,tall,gmof ztuy hcnb,0.2112426608800888,0.2350582629442215,0.02381560206413269
+results/N/tall/kwyp_elrj_sqox/attempt_1,N/tall/kwyp_elrj_sqox,N,tall,kwyp elrj sqox,0.20307239890098572,0.22473175823688507,0.021659359335899353
+results/N/tall/ntseleosk/attempt_1,N/tall/ntseleosk,N,tall,ntseleosk,0.19947564601898193,0.22551918029785156,0.02604353427886963
+results/N/tall/rnef_dsnorf/attempt_1,N/tall/rnef_dsnorf,N,tall,rnef dsnorf,0.2243596911430359,0.2317926585674286,0.0074329674243927
+results/N/tall/vbtq_orzk_plimw/attempt_1,N/tall/vbtq_orzk_plimw,N,tall,vbtq orzk plimw,0.21914027631282806,0.26906365156173706,0.049923375248909
+results/N/tall/xjeu_wkqa_dryv/attempt_1,N/tall/xjeu_wkqa_dryv,N,tall,xjeu wkqa dryv,0.22781910002231598,0.2598825693130493,0.03206346929073334
+results/N/tall/ytlurfebt_gniw_ntoeiavn/attempt_1,N/tall/ytlurfebt_gniw_ntoeiavn,N,tall,ytlurfebt gniw ntoeiavn,0.23972126841545105,0.2525705099105835,0.012849241495132446
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,P,tall,a cat,0.23229408264160156,0.24704140424728394,0.014747321605682373
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,P,tall,bone trabeculae,0.20185215771198273,0.2309514433145523,0.02909928560256958
+results/P/tall/clouds/attempt_1,P/tall/clouds,P,tall,clouds,0.16055575013160706,0.21223914623260498,0.051683396100997925
+results/P/tall/fur/attempt_1,P/tall/fur,P,tall,fur,0.18194985389709473,0.24352119863033295,0.06157134473323822
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,P,tall,gothic tracery,0.2998536229133606,0.3097948431968689,0.0099412202835083
+results/P/tall/honeycomb/attempt_1,P/tall/honeycomb,P,tall,honeycomb,0.2408679872751236,0.25684216618537903,0.015974178910255432
+results/P/tall/smoke/attempt_1,P/tall/smoke,P,tall,smoke,0.17231836915016174,0.22195540368556976,0.04963703453540802
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,P,tall,spider web,0.24729198217391968,0.2747757136821747,0.027483731508255005
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,P,tall,tree branches,0.22409412264823914,0.2354763150215149,0.011382192373275757
+results/R/bridge/butterfly_wing_venation/seed-101/attempt_1,R/bridge/butterfly_wing_venation/seed-101,R,bridge,butterfly wing venation,0.21556192636489868,0.23418739438056946,0.018625468015670776
+results/R/bridge/butterfly_wing_venation/seed-202/attempt_1,R/bridge/butterfly_wing_venation/seed-202,R,bridge,butterfly wing venation,0.20595315098762512,0.2169094681739807,0.01095631718635559
+results/R/bridge/butterfly_wing_venation/seed-303/attempt_1,R/bridge/butterfly_wing_venation/seed-303,R,bridge,butterfly wing venation,0.20663727819919586,0.22588485479354858,0.019247576594352722
+results/R/bridge/butterfly_wing_venation/seed-404/attempt_1,R/bridge/butterfly_wing_venation/seed-404,R,bridge,butterfly wing venation,0.20361608266830444,0.22659707069396973,0.022980988025665283
+results/R/bridge/fern_fronds/seed-101/attempt_1,R/bridge/fern_fronds/seed-101,R,bridge,fern fronds,0.2019907534122467,0.2155308723449707,0.013540118932723999
+results/R/bridge/fern_fronds/seed-202/attempt_1,R/bridge/fern_fronds/seed-202,R,bridge,fern fronds,0.18524155020713806,0.21297286450862885,0.027731314301490784
+results/R/bridge/fern_fronds/seed-303/attempt_1,R/bridge/fern_fronds/seed-303,R,bridge,fern fronds,0.19092392921447754,0.2114885151386261,0.02056458592414856
+results/R/bridge/fern_fronds/seed-404/attempt_1,R/bridge/fern_fronds/seed-404,R,bridge,fern fronds,0.18414941430091858,0.21001732349395752,0.02586790919303894
+results/R/bridge/skeletons/seed-101/attempt_1,R/bridge/skeletons/seed-101,R,bridge,skeletons,0.19094336032867432,0.20637966692447662,0.015436306595802307
+results/R/bridge/skeletons/seed-202/attempt_1,R/bridge/skeletons/seed-202,R,bridge,skeletons,0.20941603183746338,0.2166966050863266,0.00728057324886322
+results/R/bridge/skeletons/seed-303/attempt_1,R/bridge/skeletons/seed-303,R,bridge,skeletons,0.1897580325603485,0.20582328736782074,0.01606525480747223
+results/R/bridge/skeletons/seed-404/attempt_1,R/bridge/skeletons/seed-404,R,bridge,skeletons,0.18755599856376648,0.20748403668403625,0.019928038120269775
+results/R/bridge/unguided/seed-101/attempt_1,R/bridge/unguided/seed-101,R,bridge,,,,
+results/R/bridge/unguided/seed-202/attempt_1,R/bridge/unguided/seed-202,R,bridge,,,,
+results/R/bridge/unguided/seed-303/attempt_1,R/bridge/unguided/seed-303,R,bridge,,,,
+results/R/bridge/unguided/seed-404/attempt_1,R/bridge/unguided/seed-404,R,bridge,,,,
+results/R/short/butterfly_wing_venation/seed-101/attempt_1,R/short/butterfly_wing_venation/seed-101,R,short,butterfly wing venation,0.266659677028656,0.28276529908180237,0.016105622053146362
+results/R/short/butterfly_wing_venation/seed-202/attempt_1,R/short/butterfly_wing_venation/seed-202,R,short,butterfly wing venation,0.24749445915222168,0.28800860047340393,0.04051414132118225
+results/R/short/butterfly_wing_venation/seed-303/attempt_1,R/short/butterfly_wing_venation/seed-303,R,short,butterfly wing venation,0.21846792101860046,0.26858609914779663,0.05011817812919617
+results/R/short/butterfly_wing_venation/seed-404/attempt_1,R/short/butterfly_wing_venation/seed-404,R,short,butterfly wing venation,0.22277231514453888,0.262109637260437,0.03933732211589813
+results/R/short/fern_fronds/seed-101/attempt_1,R/short/fern_fronds/seed-101,R,short,fern fronds,0.22477826476097107,0.2576341927051544,0.03285592794418335
+results/R/short/fern_fronds/seed-202/attempt_1,R/short/fern_fronds/seed-202,R,short,fern fronds,0.22467829287052155,0.2604309022426605,0.03575260937213898
+results/R/short/fern_fronds/seed-303/attempt_1,R/short/fern_fronds/seed-303,R,short,fern fronds,0.23098543286323547,0.2562980651855469,0.0253126323223114
+results/R/short/fern_fronds/seed-404/attempt_1,R/short/fern_fronds/seed-404,R,short,fern fronds,0.22784483432769775,0.26205503940582275,0.034210205078125
+results/R/short/skeletons/seed-101/attempt_1,R/short/skeletons/seed-101,R,short,skeletons,0.226486474275589,0.2551819682121277,0.028695493936538696
+results/R/short/skeletons/seed-202/attempt_1,R/short/skeletons/seed-202,R,short,skeletons,0.24358436465263367,0.25597476959228516,0.01239040493965149
+results/R/short/skeletons/seed-303/attempt_1,R/short/skeletons/seed-303,R,short,skeletons,0.2559317350387573,0.2579159140586853,0.0019841790199279785
+results/R/short/skeletons/seed-404/attempt_1,R/short/skeletons/seed-404,R,short,skeletons,0.23513123393058777,0.2152543067932129,-0.019876927137374878
+results/R/short/unguided/seed-101/attempt_1,R/short/unguided/seed-101,R,short,,,,
+results/R/short/unguided/seed-202/attempt_1,R/short/unguided/seed-202,R,short,,,,
+results/R/short/unguided/seed-303/attempt_1,R/short/unguided/seed-303,R,short,,,,
+results/R/short/unguided/seed-404/attempt_1,R/short/unguided/seed-404,R,short,,,,
+results/R/tall/butterfly_wing_venation/seed-101/attempt_1,R/tall/butterfly_wing_venation/seed-101,R,tall,butterfly wing venation,0.23507210612297058,0.27289918065071106,0.03782707452774048
+results/R/tall/butterfly_wing_venation/seed-202/attempt_1,R/tall/butterfly_wing_venation/seed-202,R,tall,butterfly wing venation,0.2591966688632965,0.26076987385749817,0.0015732049942016602
+results/R/tall/butterfly_wing_venation/seed-303/attempt_1,R/tall/butterfly_wing_venation/seed-303,R,tall,butterfly wing venation,0.2349528670310974,0.26492840051651,0.029975533485412598
+results/R/tall/butterfly_wing_venation/seed-404/attempt_1,R/tall/butterfly_wing_venation/seed-404,R,tall,butterfly wing venation,0.2442639172077179,0.260344535112381,0.016080617904663086
+results/R/tall/fern_fronds/seed-101/attempt_1,R/tall/fern_fronds/seed-101,R,tall,fern fronds,0.263582706451416,0.2709718346595764,0.0073891282081604
+results/R/tall/fern_fronds/seed-202/attempt_1,R/tall/fern_fronds/seed-202,R,tall,fern fronds,0.22785769402980804,0.271223247051239,0.04336555302143097
+results/R/tall/fern_fronds/seed-303/attempt_1,R/tall/fern_fronds/seed-303,R,tall,fern fronds,0.23603397607803345,0.26447173953056335,0.028437763452529907
+results/R/tall/fern_fronds/seed-404/attempt_1,R/tall/fern_fronds/seed-404,R,tall,fern fronds,0.24587318301200867,0.26849883794784546,0.022625654935836792
+results/R/tall/skeletons/seed-101/attempt_1,R/tall/skeletons/seed-101,R,tall,skeletons,0.2560942471027374,0.24459630250930786,-0.011497944593429565
+results/R/tall/skeletons/seed-202/attempt_1,R/tall/skeletons/seed-202,R,tall,skeletons,0.2507314085960388,0.271701842546463,0.020970433950424194
+results/R/tall/skeletons/seed-303/attempt_1,R/tall/skeletons/seed-303,R,tall,skeletons,0.26071465015411377,0.24346321821212769,-0.017251431941986084
+results/R/tall/skeletons/seed-404/attempt_1,R/tall/skeletons/seed-404,R,tall,skeletons,0.24208524823188782,0.25911960005760193,0.01703435182571411
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,R,tall,,,,
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,R,tall,,,,
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,R,tall,,,,
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,R,tall,,,,
+results/S1/tall/butterfly_wing_venation/e/attempt_1,S1/tall/butterfly_wing_venation/e,S1,tall,butterfly wing venation,0.22979611158370972,0.2382841557264328,0.008488044142723083
+results/S1/tall/butterfly_wing_venation/g/attempt_1,S1/tall/butterfly_wing_venation/g,S1,tall,butterfly wing venation,0.22575107216835022,0.24862372875213623,0.02287265658378601
+results/S1/tall/butterfly_wing_venation/gme/attempt_1,S1/tall/butterfly_wing_venation/gme,S1,tall,butterfly wing venation,0.2364816814661026,0.2356991171836853,-0.0007825642824172974
+results/S1/tall/butterfly_wing_venation/m/attempt_2,S1/tall/butterfly_wing_venation/m,S1,tall,butterfly wing venation,0.22500565648078918,0.24655354022979736,0.02154788374900818
+results/S1/tall/fern_fronds/e/attempt_1,S1/tall/fern_fronds/e,S1,tall,fern fronds,0.20530067384243011,0.2556687593460083,0.050368085503578186
+results/S1/tall/fern_fronds/g/attempt_1,S1/tall/fern_fronds/g,S1,tall,fern fronds,0.2078884243965149,0.26439231634140015,0.056503891944885254
+results/S1/tall/fern_fronds/gme/attempt_1,S1/tall/fern_fronds/gme,S1,tall,fern fronds,0.2342742383480072,0.2636745870113373,0.029400348663330078
+results/S1/tall/fern_fronds/m/attempt_1,S1/tall/fern_fronds/m,S1,tall,fern fronds,0.23146256804466248,0.2691558003425598,0.03769323229789734
+results/S1/tall/skeletons/e/attempt_1,S1/tall/skeletons/e,S1,tall,skeletons,0.20140792429447174,0.2615542411804199,0.06014631688594818
+results/S1/tall/skeletons/g/attempt_1,S1/tall/skeletons/g,S1,tall,skeletons,0.2023647576570511,0.2549551725387573,0.05259041488170624
+results/S1/tall/skeletons/gme/attempt_1,S1/tall/skeletons/gme,S1,tall,skeletons,0.20087161660194397,0.2302951067686081,0.029423490166664124
+results/S1/tall/skeletons/m/attempt_1,S1/tall/skeletons/m,S1,tall,skeletons,0.21176910400390625,0.24199126660823822,0.03022216260433197
+results/S2/tall/butterfly_wing_venation/rho-0.00/attempt_1,S2/tall/butterfly_wing_venation/rho-0.00,S2,tall,butterfly wing venation,0.22484780848026276,0.22639089822769165,0.001543089747428894
+results/S2/tall/butterfly_wing_venation/rho-0.25/attempt_1,S2/tall/butterfly_wing_venation/rho-0.25,S2,tall,butterfly wing venation,0.2281399965286255,0.2514972388744354,0.023357242345809937
+results/S2/tall/butterfly_wing_venation/rho-0.50/attempt_1,S2/tall/butterfly_wing_venation/rho-0.50,S2,tall,butterfly wing venation,0.22234007716178894,0.24506983160972595,0.02272975444793701
+results/S2/tall/butterfly_wing_venation/rho-0.75/attempt_1,S2/tall/butterfly_wing_venation/rho-0.75,S2,tall,butterfly wing venation,0.22731271386146545,0.26427561044692993,0.03696289658546448
+results/S2/tall/butterfly_wing_venation/rho-1.00/attempt_1,S2/tall/butterfly_wing_venation/rho-1.00,S2,tall,butterfly wing venation,0.23783352971076965,0.27121680974960327,0.03338328003883362
+results/S2/tall/fern_fronds/rho-0.00/attempt_1,S2/tall/fern_fronds/rho-0.00,S2,tall,fern fronds,0.20249015092849731,0.25523290038108826,0.05274274945259094
+results/S2/tall/fern_fronds/rho-0.25/attempt_1,S2/tall/fern_fronds/rho-0.25,S2,tall,fern fronds,0.20396332442760468,0.24466532468795776,0.04070200026035309
+results/S2/tall/fern_fronds/rho-0.50/attempt_1,S2/tall/fern_fronds/rho-0.50,S2,tall,fern fronds,0.21286167204380035,0.26048222184181213,0.04762054979801178
+results/S2/tall/fern_fronds/rho-0.75/attempt_1,S2/tall/fern_fronds/rho-0.75,S2,tall,fern fronds,0.2285030633211136,0.2607077956199646,0.03220473229885101
+results/S2/tall/fern_fronds/rho-1.00/attempt_1,S2/tall/fern_fronds/rho-1.00,S2,tall,fern fronds,0.24589525163173676,0.2694500684738159,0.023554816842079163
+results/S2/tall/skeletons/rho-0.00/attempt_1,S2/tall/skeletons/rho-0.00,S2,tall,skeletons,0.20474457740783691,0.2420797049999237,0.03733512759208679
+results/S2/tall/skeletons/rho-0.25/attempt_1,S2/tall/skeletons/rho-0.25,S2,tall,skeletons,0.20356285572052002,0.23931488394737244,0.03575202822685242
+results/S2/tall/skeletons/rho-0.50/attempt_1,S2/tall/skeletons/rho-0.50,S2,tall,skeletons,0.20091700553894043,0.24763207137584686,0.04671506583690643
+results/S2/tall/skeletons/rho-0.75/attempt_1,S2/tall/skeletons/rho-0.75,S2,tall,skeletons,0.25005972385406494,0.25417008996009827,0.004110366106033325
+results/S2/tall/skeletons/rho-1.00/attempt_1,S2/tall/skeletons/rho-1.00,S2,tall,skeletons,0.25234270095825195,0.24679680168628693,-0.005545899271965027
+results/S2b/bridge/butterfly_wing_venation/rho-0.00/attempt_1,S2b/bridge/butterfly_wing_venation/rho-0.00,S2b,bridge,butterfly wing venation,0.19970831274986267,0.21803675591945648,0.01832844316959381
+results/S2b/bridge/butterfly_wing_venation/rho-0.25/attempt_1,S2b/bridge/butterfly_wing_venation/rho-0.25,S2b,bridge,butterfly wing venation,0.19133590161800385,0.214604452252388,0.023268550634384155
+results/S2b/bridge/butterfly_wing_venation/rho-0.50/attempt_1,S2b/bridge/butterfly_wing_venation/rho-0.50,S2b,bridge,butterfly wing venation,0.19841238856315613,0.22394052147865295,0.025528132915496826
+results/S2b/bridge/butterfly_wing_venation/rho-0.75/attempt_2,S2b/bridge/butterfly_wing_venation/rho-0.75,S2b,bridge,butterfly wing venation,0.20257946848869324,0.21900415420532227,0.01642468571662903
+results/S2b/bridge/butterfly_wing_venation/rho-1.00/attempt_1,S2b/bridge/butterfly_wing_venation/rho-1.00,S2b,bridge,butterfly wing venation,0.2010205239057541,0.22890499234199524,0.02788446843624115
+results/S2b/bridge/fern_fronds/rho-0.00/attempt_1,S2b/bridge/fern_fronds/rho-0.00,S2b,bridge,fern fronds,0.18690142035484314,0.1976587027311325,0.010757282376289368
+results/S2b/bridge/fern_fronds/rho-0.25/attempt_1,S2b/bridge/fern_fronds/rho-0.25,S2b,bridge,fern fronds,0.18178273737430573,0.18597108125686646,0.00418834388256073
+results/S2b/bridge/fern_fronds/rho-0.50/attempt_1,S2b/bridge/fern_fronds/rho-0.50,S2b,bridge,fern fronds,0.18438641726970673,0.19525086879730225,0.01086445152759552
+results/S2b/bridge/fern_fronds/rho-0.75/attempt_1,S2b/bridge/fern_fronds/rho-0.75,S2b,bridge,fern fronds,0.18124690651893616,0.19877363741397858,0.01752673089504242
+results/S2b/bridge/fern_fronds/rho-1.00/attempt_1,S2b/bridge/fern_fronds/rho-1.00,S2b,bridge,fern fronds,0.1900787204504013,0.1995740681886673,0.009495347738265991
+results/S2b/bridge/skeletons/rho-0.00/attempt_1,S2b/bridge/skeletons/rho-0.00,S2b,bridge,skeletons,0.18453124165534973,0.200223907828331,0.015692666172981262
+results/S2b/bridge/skeletons/rho-0.25/attempt_1,S2b/bridge/skeletons/rho-0.25,S2b,bridge,skeletons,0.18384915590286255,0.19552963972091675,0.0116804838180542
+results/S2b/bridge/skeletons/rho-0.50/attempt_1,S2b/bridge/skeletons/rho-0.50,S2b,bridge,skeletons,0.18715111911296844,0.20273080468177795,0.01557968556880951
+results/S2b/bridge/skeletons/rho-0.75/attempt_1,S2b/bridge/skeletons/rho-0.75,S2b,bridge,skeletons,0.18802081048488617,0.2186017632484436,0.030580952763557434
+results/S2b/bridge/skeletons/rho-1.00/attempt_1,S2b/bridge/skeletons/rho-1.00,S2b,bridge,skeletons,0.19734567403793335,0.21413026750087738,0.01678459346294403
+results/S2b/short/butterfly_wing_venation/rho-0.00/attempt_1,S2b/short/butterfly_wing_venation/rho-0.00,S2b,short,butterfly wing venation,0.22036783397197723,0.26154810190200806,0.04118026793003082
+results/S2b/short/butterfly_wing_venation/rho-0.25/attempt_1,S2b/short/butterfly_wing_venation/rho-0.25,S2b,short,butterfly wing venation,0.21368688344955444,0.26509568095207214,0.0514087975025177
+results/S2b/short/butterfly_wing_venation/rho-0.50/attempt_1,S2b/short/butterfly_wing_venation/rho-0.50,S2b,short,butterfly wing venation,0.23167112469673157,0.2761594355106354,0.04448831081390381
+results/S2b/short/butterfly_wing_venation/rho-0.75/attempt_1,S2b/short/butterfly_wing_venation/rho-0.75,S2b,short,butterfly wing venation,0.24289900064468384,0.25920337438583374,0.016304373741149902
+results/S2b/short/butterfly_wing_venation/rho-1.00/attempt_1,S2b/short/butterfly_wing_venation/rho-1.00,S2b,short,butterfly wing venation,0.2719109058380127,0.24911272525787354,-0.02279818058013916
+results/S2b/short/fern_fronds/rho-0.00/attempt_1,S2b/short/fern_fronds/rho-0.00,S2b,short,fern fronds,0.2072332799434662,0.25539857149124146,0.04816529154777527
+results/S2b/short/fern_fronds/rho-0.25/attempt_1,S2b/short/fern_fronds/rho-0.25,S2b,short,fern fronds,0.21669673919677734,0.25379568338394165,0.03709894418716431
+results/S2b/short/fern_fronds/rho-0.50/attempt_1,S2b/short/fern_fronds/rho-0.50,S2b,short,fern fronds,0.22294734418392181,0.26167041063308716,0.038723066449165344
+results/S2b/short/fern_fronds/rho-0.75/attempt_1,S2b/short/fern_fronds/rho-0.75,S2b,short,fern fronds,0.2224123775959015,0.266399085521698,0.04398670792579651
+results/S2b/short/fern_fronds/rho-1.00/attempt_1,S2b/short/fern_fronds/rho-1.00,S2b,short,fern fronds,0.22448070347309113,0.26232531666755676,0.03784461319446564
+results/S2b/short/skeletons/rho-0.00/attempt_1,S2b/short/skeletons/rho-0.00,S2b,short,skeletons,0.1989581286907196,0.2126777470111847,0.013719618320465088
+results/S2b/short/skeletons/rho-0.25/attempt_1,S2b/short/skeletons/rho-0.25,S2b,short,skeletons,0.19074133038520813,0.20888158679008484,0.01814025640487671
+results/S2b/short/skeletons/rho-0.50/attempt_1,S2b/short/skeletons/rho-0.50,S2b,short,skeletons,0.19563916325569153,0.2554958164691925,0.05985665321350098
+results/S2b/short/skeletons/rho-0.75/attempt_1,S2b/short/skeletons/rho-0.75,S2b,short,skeletons,0.22414888441562653,0.21790830790996552,-0.006240576505661011
+results/S2b/short/skeletons/rho-1.00/attempt_1,S2b/short/skeletons/rho-1.00,S2b,short,skeletons,0.23160389065742493,0.22727105021476746,-0.004332840442657471
+results/S2c/tall/fern_fronds/rho-0.00/seed-101/attempt_1,S2c/tall/fern_fronds/rho-0.00/seed-101,S2c,tall,fern fronds,0.21405678987503052,0.2506812512874603,0.03662446141242981
+results/S2c/tall/fern_fronds/rho-0.00/seed-202/attempt_1,S2c/tall/fern_fronds/rho-0.00/seed-202,S2c,tall,fern fronds,0.19275744259357452,0.2286740243434906,0.03591658174991608
+results/S2c/tall/fern_fronds/rho-0.00/seed-303/attempt_1,S2c/tall/fern_fronds/rho-0.00/seed-303,S2c,tall,fern fronds,0.20128819346427917,0.2566298544406891,0.05534166097640991
+results/S2c/tall/fern_fronds/rho-0.50/seed-101/attempt_2,S2c/tall/fern_fronds/rho-0.50/seed-101,S2c,tall,fern fronds,0.22833767533302307,0.2695997953414917,0.04126212000846863
+results/S2c/tall/fern_fronds/rho-0.50/seed-202/attempt_1,S2c/tall/fern_fronds/rho-0.50/seed-202,S2c,tall,fern fronds,0.2046452760696411,0.2819378972053528,0.07729262113571167
+results/S2c/tall/fern_fronds/rho-0.50/seed-303/attempt_1,S2c/tall/fern_fronds/rho-0.50/seed-303,S2c,tall,fern fronds,0.2083856761455536,0.2581937909126282,0.049808114767074585
+results/S2c/tall/fern_fronds/rho-1.00/seed-101/attempt_1,S2c/tall/fern_fronds/rho-1.00/seed-101,S2c,tall,fern fronds,0.263582706451416,0.2709718346595764,0.0073891282081604
+results/S2c/tall/fern_fronds/rho-1.00/seed-202/attempt_1,S2c/tall/fern_fronds/rho-1.00/seed-202,S2c,tall,fern fronds,0.22785769402980804,0.271223247051239,0.04336555302143097
+results/S2c/tall/fern_fronds/rho-1.00/seed-303/attempt_1,S2c/tall/fern_fronds/rho-1.00/seed-303,S2c,tall,fern fronds,0.23603397607803345,0.26447173953056335,0.028437763452529907
+results/S3/bridge/butterfly_wing_venation/attempt_1,S3/bridge/butterfly_wing_venation,S3,bridge,butterfly wing venation,0.20887714624404907,0.22814923524856567,0.0192720890045166
+results/S3/bridge/fern_fronds/attempt_1,S3/bridge/fern_fronds,S3,bridge,fern fronds,0.19157330691814423,0.2089555263519287,0.017382219433784485
+results/S3/bridge/skeletons/attempt_1,S3/bridge/skeletons,S3,bridge,skeletons,0.19070231914520264,0.20653168857097626,0.01582936942577362
+results/S3/short/butterfly_wing_venation/attempt_2,S3/short/butterfly_wing_venation,S3,short,butterfly wing venation,0.2708335220813751,0.2508654296398163,-0.019968092441558838
+results/S3/short/fern_fronds/attempt_2,S3/short/fern_fronds,S3,short,fern fronds,0.22018161416053772,0.2575779855251312,0.037396371364593506
+results/S3/short/skeletons/attempt_2,S3/short/skeletons,S3,short,skeletons,0.23160389065742493,0.22727105021476746,-0.004332840442657471
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,S3,tall,butterfly wing venation,0.23783788084983826,0.2712932229042053,0.033455342054367065
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,S3,tall,fern fronds,0.24651487171649933,0.26848846673965454,0.021973595023155212
+results/S3/tall/human_skull/attempt_1,S3/tall/human_skull,S3,tall,human skull,0.22164103388786316,0.24275198578834534,0.021110951900482178
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,S3,tall,skeletons,0.25234270095825195,0.24679680168628693,-0.005545899271965027
+results/S4/tall/fern_frond/hybrid/attempt_1,S4/tall/fern_frond/hybrid,S4,tall,fern frond,0.22908160090446472,0.2803015112876892,0.05121991038322449
+results/S4/tall/fern_frond/semantic/attempt_1,S4/tall/fern_frond/semantic,S4,tall,fern frond,0.23512530326843262,0.2671859562397003,0.0320606529712677
+results/S4/tall/field_of_ferns/hybrid/attempt_1,S4/tall/field_of_ferns/hybrid,S4,tall,field of ferns,0.2051428258419037,0.2397187203168869,0.034575894474983215
+results/S4/tall/field_of_ferns/semantic/attempt_1,S4/tall/field_of_ferns/semantic,S4,tall,field of ferns,0.1964055895805359,0.2636103630065918,0.06720477342605591
+results/S4/tall/many_fern_fronds/hybrid/attempt_1,S4/tall/many_fern_fronds/hybrid,S4,tall,many fern fronds,0.24886634945869446,0.2668302059173584,0.01796385645866394
+results/S4/tall/many_fern_fronds/semantic/attempt_1,S4/tall/many_fern_fronds/semantic,S4,tall,many fern fronds,0.22819873690605164,0.26053887605667114,0.03234013915061951
+results/S4/tall/unfurling_fern_fronds/hybrid/attempt_1,S4/tall/unfurling_fern_fronds/hybrid,S4,tall,unfurling fern fronds,0.21700982749462128,0.2369709014892578,0.019961073994636536
+results/S4/tall/unfurling_fern_fronds/semantic/attempt_1,S4/tall/unfurling_fern_fronds/semantic,S4,tall,unfurling fern fronds,0.22640474140644073,0.23251983523368835,0.00611509382724762
+results/V/bridge/butterfly_wing_venation/vf-0.20/attempt_1,V/bridge/butterfly_wing_venation/vf-0.20,V,bridge,butterfly wing venation,0.204299196600914,0.23767273128032684,0.03337353467941284
+results/V/bridge/butterfly_wing_venation/vf-0.40/attempt_1,V/bridge/butterfly_wing_venation/vf-0.40,V,bridge,butterfly wing venation,0.19425936043262482,0.21746358275413513,0.023204222321510315
+results/V/bridge/butterfly_wing_venation/vf-0.50/attempt_1,V/bridge/butterfly_wing_venation/vf-0.50,V,bridge,butterfly wing venation,0.2084656059741974,0.22577877342700958,0.017313167452812195
+results/V/bridge/fern_fronds/vf-0.20/attempt_1,V/bridge/fern_fronds/vf-0.20,V,bridge,fern fronds,0.17205385863780975,0.20845948159694672,0.03640562295913696
+results/V/bridge/fern_fronds/vf-0.40/attempt_1,V/bridge/fern_fronds/vf-0.40,V,bridge,fern fronds,0.18927626311779022,0.20986886322498322,0.020592600107192993
+results/V/bridge/fern_fronds/vf-0.50/attempt_1,V/bridge/fern_fronds/vf-0.50,V,bridge,fern fronds,0.1952541470527649,0.201151043176651,0.005896896123886108
+results/V/bridge/skeletons/vf-0.20/attempt_1,V/bridge/skeletons/vf-0.20,V,bridge,skeletons,0.18896158039569855,0.2178957313299179,0.02893415093421936
+results/V/bridge/skeletons/vf-0.40/attempt_1,V/bridge/skeletons/vf-0.40,V,bridge,skeletons,0.1914832890033722,0.20874586701393127,0.017262578010559082
+results/V/bridge/skeletons/vf-0.50/attempt_1,V/bridge/skeletons/vf-0.50,V,bridge,skeletons,0.1923401653766632,0.20474576950073242,0.012405604124069214
+results/V/bridge/unguided/vf-0.20/attempt_1,V/bridge/unguided/vf-0.20,V,bridge,,,,
+results/V/bridge/unguided/vf-0.40/attempt_1,V/bridge/unguided/vf-0.40,V,bridge,,,,
+results/V/bridge/unguided/vf-0.50/attempt_1,V/bridge/unguided/vf-0.50,V,bridge,,,,
+results/V/tall/butterfly_wing_venation/vf-0.20/attempt_1,V/tall/butterfly_wing_venation/vf-0.20,V,tall,butterfly wing venation,0.24709858000278473,0.27228617668151855,0.025187596678733826
+results/V/tall/butterfly_wing_venation/vf-0.40/attempt_1,V/tall/butterfly_wing_venation/vf-0.40,V,tall,butterfly wing venation,0.24393592774868011,0.2303641438484192,-0.013571783900260925
+results/V/tall/butterfly_wing_venation/vf-0.50/attempt_1,V/tall/butterfly_wing_venation/vf-0.50,V,tall,butterfly wing venation,0.24796144664287567,0.26472407579421997,0.0167626291513443
+results/V/tall/fern_fronds/vf-0.20/attempt_1,V/tall/fern_fronds/vf-0.20,V,tall,fern fronds,0.23360903561115265,0.28647664189338684,0.05286760628223419
+results/V/tall/fern_fronds/vf-0.40/attempt_1,V/tall/fern_fronds/vf-0.40,V,tall,fern fronds,0.26019126176834106,0.24328798055648804,-0.016903281211853027
+results/V/tall/fern_fronds/vf-0.50/attempt_1,V/tall/fern_fronds/vf-0.50,V,tall,fern fronds,0.25199973583221436,0.2379062920808792,-0.014093443751335144
+results/V/tall/skeletons/vf-0.20/attempt_1,V/tall/skeletons/vf-0.20,V,tall,skeletons,0.23398718237876892,0.25896039605140686,0.02497321367263794
+results/V/tall/skeletons/vf-0.40/attempt_1,V/tall/skeletons/vf-0.40,V,tall,skeletons,0.2591843008995056,0.24045893549919128,-0.01872536540031433
+results/V/tall/skeletons/vf-0.50/attempt_1,V/tall/skeletons/vf-0.50,V,tall,skeletons,0.25176432728767395,0.25904589891433716,0.007281571626663208
+results/V/tall/unguided/vf-0.20/attempt_1,V/tall/unguided/vf-0.20,V,tall,,,,
+results/V/tall/unguided/vf-0.40/attempt_1,V/tall/unguided/vf-0.40,V,tall,,,,
+results/V/tall/unguided/vf-0.50/attempt_1,V/tall/unguided/vf-0.50,V,tall,,,,
+results/X/tall/paraphrase/bones/seed-101/attempt_1,X/tall/paraphrase/bones/seed-101,X,tall,bones,0.2157798707485199,0.25258561968803406,0.03680574893951416
+results/X/tall/paraphrase/bones/seed-202/attempt_1,X/tall/paraphrase/bones/seed-202,X,tall,bones,0.2108483463525772,0.2278190702199936,0.016970723867416382
+results/X/tall/paraphrase/bones/seed-303/attempt_1,X/tall/paraphrase/bones/seed-303,X,tall,bones,0.2110099345445633,0.22649535536766052,0.015485420823097229
+results/X/tall/paraphrase/bracken_leaves/seed-101/attempt_1,X/tall/paraphrase/bracken_leaves/seed-101,X,tall,bracken leaves,0.21921271085739136,0.2643219232559204,0.04510921239852905
+results/X/tall/paraphrase/bracken_leaves/seed-202/attempt_1,X/tall/paraphrase/bracken_leaves/seed-202,X,tall,bracken leaves,0.22237621247768402,0.24547787010669708,0.02310165762901306
+results/X/tall/paraphrase/bracken_leaves/seed-303/attempt_1,X/tall/paraphrase/bracken_leaves/seed-303,X,tall,bracken leaves,0.2264592945575714,0.2693914771080017,0.0429321825504303
+results/X/tall/scrambled/ntseleosk/seed-101/attempt_1,X/tall/scrambled/ntseleosk/seed-101,X,tall,ntseleosk,0.19786356389522552,0.21452414989471436,0.01666058599948883
+results/X/tall/scrambled/ntseleosk/seed-202/attempt_1,X/tall/scrambled/ntseleosk/seed-202,X,tall,ntseleosk,0.18293750286102295,0.2115860879421234,0.028648585081100464
+results/X/tall/scrambled/ntseleosk/seed-303/attempt_1,X/tall/scrambled/ntseleosk/seed-303,X,tall,ntseleosk,0.17993037402629852,0.20180752873420715,0.02187715470790863
+results/X/tall/scrambled/rnef_dsnorf/seed-101/attempt_1,X/tall/scrambled/rnef_dsnorf/seed-101,X,tall,rnef dsnorf,0.1954084187746048,0.19832871854305267,0.002920299768447876
+results/X/tall/scrambled/rnef_dsnorf/seed-202/attempt_1,X/tall/scrambled/rnef_dsnorf/seed-202,X,tall,rnef dsnorf,0.25985953211784363,0.28611430525779724,0.026254773139953613
+results/X/tall/scrambled/rnef_dsnorf/seed-303/attempt_1,X/tall/scrambled/rnef_dsnorf/seed-303,X,tall,rnef dsnorf,0.21656467020511627,0.23898427188396454,0.022419601678848267

@@ -132,10 +132,10 @@ def preset_from_args(args) -> DreamLayoutPreset:
         clip_prompt=prompt,
         blend_rho=float(args.blend_rho),
         blend_rho_z=PAPER.blend_rho_z if rho_z is None else rho_z,
-        sketch_weight_end=float(args.sketch_weight_end),
+        # Runs saved before --sketch-weight-start existed used this default.
         sketch_weight_start=float(
-            getattr(args, 'sketch_weight_start', None)
-            or PAPER.sketch_weight_start),
+            getattr(args, 'sketch_weight_start', PAPER.sketch_weight_start)),
+        sketch_weight_end=float(args.sketch_weight_end),
         coadapt=bool(args.coadapt),
         resize_num=resize_num_for(width, height, spec.resize_num, spec.resize_scale),
         resize_scale=spec.resize_scale,

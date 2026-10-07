@@ -21,6 +21,7 @@ from types import SimpleNamespace
 import numpy as np
 
 from analysis.evaluate import walk_done
+from recipe.campaign_spec import PROMPTS
 
 _REPO = Path(__file__).resolve().parents[1]
 _GRID = (32, 16)
@@ -130,7 +131,11 @@ def comparison_set(meta: dict) -> str | None:
         return 'volume sweep'
     if experiment == 'M':
         return 'ours'
-    if experiment in ('S3', 'P', 'L'):
+    # S3 is the three campaign prompts. The human-skull counter lives in an
+    # old S3 directory and is not part of this set.
+    if experiment == 'S3' and prompt in PROMPTS:
+        return 'semantic prompts'
+    if experiment in ('P', 'L'):
         return 'semantic prompts'
     return None
 
@@ -269,7 +274,7 @@ def solve_all(
                 })
             continue
         command = [
-            sys.executable, str(Path(__file__).resolve()), 'resolve-one',
+            sys.executable, '-m', 'analysis.diversity', 'resolve-one',
             '--attempt', str(attempt), '--destination', str(destination),
         ]
         completed = subprocess.run(command, cwd=_REPO, text=True, capture_output=True)

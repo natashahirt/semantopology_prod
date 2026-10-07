@@ -19,6 +19,8 @@ from recipe.campaign_spec import (
     LOOSE_WEIGHT_ENDS,
     LOOSE_WEIGHT_STARTS,
     PROMPTS,
+    SKETCH_WEIGHT_LOW_ENDS,
+    SKETCH_WEIGHT_LOW_START,
     TYPOLOGY_PROMPTS,
     prompt_token,
 )
@@ -32,6 +34,7 @@ from slurm.make_manifest import (
     fern_wording_rows,
     fixed_weight_rows,
     loose_sketch_rows,
+    sketch_weight_low_rows,
     typology_rows,
 )
 
@@ -452,3 +455,22 @@ def _without_identity(argv: list[str]) -> list[str]:
         else:
             out.append(value)
     return out
+
+
+def test_f2b_low_sketch_weight_is_off_the_main_table():
+    campaign = experiment_rows(include_s1b=False)
+    assert all(not row['run_id'].startswith('F2b/') for row in campaign)
+    f2 = next(row for row in campaign if row['run_id'] == 'F2/tall/sketch-12/wend-200')
+    assert '--sketch-weight-start' not in f2['argv']
+
+    rows = sketch_weight_low_rows()
+    assert len(rows) == len(SKETCH_WEIGHT_LOW_ENDS)
+    ends = []
+    for row in rows:
+        argv = row['argv']
+        assert argv[argv.index('--sketch-weight-start') + 1] == str(SKETCH_WEIGHT_LOW_START)
+        assert argv[argv.index('--mode') + 1] == 'sketch'
+        assert argv[argv.index('--physics-beta-max') + 1] == '8'
+        ends.append(float(argv[argv.index('--sketch-weight-end') + 1]))
+    assert ends == list(SKETCH_WEIGHT_LOW_ENDS)
+    assert 'F2b/tall/sketch-12/wstart-200/wend-0' in {row['run_id'] for row in rows}

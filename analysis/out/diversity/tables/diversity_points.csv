@@ -1,0 +1,501 @@
+attempt,run_id,set,measure,band,pc1,pc2
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,structural,all,-0.21988700349655693,0.16153109350388387
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,parameter sweep,structural,all,-0.3374735394632793,0.04453321078896395
+results/D/tall/lhs-01/attempt_1,D/tall/lhs-01,parameter sweep,structural,all,-0.31308067280307306,0.06667734425976933
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,parameter sweep,structural,all,-0.35405261858702913,0.03831036866909435
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,parameter sweep,structural,all,-0.36047447963644774,0.02903583167269864
+results/D/tall/lhs-05/attempt_1,D/tall/lhs-05,parameter sweep,structural,all,-0.3539873085220761,0.035698342243428716
+results/D/tall/lhs-06/attempt_1,D/tall/lhs-06,parameter sweep,structural,all,-0.3574150857338686,0.06901944960570826
+results/D/tall/lhs-07/attempt_1,D/tall/lhs-07,parameter sweep,structural,all,-0.35517746466456834,0.023911908441740168
+results/D/tall/lhs-08/attempt_1,D/tall/lhs-08,parameter sweep,structural,all,-0.3735897663842096,0.03032516835031368
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,parameter sweep,structural,all,-0.3661736716294789,-0.004618636768299721
+results/D/tall/lhs-10/attempt_1,D/tall/lhs-10,parameter sweep,structural,all,-0.3582081718954584,0.03164769882528195
+results/D/tall/lhs-11/attempt_1,D/tall/lhs-11,parameter sweep,structural,all,-0.3615068944684761,0.043385982286073245
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,parameter sweep,structural,all,-0.3441241019469455,0.017667005119016727
+results/D/tall/lhs-13/attempt_1,D/tall/lhs-13,parameter sweep,structural,all,-0.35088507202927155,0.08877311249473431
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,parameter sweep,structural,all,-0.24696834949160143,0.14031329971803586
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,parameter sweep,structural,all,-0.33261897737179347,0.052807052683409454
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,parameter sweep,structural,all,-0.26465119453498887,0.0994095927513772
+results/D/tall/lhs-17/attempt_1,D/tall/lhs-17,parameter sweep,structural,all,-0.36660416736974755,0.025430019737449565
+results/D/tall/lhs-18/attempt_1,D/tall/lhs-18,parameter sweep,structural,all,-0.36616617603005686,0.026922752326900924
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,parameter sweep,structural,all,-0.35819084703359355,0.026382079737296185
+results/D/tall/lhs-20/attempt_1,D/tall/lhs-20,parameter sweep,structural,all,-0.34383968890810235,0.047756385073960975
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,parameter sweep,structural,all,-0.3127095817358887,0.07123507336542573
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,parameter sweep,structural,all,-0.14280765712487425,0.11938738393535742
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,parameter sweep,structural,all,-0.20564395662486534,0.2094698089856762
+results/L/tall/bracken/attempt_1,L/tall/bracken,semantic prompts,structural,all,0.2852464092799806,0.3567438863891881
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,semantic prompts,structural,all,0.3487033980407014,0.11610464440296957
+results/L/tall/lightning/attempt_1,L/tall/lightning,semantic prompts,structural,all,0.25204147503094254,-0.2258717376681223
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,ours,structural,all,0.25208332924985016,-0.2476173673913028
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,ours,structural,all,0.4598069734938776,-0.12856981698712827
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,ours,structural,all,0.42283808780589033,0.3258631141889763
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,ours,structural,all,0.41045291993676314,0.002739600670085024
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,ours,structural,all,0.325794832078725,-0.036338190706796586
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,ours,structural,all,0.20738481368025252,0.22220638324161057
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,ours,structural,all,0.42178706736337845,0.3822223414779161
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,ours,structural,all,-0.07843411820489016,-0.36018715128004564
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,ours,structural,all,-0.08838390353251788,-0.004492353997844017
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,ours,structural,all,-0.1748352544437698,-0.5755035187463461
+results/M/tall/lace/attempt_1,M/tall/lace,ours,structural,all,0.09239224559156417,-0.6028209973292247
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,ours,structural,all,0.29413331983790014,-0.11029792947679444
+results/M/tall/lichen/attempt_1,M/tall/lichen,ours,structural,all,0.3022511019438078,0.41409043358184017
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,ours,structural,all,0.4520997375364669,0.29765045231670473
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,ours,structural,all,0.5248795128484396,-0.3341782216940805
+results/M/tall/neurons/attempt_1,M/tall/neurons,ours,structural,all,0.3341949869192949,0.31542111947299617
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,ours,structural,all,0.08984770505969511,0.3782091891652803
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,ours,structural,all,-0.02660426945225156,0.27635899552187476
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,ours,structural,all,0.025762567787020497,-0.2546025832138501
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,ours,structural,all,0.20512865629754495,-0.5289820626180763
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,ours,structural,all,-0.12900751395879834,-0.48328684233140695
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,ours,structural,all,-0.07259877533026161,-0.4052654293860117
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,ours,structural,all,0.6203180512678783,0.08209696047953566
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,ours,structural,all,0.04739328548259697,-0.4083092484066261
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,semantic prompts,structural,all,0.2922986589730582,0.1721204236664295
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,semantic prompts,structural,all,0.6076401693018467,-0.0965387765518821
+results/P/tall/clouds/attempt_1,P/tall/clouds,semantic prompts,structural,all,0.39055305390651573,0.2339159958414031
+results/P/tall/fur/attempt_1,P/tall/fur,semantic prompts,structural,all,0.21782610821986498,-0.4215092024923681
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,semantic prompts,structural,all,-0.12434007762739024,-0.4473322069586293
+results/P/tall/honeycomb/attempt_1,P/tall/honeycomb,semantic prompts,structural,all,0.1094423184102851,0.04451645521077477
+results/P/tall/smoke/attempt_1,P/tall/smoke,semantic prompts,structural,all,0.4260978284275921,0.10116674546432435
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,semantic prompts,structural,all,0.562688242814902,-0.14470980300223185
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,semantic prompts,structural,all,0.32859191487096984,0.0744096940633879
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,structural,all,-0.16271818875095298,0.23032651943194893
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,structural,all,-0.16951884657571847,0.1738676855358741
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,structural,all,-0.14972605775303718,0.1772404851752965
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,structural,all,-0.19784784499875746,0.19829752904065778
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,semantic prompts,structural,all,-0.1356182686346463,-0.3881105496340641
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,semantic prompts,structural,all,0.21441450902026835,-0.0489174276962152
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,semantic prompts,structural,all,0.15280513170241294,-0.12359475546910233
+results/V/tall/unguided/vf-0.20/attempt_1,V/tall/unguided/vf-0.20,volume sweep,structural,all,-0.21518373607321095,0.32280777377997716
+results/V/tall/unguided/vf-0.40/attempt_1,V/tall/unguided/vf-0.40,volume sweep,structural,all,-0.20263060720059176,0.008743825243048432
+results/V/tall/unguided/vf-0.50/attempt_1,V/tall/unguided/vf-0.50,volume sweep,structural,all,-0.003214502157241294,-0.025095408131247464
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,geometric,all,-2.460776878303562,1.7188662890256703
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,parameter sweep,geometric,all,-3.803638105628752,0.1644908968499845
+results/D/tall/lhs-01/attempt_1,D/tall/lhs-01,parameter sweep,geometric,all,-3.3124845404969676,0.2233306224018886
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,parameter sweep,geometric,all,-3.9102803863227606,-0.00667707682365537
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,parameter sweep,geometric,all,-4.072554506033459,-0.1706347765248178
+results/D/tall/lhs-05/attempt_1,D/tall/lhs-05,parameter sweep,geometric,all,-3.8842445775375607,-0.5115911728781836
+results/D/tall/lhs-06/attempt_1,D/tall/lhs-06,parameter sweep,geometric,all,-3.904833565740745,0.19559919627620165
+results/D/tall/lhs-07/attempt_1,D/tall/lhs-07,parameter sweep,geometric,all,-3.746517053568072,-0.6407513137561722
+results/D/tall/lhs-08/attempt_1,D/tall/lhs-08,parameter sweep,geometric,all,-4.114425554933435,-0.3365993186198252
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,parameter sweep,geometric,all,-3.973266138723285,-0.6123774389627603
+results/D/tall/lhs-10/attempt_1,D/tall/lhs-10,parameter sweep,geometric,all,-3.86267727019346,-0.5340085505373952
+results/D/tall/lhs-11/attempt_1,D/tall/lhs-11,parameter sweep,geometric,all,-4.129337318321106,-0.009923772419563548
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,parameter sweep,geometric,all,-3.6863602671983755,-0.31718459703656504
+results/D/tall/lhs-13/attempt_1,D/tall/lhs-13,parameter sweep,geometric,all,-3.6462935537175376,0.45196153312910287
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,parameter sweep,geometric,all,-2.510667460474536,1.461498523441707
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,parameter sweep,geometric,all,-3.664473632407363,0.1831985461020445
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,parameter sweep,geometric,all,-2.8769088469839987,0.7394607576886565
+results/D/tall/lhs-17/attempt_1,D/tall/lhs-17,parameter sweep,geometric,all,-3.959736699065119,-0.5411847160115659
+results/D/tall/lhs-18/attempt_1,D/tall/lhs-18,parameter sweep,geometric,all,-4.0500199816752485,-0.41184789926433024
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,parameter sweep,geometric,all,-4.020303970182557,-0.1873531481281233
+results/D/tall/lhs-20/attempt_1,D/tall/lhs-20,parameter sweep,geometric,all,-3.6471811142202615,-0.059151997949800056
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,parameter sweep,geometric,all,-3.5667799321424867,0.2444655049706675
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,parameter sweep,geometric,all,-1.3204185597672031,1.1088337574170493
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,parameter sweep,geometric,all,-2.1235246251211604,2.2172221811511186
+results/L/tall/bracken/attempt_1,L/tall/bracken,semantic prompts,geometric,all,2.2613978731116093,3.8228138314211346
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,semantic prompts,geometric,all,3.303606978871657,1.3481459086939642
+results/L/tall/lightning/attempt_1,L/tall/lightning,semantic prompts,geometric,all,2.9963877733777657,-1.8648594701968726
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,ours,geometric,all,2.8916586744339647,-1.8266065040371955
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,ours,geometric,all,4.621676176710872,-0.3633031326285969
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,ours,geometric,all,3.241852178642705,3.4794079604719537
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,ours,geometric,all,4.24908603676133,0.8794046488417717
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,ours,geometric,all,3.523022465270428,-0.12295625711096925
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,ours,geometric,all,1.955844342994665,2.161173338302114
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,ours,geometric,all,3.1882278806731787,4.294340828049522
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,ours,geometric,all,0.44730383546074143,-2.987589773195168
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,ours,geometric,all,-0.3663146485587677,-0.34312115546639366
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,ours,geometric,all,-0.1888665814135107,-6.281863296343671
+results/M/tall/lace/attempt_1,M/tall/lace,ours,geometric,all,2.3182045585667215,-5.369764437199967
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,ours,geometric,all,3.048302236119088,-0.7157120277860868
+results/M/tall/lichen/attempt_1,M/tall/lichen,ours,geometric,all,2.3584598000969876,4.157519834690743
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,ours,geometric,all,3.763219864481815,3.4375333303875135
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,ours,geometric,all,5.626985900632356,-1.872121119663286
+results/M/tall/neurons/attempt_1,M/tall/neurons,ours,geometric,all,2.7143394289274667,3.5778812689553723
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,ours,geometric,all,1.1545347468452587,3.71515531246376
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,ours,geometric,all,-0.019937795393356328,2.696364598437766
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,ours,geometric,all,1.1807604628203205,-2.847063565979946
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,ours,geometric,all,3.119766614367797,-4.725782327866495
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,ours,geometric,all,0.42507794490037015,-5.205383439406223
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,ours,geometric,all,0.6189356184956074,-4.496337674207609
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,ours,geometric,all,5.52630178095861,1.8496109923274682
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,ours,geometric,all,1.9476685523530086,-3.7426575090427785
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,semantic prompts,geometric,all,2.810623354861902,2.0498035820728497
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,semantic prompts,geometric,all,5.70466442006416,-0.22195880833173043
+results/P/tall/clouds/attempt_1,P/tall/clouds,semantic prompts,geometric,all,3.3089973706068427,2.363463670905024
+results/P/tall/fur/attempt_1,P/tall/fur,semantic prompts,geometric,all,3.1970648282789593,-3.5687013928859486
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,semantic prompts,geometric,all,0.002140071920213482,-5.141866264560086
+results/P/tall/honeycomb/attempt_1,P/tall/honeycomb,semantic prompts,geometric,all,1.4110795728733447,0.5509625412878094
+results/P/tall/smoke/attempt_1,P/tall/smoke,semantic prompts,geometric,all,3.956680756055525,1.3745069430314165
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,semantic prompts,geometric,all,5.443629244971579,-0.49276527716089746
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,semantic prompts,geometric,all,2.8470361258480112,0.5093354477208446
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,geometric,all,-2.012241799903855,2.5459019242475414
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,geometric,all,-2.142679554570732,1.9284904818578399
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,geometric,all,-1.8605770604889034,2.0313458533602597
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,geometric,all,-2.4652777752473956,2.0503171878948354
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,semantic prompts,geometric,all,0.10744118300722066,-4.434182424251925
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,semantic prompts,geometric,all,2.385836590712475,-0.4021224809059135
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,semantic prompts,geometric,all,1.9469948069157486,-1.1578348443699018
+results/V/tall/unguided/vf-0.20/attempt_1,V/tall/unguided/vf-0.20,volume sweep,geometric,all,-1.0212426725946582,2.133526425870661
+results/V/tall/unguided/vf-0.40/attempt_1,V/tall/unguided/vf-0.40,volume sweep,geometric,all,-3.5363575831531078,0.14946700380233435
+results/V/tall/unguided/vf-0.50/attempt_1,V/tall/unguided/vf-0.50,volume sweep,geometric,all,-1.7436100419070093,0.7084382379618314
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,perceptual,all,-0.12954973851640378,-0.1375450513606135
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,parameter sweep,perceptual,all,-0.22274374425697788,0.09896901804925504
+results/D/tall/lhs-01/attempt_1,D/tall/lhs-01,parameter sweep,perceptual,all,-0.09540987520483703,-0.012518363177481746
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,parameter sweep,perceptual,all,-0.20616683752689202,0.06659685904837376
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,parameter sweep,perceptual,all,-0.2107335182185565,0.06177435596386162
+results/D/tall/lhs-05/attempt_1,D/tall/lhs-05,parameter sweep,perceptual,all,-0.12540835144659723,0.18930709678208463
+results/D/tall/lhs-06/attempt_1,D/tall/lhs-06,parameter sweep,perceptual,all,-0.20027290796140537,0.06850773030080368
+results/D/tall/lhs-07/attempt_1,D/tall/lhs-07,parameter sweep,perceptual,all,-0.10922293524833095,0.15982095224285128
+results/D/tall/lhs-08/attempt_1,D/tall/lhs-08,parameter sweep,perceptual,all,-0.17138069778084156,0.06594482127075722
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,parameter sweep,perceptual,all,-0.16374697713745115,-0.010408704523359685
+results/D/tall/lhs-10/attempt_1,D/tall/lhs-10,parameter sweep,perceptual,all,-0.11767233276079586,0.1882380466247361
+results/D/tall/lhs-11/attempt_1,D/tall/lhs-11,parameter sweep,perceptual,all,-0.19942780680127378,0.08558998903317427
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,parameter sweep,perceptual,all,-0.17726161326030604,0.02805995526769989
+results/D/tall/lhs-13/attempt_1,D/tall/lhs-13,parameter sweep,perceptual,all,-0.2027189489243756,0.031783788462708754
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,parameter sweep,perceptual,all,-0.1909947132481335,-0.061844337868959674
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,parameter sweep,perceptual,all,-0.20926815535389673,0.06157886024990772
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,parameter sweep,perceptual,all,-0.2326054320073338,0.056772272939859696
+results/D/tall/lhs-17/attempt_1,D/tall/lhs-17,parameter sweep,perceptual,all,-0.15534568061162835,0.11133545670569707
+results/D/tall/lhs-18/attempt_1,D/tall/lhs-18,parameter sweep,perceptual,all,-0.1500112073502746,0.09599385276070521
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,parameter sweep,perceptual,all,-0.15558988062127277,0.0347555836933574
+results/D/tall/lhs-20/attempt_1,D/tall/lhs-20,parameter sweep,perceptual,all,-0.11654798112546597,-0.04759118951731196
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,parameter sweep,perceptual,all,-0.17380618200716427,0.03831394439324293
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,parameter sweep,perceptual,all,-0.07192794204929427,-0.05988785949975658
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,parameter sweep,perceptual,all,-0.2118823390395439,-0.06509040176834556
+results/L/tall/bracken/attempt_1,L/tall/bracken,semantic prompts,perceptual,all,0.06272857070354877,-0.13892974659334836
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,semantic prompts,perceptual,all,0.16239545481190035,0.01331433108893175
+results/L/tall/lightning/attempt_1,L/tall/lightning,semantic prompts,perceptual,all,0.16454118750439412,0.1410986430782363
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,ours,perceptual,all,0.09897986438462526,-0.21570906963474742
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,ours,perceptual,all,0.1714806019846213,0.03788783524323994
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,ours,perceptual,all,0.14996526239232094,0.10563830869912443
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,ours,perceptual,all,0.1843400472801689,0.09058130363938975
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,ours,perceptual,all,0.12282629190644806,0.08416600783915323
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,ours,perceptual,all,0.16845003527392505,-0.028083189197724154
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,ours,perceptual,all,0.08686399269112534,0.07584946935049727
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,ours,perceptual,all,0.1657376036032859,-0.14498777420847303
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,ours,perceptual,all,0.04778675058282193,-0.27521990615950453
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,ours,perceptual,all,0.13559106933530973,0.07129901577283038
+results/M/tall/lace/attempt_1,M/tall/lace,ours,perceptual,all,0.12192333816319974,-0.04198939013541973
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,ours,perceptual,all,0.16174896831516353,0.01818910033231817
+results/M/tall/lichen/attempt_1,M/tall/lichen,ours,perceptual,all,0.1089953415243701,-0.02709980984732546
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,ours,perceptual,all,0.07457726298570047,-0.016119234497900994
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,ours,perceptual,all,0.1468509488228687,0.11389573168748943
+results/M/tall/neurons/attempt_1,M/tall/neurons,ours,perceptual,all,0.1604534955048565,0.04252556974828141
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,ours,perceptual,all,0.07866864331656057,-0.13390047736101707
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,ours,perceptual,all,0.10289853587229508,0.02806283370372824
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,ours,perceptual,all,0.15142932602673892,-0.07501083974556183
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,ours,perceptual,all,0.16237132808803356,0.15114796555038812
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,ours,perceptual,all,0.16272390145289697,0.05889341543730359
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,ours,perceptual,all,0.11004025119323504,-0.3001092887211728
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,ours,perceptual,all,0.11013291684701577,-0.034525845584755785
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,ours,perceptual,all,0.12620309770575322,0.0686448100939083
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,semantic prompts,perceptual,all,0.06566413958299118,-0.11817521102757475
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,semantic prompts,perceptual,all,0.1032953800849223,0.12931241310305414
+results/P/tall/clouds/attempt_1,P/tall/clouds,semantic prompts,perceptual,all,0.15063475964309775,0.07640792738906751
+results/P/tall/fur/attempt_1,P/tall/fur,semantic prompts,perceptual,all,0.10652481226977265,0.06086337835354762
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,semantic prompts,perceptual,all,0.04036623544529417,-0.27417197416527905
+results/P/tall/honeycomb/attempt_1,P/tall/honeycomb,semantic prompts,perceptual,all,0.13320615503080732,0.09166615321225144
+results/P/tall/smoke/attempt_1,P/tall/smoke,semantic prompts,perceptual,all,0.12537405288826398,0.15565842949814374
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,semantic prompts,perceptual,all,0.1467785417896441,0.04930615203372784
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,semantic prompts,perceptual,all,0.14791785861712847,-0.03703639178066927
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,perceptual,all,-0.12957769256317256,-0.1637094906034096
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,perceptual,all,-0.12490566763575012,-0.13124049177102165
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,perceptual,all,-0.13051644554796885,-0.11539833639292146
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,perceptual,all,-0.141843369230156,-0.1240508834936177
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,semantic prompts,perceptual,all,0.1251142390268309,0.018465021249154258
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,semantic prompts,perceptual,all,0.17985601838448556,-0.05067708090441065
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,semantic prompts,perceptual,all,0.1427451420272809,0.023040344946612633
+results/V/tall/unguided/vf-0.20/attempt_1,V/tall/unguided/vf-0.20,volume sweep,perceptual,all,-0.15715971991561106,-0.037757968823282265
+results/V/tall/unguided/vf-0.40/attempt_1,V/tall/unguided/vf-0.40,volume sweep,perceptual,all,-0.13252649270529315,-0.18869144197456308
+results/V/tall/unguided/vf-0.50/attempt_1,V/tall/unguided/vf-0.50,volume sweep,perceptual,all,-0.1519562370066984,-0.08177699449992595
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,structural_binary,all,0.057025571850515475,-0.39242526388055293
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,parameter sweep,structural_binary,all,-0.31362261915040446,-0.14362018344146532
+results/D/tall/lhs-01/attempt_1,D/tall/lhs-01,parameter sweep,structural_binary,all,-0.09559576031957828,0.3453957037631915
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,parameter sweep,structural_binary,all,-0.34518053026666345,-0.14339650684345204
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,parameter sweep,structural_binary,all,-0.42130101568871847,-0.11672910736562678
+results/D/tall/lhs-05/attempt_1,D/tall/lhs-05,parameter sweep,structural_binary,all,-0.38428386999841857,0.2594734100778806
+results/D/tall/lhs-06/attempt_1,D/tall/lhs-06,parameter sweep,structural_binary,all,-0.29795679353594184,-0.3659585643906018
+results/D/tall/lhs-07/attempt_1,D/tall/lhs-07,parameter sweep,structural_binary,all,-0.36320645127733153,0.2997524700474382
+results/D/tall/lhs-08/attempt_1,D/tall/lhs-08,parameter sweep,structural_binary,all,-0.5341817908431675,0.021643066155314805
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,parameter sweep,structural_binary,all,-0.4499514190376981,-0.008099683743753083
+results/D/tall/lhs-10/attempt_1,D/tall/lhs-10,parameter sweep,structural_binary,all,-0.38065454873962784,0.26077295658479926
+results/D/tall/lhs-11/attempt_1,D/tall/lhs-11,parameter sweep,structural_binary,all,-0.3954324335203297,-0.035268107409296326
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,parameter sweep,structural_binary,all,-0.41925151939873156,-0.04919355083465385
+results/D/tall/lhs-13/attempt_1,D/tall/lhs-13,parameter sweep,structural_binary,all,-0.14540865795147462,-0.3521672664594368
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,parameter sweep,structural_binary,all,0.029005450674697418,-0.033271953562556744
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,parameter sweep,structural_binary,all,-0.4066231381953279,-0.10129130186182839
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,parameter sweep,structural_binary,all,-0.12335832036504535,0.1347064743657086
+results/D/tall/lhs-17/attempt_1,D/tall/lhs-17,parameter sweep,structural_binary,all,-0.49607973441102776,0.17259688396354506
+results/D/tall/lhs-18/attempt_1,D/tall/lhs-18,parameter sweep,structural_binary,all,-0.5390868757802153,0.13970922855893492
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,parameter sweep,structural_binary,all,-0.4764101837559932,-0.14089909431350248
+results/D/tall/lhs-20/attempt_1,D/tall/lhs-20,parameter sweep,structural_binary,all,-0.33106087298112663,-0.007546117770922709
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,parameter sweep,structural_binary,all,-0.303235337467617,0.02609946800400294
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,parameter sweep,structural_binary,all,-0.1021075501302432,0.10127279840237914
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,parameter sweep,structural_binary,all,0.09966391492950216,0.0618798342392448
+results/L/tall/bracken/attempt_1,L/tall/bracken,semantic prompts,structural_binary,all,0.14342535323917543,0.0861264908792443
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,semantic prompts,structural_binary,all,0.1965723415072437,-0.030168493836346188
+results/L/tall/lightning/attempt_1,L/tall/lightning,semantic prompts,structural_binary,all,0.18049721421556536,0.0405831655365526
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,ours,structural_binary,all,0.15209986686054727,-0.010696957556423168
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,ours,structural_binary,all,0.2792732902307121,0.05441944616718655
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,ours,structural_binary,all,0.2722564942418514,0.004640330824473165
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,ours,structural_binary,all,0.24304876483792026,0.15789077275913982
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,ours,structural_binary,all,0.1858436228811429,0.11152219938553817
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,ours,structural_binary,all,0.3027473179101525,0.10382320013986371
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,ours,structural_binary,all,0.28637378744264286,0.10674528567507308
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,ours,structural_binary,all,-0.04821248145792853,0.1898411702110357
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,ours,structural_binary,all,0.13363895992039537,-0.19153747944335467
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,ours,structural_binary,all,-0.05675827651418168,0.18725470800901037
+results/M/tall/lace/attempt_1,M/tall/lace,ours,structural_binary,all,0.09191144195794658,0.1251032242909514
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,ours,structural_binary,all,0.12756101377559265,0.020947615759826774
+results/M/tall/lichen/attempt_1,M/tall/lichen,ours,structural_binary,all,0.27837734474651377,0.024999127758267695
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,ours,structural_binary,all,0.09990159541861604,0.173967342749208
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,ours,structural_binary,all,0.307412929319308,0.1436094159734423
+results/M/tall/neurons/attempt_1,M/tall/neurons,ours,structural_binary,all,0.24754146193681786,0.2524216743735277
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,ours,structural_binary,all,0.14743337809117057,-0.35116880011973206
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,ours,structural_binary,all,0.09186899013363897,0.10345323615935147
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,ours,structural_binary,all,0.040859500503060316,0.1490544084993371
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,ours,structural_binary,all,0.13551511118721668,0.0916394654672208
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,ours,structural_binary,all,-0.04354287818256694,-0.17441667104143072
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,ours,structural_binary,all,0.12759847769067095,0.08899404473968042
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,ours,structural_binary,all,0.30321599021149226,-0.024145950015315602
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,ours,structural_binary,all,0.11890737088304508,-0.02321079409842436
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,semantic prompts,structural_binary,all,0.2900292232223304,0.14328854412585834
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,semantic prompts,structural_binary,all,0.28777082959183187,-0.011456862707186384
+results/P/tall/clouds/attempt_1,P/tall/clouds,semantic prompts,structural_binary,all,0.24921045482537207,0.02418839765262673
+results/P/tall/fur/attempt_1,P/tall/fur,semantic prompts,structural_binary,all,0.25527413268408133,0.025132496621810333
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,semantic prompts,structural_binary,all,-0.09970408076040845,-0.22470513482889723
+results/P/tall/honeycomb/attempt_1,P/tall/honeycomb,semantic prompts,structural_binary,all,0.12102806302163807,0.11191496768307424
+results/P/tall/smoke/attempt_1,P/tall/smoke,semantic prompts,structural_binary,all,-0.005632967960567756,0.06565529274520125
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,semantic prompts,structural_binary,all,0.34170413231780006,-2.866140012422469e-05
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,semantic prompts,structural_binary,all,0.3349315522341452,-0.01563419764718038
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,structural_binary,all,0.14190828367027652,-0.5151278348733066
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,structural_binary,all,0.10296436401338924,-0.5343152003707934
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,structural_binary,all,0.02234059001850001,-0.40949431795433455
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,structural_binary,all,0.16369768838792564,-0.5681360766515804
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,semantic prompts,structural_binary,all,0.12074748401094577,0.2474750487645716
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,semantic prompts,structural_binary,all,0.12875150587090925,0.3887080387971411
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,semantic prompts,structural_binary,all,0.15963965954125114,-0.07061706713281009
+results/V/tall/unguided/vf-0.20/attempt_1,V/tall/unguided/vf-0.20,volume sweep,structural_binary,all,-0.1463014067618152,0.048861194031797096
+results/V/tall/unguided/vf-0.40/attempt_1,V/tall/unguided/vf-0.40,volume sweep,structural_binary,all,0.2200306328344433,-0.25194352573389517
+results/V/tall/unguided/vf-0.50/attempt_1,V/tall/unguided/vf-0.50,volume sweep,structural_binary,all,0.10453636161015636,0.20110812734633648
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,structural,quality 0.75-1.05,-0.267654117019838,0.26249540776903935
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,parameter sweep,structural,quality 0.75-1.05,-0.3725505674672081,0.15215202120667565
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,parameter sweep,structural,quality 0.75-1.05,-0.38564021237043733,0.14907266005570988
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,parameter sweep,structural,quality 0.75-1.05,-0.39149837758208716,0.13945858175216586
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,parameter sweep,structural,quality 0.75-1.05,-0.40354847983688535,0.10654516199241931
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,parameter sweep,structural,quality 0.75-1.05,-0.38342962391195456,0.12468852542964957
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,parameter sweep,structural,quality 0.75-1.05,-0.28142435709676006,0.23218788284880273
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,parameter sweep,structural,quality 0.75-1.05,-0.3671411383079237,0.16021273277420423
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,parameter sweep,structural,quality 0.75-1.05,-0.29089261978437914,0.18781116658829447
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,parameter sweep,structural,quality 0.75-1.05,-0.39187423235540164,0.1371821370647132
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,parameter sweep,structural,quality 0.75-1.05,-0.33646062129691967,0.16881947510089174
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,parameter sweep,structural,quality 0.75-1.05,-0.17795846193273263,0.18124090771365625
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,parameter sweep,structural,quality 0.75-1.05,-0.2219955257786655,0.29344110128677603
+results/L/tall/bracken/attempt_1,L/tall/bracken,semantic prompts,structural,quality 0.75-1.05,0.2913201312115909,0.30923293891033843
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,semantic prompts,structural,quality 0.75-1.05,0.31325217091984126,0.05442210536546489
+results/L/tall/lightning/attempt_1,L/tall/lightning,semantic prompts,structural,quality 0.75-1.05,0.1046727135999595,-0.2352367910285103
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,ours,structural,quality 0.75-1.05,0.11533623746422378,-0.2727465387200597
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,ours,structural,quality 0.75-1.05,0.3675192486259774,-0.22670196654929683
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,ours,structural,quality 0.75-1.05,0.43386483667118625,0.23043984790944866
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,ours,structural,quality 0.75-1.05,0.3574037185611379,-0.09244675152085878
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,ours,structural,quality 0.75-1.05,0.2552880913170915,-0.09944145048974692
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,ours,structural,quality 0.75-1.05,0.17334965074943795,0.20625487160302833
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,ours,structural,quality 0.75-1.05,0.43458187121258374,0.2987879216917615
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,ours,structural,quality 0.75-1.05,-0.2462115285225881,-0.29175289221171846
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,ours,structural,quality 0.75-1.05,-0.16410546103735962,0.05501437219449525
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,ours,structural,quality 0.75-1.05,-0.3745573105677362,-0.4812514047743311
+results/M/tall/lace/attempt_1,M/tall/lace,ours,structural,quality 0.75-1.05,-0.128620547307558,-0.580787557784934
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,ours,structural,quality 0.75-1.05,0.18676521166577795,-0.14275396906391075
+results/M/tall/lichen/attempt_1,M/tall/lichen,ours,structural,quality 0.75-1.05,0.31968599486336785,0.3609024084105857
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,ours,structural,quality 0.75-1.05,0.4366312583197042,0.21324906765472995
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,ours,structural,quality 0.75-1.05,0.3932525234798132,-0.44779609580116136
+results/M/tall/neurons/attempt_1,M/tall/neurons,ours,structural,quality 0.75-1.05,0.3238494442315851,0.25732169113692893
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,ours,structural,quality 0.75-1.05,0.09639967231799451,0.387443623376621
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,ours,structural,quality 0.75-1.05,-0.0274656021397748,0.30809642180622226
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,ours,structural,quality 0.75-1.05,-0.1192475019225741,-0.2118068416750583
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,ours,structural,quality 0.75-1.05,-0.014352593044239054,-0.5267012660015518
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,ours,structural,quality 0.75-1.05,-0.34021237852671044,-0.3842934553700898
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,ours,structural,quality 0.75-1.05,-0.26308372309002015,-0.32980193588370055
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,ours,structural,quality 0.75-1.05,0.5681926121903387,-0.04994869729694451
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,ours,structural,quality 0.75-1.05,-0.1504544033937616,-0.364609524727679
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,semantic prompts,structural,quality 0.75-1.05,0.2622979145452379,0.11907902195055578
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,semantic prompts,structural,quality 0.75-1.05,0.5230051258968832,-0.22498319544480871
+results/P/tall/clouds/attempt_1,P/tall/clouds,semantic prompts,structural,quality 0.75-1.05,0.35944528339920667,0.1718241087576352
+results/P/tall/fur/attempt_1,P/tall/fur,semantic prompts,structural,quality 0.75-1.05,0.03886675092638933,-0.42573545030545823
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,semantic prompts,structural,quality 0.75-1.05,-0.32301138109126215,-0.35247970126549055
+results/P/tall/smoke/attempt_1,P/tall/smoke,semantic prompts,structural,quality 0.75-1.05,0.3771518272630268,0.022332036006835795
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,semantic prompts,structural,quality 0.75-1.05,0.44609779199768895,-0.2467394525944085
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,semantic prompts,structural,quality 0.75-1.05,0.2489805754240868,0.03698784677007997
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,structural,quality 0.75-1.05,-0.18902208995478437,0.3152092464737161
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,structural,quality 0.75-1.05,-0.21656477133970536,0.26252926259411047
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,structural,quality 0.75-1.05,-0.1906850494898705,0.2578487237719302
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,structural,quality 0.75-1.05,-0.23481377910406964,0.2934979049526362
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,semantic prompts,structural,quality 0.75-1.05,-0.2960141025227736,-0.30759689240971805
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,semantic prompts,structural,quality 0.75-1.05,0.09810246154580175,-0.04817923582643477
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,semantic prompts,structural,quality 0.75-1.05,0.025177439396047607,-0.11199011617425177
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,geometric,quality 0.75-1.05,3.6429405410472984,-1.588108224531472
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,parameter sweep,geometric,quality 0.75-1.05,4.549123239332136,-0.09228004119124925
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,parameter sweep,geometric,quality 0.75-1.05,4.5673816115016255,0.05705831452482768
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,parameter sweep,geometric,quality 0.75-1.05,4.673834424985836,0.21800200194534824
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,parameter sweep,geometric,quality 0.75-1.05,4.56413987160464,0.6527529749007303
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,parameter sweep,geometric,quality 0.75-1.05,4.395165781664597,0.376265154600543
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,parameter sweep,geometric,quality 0.75-1.05,3.4957376966612,-1.3407529074279558
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,parameter sweep,geometric,quality 0.75-1.05,4.448346831450799,-0.11246975801127057
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,parameter sweep,geometric,quality 0.75-1.05,3.702533623211553,-0.6628280987056594
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,parameter sweep,geometric,quality 0.75-1.05,4.680145289969534,0.2424115108646112
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,parameter sweep,geometric,quality 0.75-1.05,4.257537816693155,-0.18754246579699094
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,parameter sweep,geometric,quality 0.75-1.05,2.3694458394240634,-1.044819103635483
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,parameter sweep,geometric,quality 0.75-1.05,3.1586608734269124,-2.147441210953969
+results/L/tall/bracken/attempt_1,L/tall/bracken,semantic prompts,geometric,quality 0.75-1.05,-1.3138879569419974,-3.868103772229996
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,semantic prompts,geometric,quality 0.75-1.05,-2.6013422183473836,-1.5149892709207995
+results/L/tall/lightning/attempt_1,L/tall/lightning,semantic prompts,geometric,quality 0.75-1.05,-2.1233002670800287,1.7779371113252629
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,ours,geometric,quality 0.75-1.05,-2.156090143650843,1.7212258744383524
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,ours,geometric,quality 0.75-1.05,-4.063522753156864,0.23130941863742893
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,ours,geometric,quality 0.75-1.05,-2.4087131063512137,-3.5768896125511622
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,ours,geometric,quality 0.75-1.05,-3.6656251724885163,-1.0290468150589756
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,ours,geometric,quality 0.75-1.05,-2.9181056784793533,0.005159160055951545
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,ours,geometric,quality 0.75-1.05,-0.9743590652438594,-2.1983906454787623
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,ours,geometric,quality 0.75-1.05,-2.2677945159136237,-4.385910298989838
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,ours,geometric,quality 0.75-1.05,0.41844610636933177,2.9980794708126566
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,ours,geometric,quality 0.75-1.05,1.2864108087729424,0.3598192864725249
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,ours,geometric,quality 0.75-1.05,0.9331389896562645,6.24989445881949
+results/M/tall/lace/attempt_1,M/tall/lace,ours,geometric,quality 0.75-1.05,-1.6414779546035845,5.341490643867903
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,ours,geometric,quality 0.75-1.05,-2.2448959310927945,0.6107914047534431
+results/M/tall/lichen/attempt_1,M/tall/lichen,ours,geometric,quality 0.75-1.05,-1.3415439366180137,-4.203469590023441
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,ours,geometric,quality 0.75-1.05,-2.821586141216752,-3.5409242413301487
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,ours,geometric,quality 0.75-1.05,-5.149728152106231,1.6745936711626666
+results/M/tall/neurons/attempt_1,M/tall/neurons,ours,geometric,quality 0.75-1.05,-1.7662229315588402,-3.6165956539477024
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,ours,geometric,quality 0.75-1.05,-0.004629939514941783,-3.7009653427107736
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,ours,geometric,quality 0.75-1.05,0.9945518029420749,-2.6849441971982086
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,ours,geometric,quality 0.75-1.05,-0.19709726764537405,2.811075587726815
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,ours,geometric,quality 0.75-1.05,-2.3142999983725856,4.69877539764513
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,ours,geometric,quality 0.75-1.05,0.5941432979762573,5.226958998703882
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,ours,geometric,quality 0.75-1.05,0.29058192062152166,4.527358764791758
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,ours,geometric,quality 0.75-1.05,-4.843056202053713,-2.0632455967908476
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,ours,geometric,quality 0.75-1.05,-1.058304516659025,3.7884955076342246
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,semantic prompts,geometric,quality 0.75-1.05,-1.9523745097991458,-2.1468956116626927
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,semantic prompts,geometric,quality 0.75-1.05,-5.206422596334523,-0.04570721795770971
+results/P/tall/clouds/attempt_1,P/tall/clouds,semantic prompts,geometric,quality 0.75-1.05,-2.3048340718829823,-2.478266585907247
+results/P/tall/fur/attempt_1,P/tall/fur,semantic prompts,geometric,quality 0.75-1.05,-2.4148901753988663,3.4564929001674454
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,semantic prompts,geometric,quality 0.75-1.05,0.8913724173536289,5.166145921316984
+results/P/tall/smoke/attempt_1,P/tall/smoke,semantic prompts,geometric,quality 0.75-1.05,-3.173866445452095,-1.5329563805236837
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,semantic prompts,geometric,quality 0.75-1.05,-4.6950550056327485,0.3490663403225799
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,semantic prompts,geometric,quality 0.75-1.05,-1.8775829066817122,-0.5433606292793007
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,geometric,quality 0.75-1.05,3.1969862171749677,-2.469886285309885
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,geometric,quality 0.75-1.05,3.375601416766731,-1.8185639726475213
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,geometric,quality 0.75-1.05,3.059312307999407,-1.9400459257224105
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,geometric,quality 0.75-1.05,3.6616727237056765,-1.940502095007181
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,semantic prompts,geometric,quality 0.75-1.05,0.6268737399519816,4.400399568102017
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,semantic prompts,geometric,quality 0.75-1.05,-1.3373124077639735,0.3786295299804173
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,semantic prompts,geometric,quality 0.75-1.05,-0.996163222222546,1.1557125779293371
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,perceptual,quality 0.75-1.05,-0.1835526613884751,0.09229011627658357
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,parameter sweep,perceptual,quality 0.75-1.05,-0.2503288548931687,-0.15731890538250967
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,parameter sweep,perceptual,quality 0.75-1.05,-0.2383524800917258,-0.1251099236185792
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,parameter sweep,perceptual,quality 0.75-1.05,-0.2341820785160554,-0.10866104724249231
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,parameter sweep,perceptual,quality 0.75-1.05,-0.1896854648879654,-0.0207524420805053
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,parameter sweep,perceptual,quality 0.75-1.05,-0.20049917809823786,-0.0659856556255444
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,parameter sweep,perceptual,quality 0.75-1.05,-0.23704370415811288,0.011328182802920028
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,parameter sweep,perceptual,quality 0.75-1.05,-0.24415254979116857,-0.12290318773949765
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,parameter sweep,perceptual,quality 0.75-1.05,-0.26459489783570006,-0.10969511013462466
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,parameter sweep,perceptual,quality 0.75-1.05,-0.18512192673252054,-0.07520764010789342
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,parameter sweep,perceptual,quality 0.75-1.05,-0.20009571240247614,-0.07752489193500571
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,parameter sweep,perceptual,quality 0.75-1.05,-0.1186911842418476,0.015368804788948302
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,parameter sweep,perceptual,quality 0.75-1.05,-0.2579381970192175,0.013665727416757738
+results/L/tall/bracken/attempt_1,L/tall/bracken,semantic prompts,perceptual,quality 0.75-1.05,0.023326391929933445,0.1462976660173457
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,semantic prompts,perceptual,quality 0.75-1.05,0.1328043228558975,-0.005499696370321456
+results/L/tall/lightning/attempt_1,L/tall/lightning,semantic prompts,perceptual,quality 0.75-1.05,0.14421185025926975,-0.15543479933008214
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,ours,perceptual,quality 0.75-1.05,0.040089612770501326,0.22501132938280516
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,ours,perceptual,quality 0.75-1.05,0.15008514071620194,-0.02436980524583649
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,ours,perceptual,quality 0.75-1.05,0.13940455479761527,-0.09053899986592642
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,ours,perceptual,quality 0.75-1.05,0.17056188754247217,-0.06650540004276245
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,ours,perceptual,quality 0.75-1.05,0.10833547235082086,-0.05893334576668695
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,ours,perceptual,quality 0.75-1.05,0.12394209087276797,0.03263594734540211
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,ours,perceptual,quality 0.75-1.05,0.06879132856722675,-0.0758197203003264
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,ours,perceptual,quality 0.75-1.05,0.11281907069364391,0.16507386004360142
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,ours,perceptual,quality 0.75-1.05,-0.02135145235781975,0.2640342227434645
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,ours,perceptual,quality 0.75-1.05,0.11910790538019539,-0.06549421424862828
+results/M/tall/lace/attempt_1,M/tall/lace,ours,perceptual,quality 0.75-1.05,0.08278426703608932,0.04957868065493396
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,ours,perceptual,quality 0.75-1.05,0.14567193204763185,0.006571484197933233
+results/M/tall/lichen/attempt_1,M/tall/lichen,ours,perceptual,quality 0.75-1.05,0.07618719574760441,0.030312464856459345
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,ours,perceptual,quality 0.75-1.05,0.03633629996557373,-0.006741278205529561
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,ours,perceptual,quality 0.75-1.05,0.12356930719100852,-0.11741939791167175
+results/M/tall/neurons/attempt_1,M/tall/neurons,ours,perceptual,quality 0.75-1.05,0.12906763231472732,-0.046820626587006524
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,ours,perceptual,quality 0.75-1.05,0.03989756066848944,0.15782025467482988
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,ours,perceptual,quality 0.75-1.05,0.07247835292338592,-0.03323023065918324
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,ours,perceptual,quality 0.75-1.05,0.10826214596225868,0.0914302820264404
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,ours,perceptual,quality 0.75-1.05,0.14126526222787994,-0.16510016574425254
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,ours,perceptual,quality 0.75-1.05,0.12510762379331886,-0.07302504514672
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,ours,perceptual,quality 0.75-1.05,0.03899081515588248,0.3076920380587901
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,ours,perceptual,quality 0.75-1.05,0.08938209088197158,0.05383715704242685
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,ours,perceptual,quality 0.75-1.05,0.10731410841481752,-0.0519236190735972
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,semantic prompts,perceptual,quality 0.75-1.05,0.01414734738521261,0.12705308319607533
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,semantic prompts,perceptual,quality 0.75-1.05,0.08220002267688753,-0.13591752370506188
+results/P/tall/clouds/attempt_1,P/tall/clouds,semantic prompts,perceptual,quality 0.75-1.05,0.12083946595174387,-0.08953632431772143
+results/P/tall/fur/attempt_1,P/tall/fur,semantic prompts,perceptual,quality 0.75-1.05,0.06804030042079275,-0.07932561390716678
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,semantic prompts,perceptual,quality 0.75-1.05,-0.030534428108876747,0.26346932551458135
+results/P/tall/smoke/attempt_1,P/tall/smoke,semantic prompts,perceptual,quality 0.75-1.05,0.10678870067471627,-0.16073528603661855
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,semantic prompts,perceptual,quality 0.75-1.05,0.12054830127210683,-0.04440525986448525
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,semantic prompts,perceptual,quality 0.75-1.05,0.10258549798118027,0.02346776242003521
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,perceptual,quality 0.75-1.05,-0.18612644193023065,0.11601189355167316
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,perceptual,quality 0.75-1.05,-0.17944066865774683,0.07906692178041035
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,perceptual,quality 0.75-1.05,-0.1834655274047612,0.06516488016707281
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,perceptual,quality 0.75-1.05,-0.19500650929101648,0.0720094329297887
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,semantic prompts,perceptual,quality 0.75-1.05,0.08882742029043719,-0.020292036969430445
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,semantic prompts,perceptual,quality 0.75-1.05,0.13588698538773877,0.04976741632351164
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,semantic prompts,perceptual,quality 0.75-1.05,0.1105056526991208,-0.028731741047123418
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,structural_binary,quality 0.75-1.05,-0.09623538256676584,0.44997735846926534
+results/D/tall/lhs-00/attempt_1,D/tall/lhs-00,parameter sweep,structural_binary,quality 0.75-1.05,-0.4218342025951596,-0.05792599963577828
+results/D/tall/lhs-02/attempt_1,D/tall/lhs-02,parameter sweep,structural_binary,quality 0.75-1.05,-0.46831415996989745,-0.06748005611271131
+results/D/tall/lhs-04/attempt_1,D/tall/lhs-04,parameter sweep,structural_binary,quality 0.75-1.05,-0.4929204515129305,-0.07455250315844196
+results/D/tall/lhs-09/attempt_1,D/tall/lhs-09,parameter sweep,structural_binary,quality 0.75-1.05,-0.4682823864732544,-0.08187177903632122
+results/D/tall/lhs-12/attempt_1,D/tall/lhs-12,parameter sweep,structural_binary,quality 0.75-1.05,-0.44398748219913725,-0.057718873583859145
+results/D/tall/lhs-14/attempt_1,D/tall/lhs-14,parameter sweep,structural_binary,quality 0.75-1.05,-0.08468118846812261,0.07311095842620752
+results/D/tall/lhs-15/attempt_1,D/tall/lhs-15,parameter sweep,structural_binary,quality 0.75-1.05,-0.49761002199738585,-0.06608510390041432
+results/D/tall/lhs-16/attempt_1,D/tall/lhs-16,parameter sweep,structural_binary,quality 0.75-1.05,-0.17873375407964623,-0.10955514024452986
+results/D/tall/lhs-19/attempt_1,D/tall/lhs-19,parameter sweep,structural_binary,quality 0.75-1.05,-0.5344768895373129,-0.03451846357891472
+results/D/tall/lhs-21/attempt_1,D/tall/lhs-21,parameter sweep,structural_binary,quality 0.75-1.05,-0.3704248188326188,-0.1537885239215148
+results/D/tall/lhs-22/attempt_1,D/tall/lhs-22,parameter sweep,structural_binary,quality 0.75-1.05,-0.16654545164407691,-0.14107564426597474
+results/D/tall/lhs-23/attempt_1,D/tall/lhs-23,parameter sweep,structural_binary,quality 0.75-1.05,0.05898993651700614,0.08343198098467344
+results/L/tall/bracken/attempt_1,L/tall/bracken,semantic prompts,structural_binary,quality 0.75-1.05,0.09048738067914455,-0.03636712694220366
+results/L/tall/brick_wall/attempt_1,L/tall/brick_wall,semantic prompts,structural_binary,quality 0.75-1.05,0.19620638485792374,0.02711361053615189
+results/L/tall/lightning/attempt_1,L/tall/lightning,semantic prompts,structural_binary,quality 0.75-1.05,0.09184158234088613,-0.011205221014593203
+results/M/tall/art_nouveau_ironwork/attempt_1,M/tall/art_nouveau_ironwork,ours,structural_binary,quality 0.75-1.05,0.023769802868567003,-0.07429088043630763
+results/M/tall/bamboo_scaffolding/attempt_1,M/tall/bamboo_scaffolding,ours,structural_binary,quality 0.75-1.05,0.3011761973923791,0.004139849809387759
+results/M/tall/barbed_wire/attempt_1,M/tall/barbed_wire,ours,structural_binary,quality 0.75-1.05,0.21191341337347958,0.07777533652030318
+results/M/tall/chain_link_fence/attempt_1,M/tall/chain_link_fence,ours,structural_binary,quality 0.75-1.05,0.28274595726441343,-0.04054510809588099
+results/M/tall/circuit_board/attempt_1,M/tall/circuit_board,ours,structural_binary,quality 0.75-1.05,0.1557855558648427,-0.08999503761226711
+results/M/tall/coral_reef/attempt_1,M/tall/coral_reef,ours,structural_binary,quality 0.75-1.05,0.2696716279766528,0.04526561464619783
+results/M/tall/cracked_mud/attempt_1,M/tall/cracked_mud,ours,structural_binary,quality 0.75-1.05,0.2923084043037827,0.0013202268172401999
+results/M/tall/dragonfly_wing/attempt_1,M/tall/dragonfly_wing,ours,structural_binary,quality 0.75-1.05,-0.08362328668875624,-0.4069300169142183
+results/M/tall/flying_buttresses/attempt_1,M/tall/flying_buttresses,ours,structural_binary,quality 0.75-1.05,-0.04157176914613028,0.13515923401310304
+results/M/tall/ice_crystals/attempt_1,M/tall/ice_crystals,ours,structural_binary,quality 0.75-1.05,-0.08754800326684142,-0.21963237536759872
+results/M/tall/lace/attempt_1,M/tall/lace,ours,structural_binary,quality 0.75-1.05,0.03682000778768773,-0.1851706752884993
+results/M/tall/lattice_tower/attempt_1,M/tall/lattice_tower,ours,structural_binary,quality 0.75-1.05,0.1023591576260574,-0.012297125527947289
+results/M/tall/lichen/attempt_1,M/tall/lichen,ours,structural_binary,quality 0.75-1.05,0.2087224340622289,0.026106932029823705
+results/M/tall/mangrove_roots/attempt_1,M/tall/mangrove_roots,ours,structural_binary,quality 0.75-1.05,0.06545757036583437,-0.1825796689087218
+results/M/tall/marble_veins/attempt_1,M/tall/marble_veins,ours,structural_binary,quality 0.75-1.05,0.3018394929552536,-0.01802297209180214
+results/M/tall/neurons/attempt_1,M/tall/neurons,ours,structural_binary,quality 0.75-1.05,0.24676700818304353,-0.13892976333617313
+results/M/tall/pine_cone/attempt_1,M/tall/pine_cone,ours,structural_binary,quality 0.75-1.05,-0.012768066267888983,0.39563779751625733
+results/M/tall/river_delta/attempt_1,M/tall/river_delta,ours,structural_binary,quality 0.75-1.05,0.07030818374362337,0.018456054870856692
+results/M/tall/seashell_spiral/attempt_1,M/tall/seashell_spiral,ours,structural_binary,quality 0.75-1.05,-0.008874110204784784,-0.22462994046576004
+results/M/tall/sound_waves/attempt_1,M/tall/sound_waves,ours,structural_binary,quality 0.75-1.05,0.05141241802844361,-0.16899793989121986
+results/M/tall/spiral_galaxy/attempt_1,M/tall/spiral_galaxy,ours,structural_binary,quality 0.75-1.05,-0.17246162771626017,0.08643915033242719
+results/M/tall/stained_glass_window/attempt_1,M/tall/stained_glass_window,ours,structural_binary,quality 0.75-1.05,0.0452254007603028,-0.2047970936321635
+results/M/tall/suspension_bridge_cables/attempt_1,M/tall/suspension_bridge_cables,ours,structural_binary,quality 0.75-1.05,0.30476291837177366,0.12443225767869331
+results/M/tall/woven_basket/attempt_1,M/tall/woven_basket,ours,structural_binary,quality 0.75-1.05,0.016573195425384893,-0.10211115836567819
+results/P/tall/a_cat/attempt_1,P/tall/a_cat,semantic prompts,structural_binary,quality 0.75-1.05,0.2944824959596524,-0.14052805364604923
+results/P/tall/bone_trabeculae/attempt_1,P/tall/bone_trabeculae,semantic prompts,structural_binary,quality 0.75-1.05,0.25824592511653,0.07799284738925066
+results/P/tall/clouds/attempt_1,P/tall/clouds,semantic prompts,structural_binary,quality 0.75-1.05,0.23989152878223718,0.005865405576143498
+results/P/tall/fur/attempt_1,P/tall/fur,semantic prompts,structural_binary,quality 0.75-1.05,0.2123089564796533,0.01663660868159851
+results/P/tall/gothic_tracery/attempt_1,P/tall/gothic_tracery,semantic prompts,structural_binary,quality 0.75-1.05,-0.24098434685792128,-0.016762085274901667
+results/P/tall/smoke/attempt_1,P/tall/smoke,semantic prompts,structural_binary,quality 0.75-1.05,-0.009006908344914646,-0.05524105715637457
+results/P/tall/spider_web/attempt_1,P/tall/spider_web,semantic prompts,structural_binary,quality 0.75-1.05,0.2525260284649515,0.016484934804538748
+results/P/tall/tree_branches/attempt_1,P/tall/tree_branches,semantic prompts,structural_binary,quality 0.75-1.05,0.28375664364276204,0.06145628317140313
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,structural_binary,quality 0.75-1.05,-0.06388351312117836,0.5398002647141893
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,structural_binary,quality 0.75-1.05,-0.10254080091746609,0.5437680198132564
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,structural_binary,quality 0.75-1.05,-0.16125929262057104,0.5055925469830556
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,structural_binary,quality 0.75-1.05,-0.03854866623078345,0.6231501531475054
+results/S3/tall/butterfly_wing_venation/attempt_2,S3/tall/butterfly_wing_venation,semantic prompts,structural_binary,quality 0.75-1.05,0.05847174961905071,-0.3606414237926442
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,semantic prompts,structural_binary,quality 0.75-1.05,0.13472913591220784,-0.4256445948940961
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,semantic prompts,structural_binary,quality 0.75-1.05,0.08756008653404763,0.020777979162028483

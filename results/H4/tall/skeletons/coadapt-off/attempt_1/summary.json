@@ -1,0 +1,42 @@
+{
+  "prompt": "skeletons",
+  "problem": "tall_building",
+  "slug": "skeletons",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 85.97064971923828,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 85.30400848388672,
+  "clip_loss_raw": 0.3866315484046936,
+  "dream_clip_loss": 0.40003493428230286,
+  "volume_actual": 0.331146240234375,
+  "mean_physical_density": 0.30000001192092896,
+  "mass_on_scaffold": 0.8430309127338464,
+  "validity": {
+    "component_count": 3.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.019779101617678266,
+    "spanning_mass_fraction": 0.9802208983823217,
+    "mean_physical_density": 0.30000001192092896
+  },
+  "load_on_solid_fraction": 0.9286821705426357,
+  "thresholded_compliance": 1987995.9736721027,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 218.04617645498365,
+  "physics_seconds": 4637.405357171781,
+  "total_seconds": 4863.416516269557,
+  "git_commit": "f26d7381d0a06f1ec27a8c9dc5f51c5a3e7785a0-dirty",
+  "gate": null
+}

@@ -1,0 +1,25 @@
+attempt,run_id,prompt,family,condition,seed
+results/N/tall/ntseleosk/attempt_1,N/tall/ntseleosk,ntseleosk,skeletons,scrambled,12
+results/N/tall/rnef_dsnorf/attempt_1,N/tall/rnef_dsnorf,rnef dsnorf,fern fronds,scrambled,12
+results/R/tall/fern_fronds/seed-101/attempt_1,R/tall/fern_fronds/seed-101,fern fronds,fern fronds,original,101
+results/R/tall/fern_fronds/seed-202/attempt_1,R/tall/fern_fronds/seed-202,fern fronds,fern fronds,original,202
+results/R/tall/fern_fronds/seed-303/attempt_1,R/tall/fern_fronds/seed-303,fern fronds,fern fronds,original,303
+results/R/tall/fern_fronds/seed-404/attempt_1,R/tall/fern_fronds/seed-404,fern fronds,fern fronds,original,404
+results/R/tall/skeletons/seed-101/attempt_1,R/tall/skeletons/seed-101,skeletons,skeletons,original,101
+results/R/tall/skeletons/seed-202/attempt_1,R/tall/skeletons/seed-202,skeletons,skeletons,original,202
+results/R/tall/skeletons/seed-303/attempt_1,R/tall/skeletons/seed-303,skeletons,skeletons,original,303
+results/R/tall/skeletons/seed-404/attempt_1,R/tall/skeletons/seed-404,skeletons,skeletons,original,404
+results/S3/tall/fern_fronds/attempt_3,S3/tall/fern_fronds,fern fronds,fern fronds,original,12
+results/S3/tall/skeletons/attempt_2,S3/tall/skeletons,skeletons,skeletons,original,12
+results/X/tall/paraphrase/bones/seed-101/attempt_1,X/tall/paraphrase/bones/seed-101,bones,skeletons,paraphrase,101
+results/X/tall/paraphrase/bones/seed-202/attempt_1,X/tall/paraphrase/bones/seed-202,bones,skeletons,paraphrase,202
+results/X/tall/paraphrase/bones/seed-303/attempt_1,X/tall/paraphrase/bones/seed-303,bones,skeletons,paraphrase,303
+results/X/tall/paraphrase/bracken_leaves/seed-101/attempt_1,X/tall/paraphrase/bracken_leaves/seed-101,bracken leaves,fern fronds,paraphrase,101
+results/X/tall/paraphrase/bracken_leaves/seed-202/attempt_1,X/tall/paraphrase/bracken_leaves/seed-202,bracken leaves,fern fronds,paraphrase,202
+results/X/tall/paraphrase/bracken_leaves/seed-303/attempt_1,X/tall/paraphrase/bracken_leaves/seed-303,bracken leaves,fern fronds,paraphrase,303
+results/X/tall/scrambled/ntseleosk/seed-101/attempt_1,X/tall/scrambled/ntseleosk/seed-101,ntseleosk,skeletons,scrambled,101
+results/X/tall/scrambled/ntseleosk/seed-202/attempt_1,X/tall/scrambled/ntseleosk/seed-202,ntseleosk,skeletons,scrambled,202
+results/X/tall/scrambled/ntseleosk/seed-303/attempt_1,X/tall/scrambled/ntseleosk/seed-303,ntseleosk,skeletons,scrambled,303
+results/X/tall/scrambled/rnef_dsnorf/seed-101/attempt_1,X/tall/scrambled/rnef_dsnorf/seed-101,rnef dsnorf,fern fronds,scrambled,101
+results/X/tall/scrambled/rnef_dsnorf/seed-202/attempt_1,X/tall/scrambled/rnef_dsnorf/seed-202,rnef dsnorf,fern fronds,scrambled,202
+results/X/tall/scrambled/rnef_dsnorf/seed-303/attempt_1,X/tall/scrambled/rnef_dsnorf/seed-303,rnef dsnorf,fern fronds,scrambled,303

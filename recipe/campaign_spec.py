@@ -165,18 +165,14 @@ H3_SKETCHES = ('12.jpg', 'col3_braced.png', 'col6_grid.png')
 SCALE_ARMS = ('g', 'm', 'e', 'gme')
 BLEND_RHOS = (0.0, 0.25, 0.5, 0.75, 1.0)
 WEIGHT_ENDS = (200.0, 400.0, 800.0, 1200.0, 2000.0)
-# F2b: the two most regular sketches read as rigid at the default end of 400,
-# and WEIGHT_ENDS only has one rung below it. These ladders go the other way.
-# A braced frame and a column grid are the sketches with the least slack to
-# give, so they are where a loosened prior shows up first.
+# Official F2b: the two most regular sketches read as rigid at the default
+# end of 400, and WEIGHT_ENDS only has one rung below it.
 LOOSE_SKETCHES = ('col3_braced.png', 'col6_grid.png')
-# 0 keeps the coarse-grid prior and lets it decay to nothing, so the sketch
-# sets the global posture and physics finishes the design unconstrained.
 LOOSE_WEIGHT_ENDS = (0.0, 50.0, 100.0, 200.0)
-# The ramp starts here on the coarsest grid, which is where AdaptivePixel
-# settles topology -- so a design can be locked rigid before the end weight
-# ever applies. Swept on the braced sketch only, at the default end.
 LOOSE_WEIGHT_STARTS = (1000.0, 2000.0)
+# Earlier off-table dial on sketch 12, below the saturated 200–2000 band.
+SKETCH_WEIGHT_LOW_START = 200.0
+SKETCH_WEIGHT_LOW_ENDS = (0.0, 10.0, 40.0, 100.0, 200.0)
 # H5: each solid pixel carries an equal share of this fraction of the live load.
 GRAVITY_LOAD = 0.05
 

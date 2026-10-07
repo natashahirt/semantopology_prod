@@ -1,0 +1,2 @@
+measure,test,separation,p_value,null_mean,null_sd,accuracy,chance,n
+geometric,specificity,-0.28065263926537654,0.9032096790320968,-0.002015142098400814,0.2907355398296105,0.2,0.5,10

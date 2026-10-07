@@ -117,10 +117,27 @@ def test_legacy_run_arguments_are_recovered_from_manifest(tmp_path):
          'volume sweep'),
         ({'experiment': 'V', 'structure': 'tall', 'prompt': 'fern fronds'},
          None),
+        ({'experiment': 'S3', 'structure': 'tall', 'prompt': 'fern fronds'},
+         'semantic prompts'),
+        ({'experiment': 'S3', 'structure': 'tall', 'prompt': 'human skull'},
+         None),
     ],
 )
 def test_comparison_set(meta, expected):
     assert comparison_set(meta) == expected
+
+
+def test_legacy_cli_without_sketch_weight_start_uses_the_paper_default():
+    """B/tall was saved before the flag existed and still has to replay."""
+    from run import build_parser
+    from recipe.campaign import preset_from_args
+    from recipe.preset import PAPER
+
+    args = build_parser().parse_args([
+        '--mode', 'unguided', '--structure', 'tall', '--experiment', 'B',
+    ])
+    del args.sketch_weight_start
+    assert preset_from_args(args).sketch_weight_start == PAPER.sketch_weight_start
 
 
 def _point(group, compliance, *, volume=0.3, experiment='M', offset=0.0):
