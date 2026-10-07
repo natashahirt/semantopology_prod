@@ -817,8 +817,13 @@ and binary structural maps disagree.
 - Every Phase 2e (S2c) row is `DONE`, permanently failed, or explicitly
   dropped for queue time, with the dial reported as a four-seed band.
 - Every Phase 2f (F2b) row is `DONE`, permanently failed, or explicitly
-  dropped, with a verdict on which lever — end or start — loosened the prior,
-  and the stated prediction marked kept or broken.
+  dropped. **Answered: the prediction is broken.** On `col3_braced`, cutting
+  the start weight from 4000 to 1000 moves sketch adherence 0.911 to 0.899,
+  while taking the end weight from 400 to 0 moves it 0.911 to 0.651 — the end
+  weight is about twenty times the more effective lever, not the reverse. Note
+  that `F2b` holds two panels: the `sketch-12/wstart-200/wend-*` rows fix the
+  start at 200 and sweep the end, so a mean over all F2b rows mixes two
+  designs and means nothing.
 - Every Phase 2g (X) row is `DONE` or permanently failed, with the pooled
   paraphrase--scramble gap and its p-value reported, and the stated
   prediction marked kept or broken. This panel is not droppable for queue
