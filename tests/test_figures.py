@@ -8,7 +8,12 @@ from pathlib import Path
 
 import pytest
 
-from analysis.figures import MEANINGLESS_PROMPTS, semantic_floor, weight_headroom
+from analysis.figures import (
+    MEANINGLESS_PROMPTS,
+    formal_table,
+    semantic_floor,
+    weight_headroom,
+)
 from guidance.blend import GRAD_MATCH_WEIGHT_MAX
 from recipe.campaign_spec import PROMPTS
 
@@ -85,3 +90,39 @@ def test_weight_headroom_flags_a_run_against_the_cap(tmp_path):
     assert rows['legacy']['at_cap'] == ''
     assert rows['legacy']['max_fraction_of_cap'] == ''
     assert float(rows['legacy']['mean_fraction_of_cap']) == 0.95
+
+
+def test_formal_table_carries_only_runs_given_a_drawing(tmp_path):
+    """Sketch adherence is meaningless where there is no sketch.
+
+    `mass_on_scaffold` is null on unguided and prompt-only runs, which is
+    what keeps them out -- so no list of formal experiment codes has to be
+    maintained here as panels are added.
+    """
+    runs = [
+        {'run_id': 'unguided', 'experiment': 'B', 'mass_on_scaffold': None},
+        {'run_id': 'prompt-only', 'experiment': 'S3',
+         'mass_on_scaffold': None, 'prompt': PROMPTS[0]},
+        {'run_id': 'sketch', 'experiment': 'F3', 'mode': 'sketch',
+         'sketch': '/cluster/home/inputs/sketches/12.jpg',
+         'mass_on_scaffold': 0.72,
+         'validity': {'floating_mass_fraction': 0.013,
+                      'spanning_mass_fraction': 0.987,
+                      'top_to_bottom_connected': 1.0,
+                      'support_to_load_connected': 1.0}},
+        {'run_id': 'hybrid', 'experiment': 'H3', 'mode': 'semantic',
+         'sketch': '/cluster/home/inputs/sketches/12.jpg',
+         'prompt': PROMPTS[0], 'mass_on_scaffold': 0.61},
+    ]
+
+    formal_table(runs, tmp_path)
+
+    rows = {row['run_id']: row for row in _read(
+        tmp_path / 'tables' / 'formal.csv')}
+    assert set(rows) == {'sketch', 'hybrid'}
+    # The recorded path is the cluster's, so only the filename is portable.
+    assert rows['sketch']['sketch'] == '12.jpg'
+    assert float(rows['sketch']['floating_mass_fraction']) == 0.013
+    # A run whose validity block is absent reports blanks, not zeros: zero
+    # floating mass is a strong claim and must not be invented.
+    assert rows['hybrid']['floating_mass_fraction'] == ''

@@ -155,3 +155,25 @@ def test_grad_match_logs_the_raw_z_weight_c2_calibrates_from():
     assert ds.attrs['blend_mode'] == 'grad_match'
     assert campaign._mean(ds, 'blend_clip_raw_z_weight') > 0.0
     assert campaign._mean(ds, 'clip_weight') > 0.0
+
+
+def test_cap_share_separates_a_transient_spike_from_a_pinned_run():
+    """The peak alone cannot tell these apart, and they mean opposite things.
+
+    Every campaign run that logged a peak hit the cap exactly, so the peak
+    is uninformative on its own: one clipped step and a run spent entirely
+    at the ceiling both report 2000. The share is what distinguishes a
+    transient from a coupling that was effectively set by hand at the cap.
+    """
+    cap = campaign.GRAD_MATCH_WEIGHT_MAX
+    spike = {'clip_weight': SimpleNamespace(
+        values=np.array([10.0, cap, 20.0, 30.0]))}
+    pinned = {'clip_weight': SimpleNamespace(
+        values=np.array([cap, cap, cap, cap]))}
+
+    assert campaign._peak(spike, 'clip_weight') == cap
+    assert campaign._peak(pinned, 'clip_weight') == cap
+    assert campaign._share_at_cap(spike, 'clip_weight', cap) == 0.25
+    assert campaign._share_at_cap(pinned, 'clip_weight', cap) == 1.0
+    # Absent column means unknown, not zero.
+    assert campaign._share_at_cap({}, 'clip_weight', cap) is None

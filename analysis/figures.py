@@ -29,6 +29,10 @@ MEANINGLESS_PROMPTS = frozenset(
     NONSENSE_PROMPTS + SCRAMBLED_PROMPTS + (CONTROL_PROMPTS[1],))
 
 _REPO = Path(__file__).resolve().parents[1]
+# Recorded under 'validity' by every run; only component_count had a column.
+_CONNECTIVITY_FIELDS = (
+    'floating_mass_fraction', 'spanning_mass_fraction',
+    'top_to_bottom_connected', 'support_to_load_connected')
 
 
 def _load_runs(results: Path) -> list[dict]:
@@ -55,6 +59,21 @@ def _write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
             writer.writerow({key: row.get(key) for key in fieldnames})
 
 
+def _connectivity(run: dict) -> dict[str, float | None]:
+    """The validity metrics the run already recorded, flattened for CSV.
+
+    `connectivity_metrics` computed all of these during the run and the
+    summary stored the whole dict under `validity`, but only
+    `component_count` was ever lifted into a column -- so floating mass has
+    been on disk all along, just unreachable from a table. Read rather than
+    recomputed: these used the real load sites, which are not saved.
+    """
+    validity = run.get('validity')
+    if not isinstance(validity, dict):
+        return {key: None for key in _CONNECTIVITY_FIELDS}
+    return {key: validity.get(key) for key in _CONNECTIVITY_FIELDS}
+
+
 def compliance_table(runs: list[dict], out: Path) -> None:
     baseline = {}
     for run in runs:
@@ -75,12 +94,55 @@ def compliance_table(runs: list[dict], out: Path) -> None:
             'gray_fraction': run.get('gray_fraction'),
             'thresholded_compliance': run.get('thresholded_compliance'),
             'connected_components': run.get('connected_components'),
+            'load_on_solid_fraction': run.get('load_on_solid_fraction'),
+            **_connectivity(run),
         })
     _write_csv(
         out / 'tables' / 'compliance.csv', rows,
         ['run_id', 'experiment', 'structure', 'prompt', 'compliance',
          'compliance_ratio', 'gray_fraction', 'thresholded_compliance',
-         'connected_components'])
+         'connected_components', 'load_on_solid_fraction',
+         *_CONNECTIVITY_FIELDS])
+
+
+def formal_table(runs: list[dict], out: Path) -> None:
+    """Sketch adherence for every run that was given a drawing.
+
+    `mass_on_scaffold` is the share of material landing on the drawing, and
+    the only quantitative answer to whether a design followed it. It is null
+    without a sketch, so unguided and prompt-only runs are absent by
+    construction rather than by filtering on experiment -- F2b and H panels
+    would otherwise have to be enumerated here and kept in sync.
+
+    `prompt` is carried because the hybrid rows are the composition claim:
+    the same drawing with and without a prompt is what shows whether the two
+    channels compose or fight.
+    """
+    rows = []
+    for run in runs:
+        if run.get('mass_on_scaffold') is None:
+            continue
+        sketch = run.get('sketch')
+        rows.append({
+            'run_id': run.get('run_id'),
+            'experiment': run.get('experiment'),
+            'structure': run.get('structure'),
+            'mode': run.get('mode'),
+            'prompt': run.get('prompt'),
+            # The recorded path is the cluster's, so keep only the filename.
+            'sketch': None if sketch is None else Path(sketch).name,
+            'mass_on_scaffold': run.get('mass_on_scaffold'),
+            'compliance': run.get('compliance'),
+            'gray_fraction': run.get('gray_fraction'),
+            'load_on_solid_fraction': run.get('load_on_solid_fraction'),
+            **_connectivity(run),
+        })
+    rows.sort(key=lambda row: (row['experiment'] or '', row['run_id'] or ''))
+    _write_csv(
+        out / 'tables' / 'formal.csv', rows,
+        ['run_id', 'experiment', 'structure', 'mode', 'prompt', 'sketch',
+         'mass_on_scaffold', 'compliance', 'gray_fraction',
+         'load_on_solid_fraction', *_CONNECTIVITY_FIELDS])
 
 
 def cross_prompt_matrix(
@@ -188,6 +250,7 @@ def weight_headroom(runs: list[dict], out: Path) -> None:
             'clip_weight_mean': mean,
             'clip_weight_max': peak,
             'clip_raw_z_weight_mean': run.get('clip_raw_z_weight_mean'),
+            'cap_share': run.get('clip_weight_cap_share'),
             'clip_raw_z_weight_max': run.get('clip_raw_z_weight_max'),
             'cap': cap,
             'mean_fraction_of_cap': None if mean is None else float(mean) / cap,
@@ -199,7 +262,7 @@ def weight_headroom(runs: list[dict], out: Path) -> None:
         ['run_id', 'experiment', 'structure', 'prompt', 'coupling',
          'clip_weight_mean', 'clip_weight_max', 'clip_raw_z_weight_mean',
          'clip_raw_z_weight_max', 'cap', 'mean_fraction_of_cap',
-         'max_fraction_of_cap', 'at_cap'])
+         'max_fraction_of_cap', 'at_cap', 'cap_share'])
 
 
 def evaluator_view_gap(
@@ -335,6 +398,7 @@ def main(argv: list[str] | None = None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     runs = _load_runs(Path(args.results))
     compliance_table(runs, out)
+    formal_table(runs, out)
     weight_headroom(runs, out)
     for model_name in EVAL_MODELS:
         for view in EVAL_VIEWS:

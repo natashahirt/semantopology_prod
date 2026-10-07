@@ -612,6 +612,36 @@ This is a separate manifest from `meaning.tsv` so the finished rows are not
 resubmitted. Do not merge the two files; the run ids are disjoint by design
 and a test enforces it.
 
+## Phase 2i — three reruns for the weight-cap number
+
+Three rows, and they close an objection rather than add a claim.
+
+```bash
+python slurm/make_manifest.py                       # 118-row campaign.tsv
+# Rename DONE to DONE.superseded on the three S3 tall attempts first, so
+# they rerun and write the new field. Designs stay on disk.
+sbatch --array=51-53 slurm/campaign.sbatch
+```
+
+Grad-match sets the CLIP weight as a ratio of gradient norms, capped at 2000.
+Mean weights sit far below that — 7% to 59% across G, S2c and X — but of the
+39 runs that logged a peak, every one of the 36 with a CLIP term hit exactly
+2000.0. The three that did not are the rho=0 arms with no CLIP term at all.
+A peak pinned to the cap under means that low is the signature of a brief
+spike, and the likely cause is in `GradNormEma`: `reset()` fires at each
+AdaptivePixel upsample and the next observation seeds the averages directly,
+so one step's raw norm ratio sets the weight unsmoothed.
+
+But that is inference, not measurement, and no per-step log survives on disk.
+Until it is measured, "the weight is derived rather than hand-tuned" has a
+hole in it: it is derived except at the ceiling, where a hand-chosen 2000
+does the clipping. `clip_weight_cap_share` now records the share of steps at
+the cap, so three reruns turn the objection into a number. Report it.
+
+If the share comes back near zero the claim stands as written. If it is
+large, say so plainly and describe the coupling as grad-matched below a fixed
+ceiling, which is what it would then be.
+
 ## Phase 3 — analysis
 
 ### Run it early, on partial results, before the campaign finishes
@@ -745,6 +775,21 @@ first. That is optional — the perceptual and geometric results are the
 reported ones, and the energy cache built for the diversity selection does
 not cover these runs.
 
+`formal.csv` is the formal-channel and composition table: `mass_on_scaffold`
+is the share of material landing on the supplied drawing, and the only
+quantitative answer to whether a design followed it. Runs with no drawing are
+absent because the field is null for them, not because experiments are
+filtered by name, so a new sketch panel appears here without any change.
+Alongside it are the connectivity metrics every run already recorded under
+`validity` but which no table surfaced: floating mass, spanning mass, and the
+two connectivity flags. `compliance.csv` now carries those as well.
+
+On the weight cap: every campaign run that logged a peak hit it exactly, so
+`clip_weight_max` alone cannot distinguish one clipped step from a run spent
+entirely at the ceiling. New runs record `clip_weight_cap_share`, the share of
+steps that reached the cap, which appears as `cap_share` in
+`weight_headroom.csv`. Rows from before the field existed leave it blank.
+
 Outputs land under `analysis/out/`. In `REPORT.md`, report each cross-prompt
 table per evaluator and view, the z-minus-density evaluator gap, and
 `semantic_floor.csv` — which gives, per prompt, how much closer its own
@@ -780,6 +825,8 @@ and binary structural maps disagree.
   time: no other run answers whether meaning does the work.
 - Every Phase 2h row is `DONE` or permanently failed, and `meaning.csv`
   reports each family's own p-value alongside the pooled one.
+- The three Phase 2i reruns are `DONE` and `cap_share` is reported, with a
+  verdict on whether the derived-weight claim stands as written.
 - Every Phase 3 output exists under `analysis/out/`.
 - `REPORT.md` is written for a reader who did not watch the run:
   - what ran, and what failed and why;

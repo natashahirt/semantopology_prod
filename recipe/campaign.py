@@ -267,6 +267,24 @@ def _peak(ds, name: str) -> float | None:
     return float(values.max()) if values.size else None
 
 
+def _share_at_cap(ds, name: str, cap: float) -> float | None:
+    """Share of logged steps whose weight reached the cap.
+
+    The peak alone cannot distinguish a single clipped step from a run that
+    spent its whole length against the ceiling, and those mean different
+    things: the first is a transient, the second says the coupling was set
+    by hand at `cap` rather than derived. Every campaign run that logged a
+    peak hit the cap exactly, so this is the number that separates them.
+    """
+    if name not in ds or not np.isfinite(cap):
+        return None
+    values = np.asarray(ds[name].values, dtype=np.float64).reshape(-1)
+    values = values[np.isfinite(values)]
+    if not values.size:
+        return None
+    return float(np.mean(values >= float(cap) * (1.0 - 1e-9)))
+
+
 def _gray_fraction(density: np.ndarray) -> float:
     flat = np.asarray(density, dtype=np.float64).reshape(-1)
     return float(np.mean((flat > 0.1) & (flat < 0.9)))
@@ -507,6 +525,10 @@ def run_campaign(args, output_dir: Path) -> dict:
                 preset.clip_weight_z if fixed
                 else _peak(ds, 'blend_clip_raw_z_weight')),
             'clip_weight_cap': GRAD_MATCH_WEIGHT_MAX,
+            'clip_weight_cap_share': (
+                0.0 if fixed
+                else _share_at_cap(
+                    ds, 'clip_weight', GRAD_MATCH_WEIGHT_MAX)),
         })
     return _write_contract(
         output_dir, args=args, preset=preset, density=density, raw=raw,
