@@ -1,0 +1,42 @@
+{
+  "prompt": "ice crystals",
+  "problem": "tall_building",
+  "slug": "ice_crystals",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 89.62598419189453,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 71.44090270996094,
+  "clip_loss_raw": 0.37782734632492065,
+  "dream_clip_loss": 0.4084923565387726,
+  "volume_actual": 0.346160888671875,
+  "mean_physical_density": 0.29999998211860657,
+  "mass_on_scaffold": 0.7696585949822489,
+  "validity": {
+    "component_count": 26.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.03045366369034788,
+    "spanning_mass_fraction": 0.969410353124438,
+    "mean_physical_density": 0.29999998211860657
+  },
+  "load_on_solid_fraction": 0.8542635658914729,
+  "thresholded_compliance": 5326282.762359861,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 227.71003753412515,
+  "physics_seconds": 4100.976286839694,
+  "total_seconds": 4337.391521792859,
+  "git_commit": "2fbf1485377d896e3d76dfbae6123d3fc6a82aac-dirty",
+  "gate": null
+}

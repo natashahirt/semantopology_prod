@@ -1,0 +1,42 @@
+{
+  "prompt": "neurons",
+  "problem": "tall_building",
+  "slug": "neurons",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 87.84780883789062,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 95.85945892333984,
+  "clip_loss_raw": 0.37554579973220825,
+  "dream_clip_loss": 0.39269721508026123,
+  "volume_actual": 0.319732666015625,
+  "mean_physical_density": 0.30000001192092896,
+  "mass_on_scaffold": 0.8485010777463714,
+  "validity": {
+    "component_count": 4.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.017451282706855874,
+    "spanning_mass_fraction": 0.9817457318911548,
+    "mean_physical_density": 0.30000001192092896
+  },
+  "load_on_solid_fraction": 0.8821705426356589,
+  "thresholded_compliance": 4174186.8573619826,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 166.13225452043116,
+  "physics_seconds": 3061.56623042468,
+  "total_seconds": 3234.404633311555,
+  "git_commit": "2fbf1485377d896e3d76dfbae6123d3fc6a82aac-dirty",
+  "gate": null
+}

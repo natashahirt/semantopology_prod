@@ -69,5 +69,7 @@
 - 2026-10-07 15:48 UTC: Job 25158679 COMPLETED in 54 minutes. Rescored every finished run: 354 on `final.png`, 351 on density (three dream-only runs have no physical density). G, S2c, F2b, and X are in the tables. Figures and both reports rewritten.
 - 2026-10-07 16:12 UTC: Pulled `b980d27`. Specificity now includes butterfly, and meaning is also scored on ViT-L/14 image embeddings (pooled gap +0.253, p=0.0008; geometry stays p=0.45). Submitted Phase 2h as job 25170940, 12 tall rows in `slurm/meaning_seeds.tsv`, seeds 404/505/606. Did not resubmit `meaning.tsv`.
 - 2026-10-07 18:40 UTC: Phase 2h job 25170940 is 12/12 COMPLETED. Rescored every finished run as job 25184676 (366 on `final.png`, 363 on density). With six seeds per condition, perceptual meaning is fern gap 0.308 p=0.0005, skeletons gap 0.204 p=0.0005, pooled gap 0.256 p=0.0001. Geometry stays nonsignificant (pooled p=0.34).
+- 2026-10-10 17:00 UTC: Submitted the 24 M prompts again as tall hybrids, job 25506314 (`slurm/diversity_hybrid.tsv`, experiment `Mh`). Same paper recipe as H1: the CLIP dream is the occupancy prior and the initial density, co-adaptation on. Gallery job 25506316 waits on that array and writes `analysis/out/figures/M_semantic_hybrid.png` with semantic on top and hybrid below.
+- 2026-10-10 18:45 UTC: Job 25506314 is 24/24 COMPLETED. Gallery 25506316 wrote `analysis/out/figures/M_semantic_hybrid.png`.
 
 

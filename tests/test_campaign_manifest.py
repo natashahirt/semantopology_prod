@@ -31,6 +31,7 @@ from run import build_parser
 from slurm.make_manifest import (
     control_prompt_rows,
     dial_seed_rows,
+    diversity_hybrid_rows,
     experiment_rows,
     extension_rows,
     fern_wording_rows,
@@ -501,3 +502,23 @@ def test_f2b_low_sketch_weight_is_off_the_main_table():
         ends.append(float(argv[argv.index('--sketch-weight-end') + 1]))
     assert ends == list(SKETCH_WEIGHT_LOW_ENDS)
     assert 'F2b/tall/sketch-12/wstart-200/wend-0' in {row['run_id'] for row in rows}
+
+
+def test_diversity_hybrid_reruns_every_m_prompt_as_a_tall_hybrid():
+    rows = diversity_hybrid_rows()
+    assert len(rows) == len(DIVERSITY_PROMPTS)
+    semantic = {
+        row['run_id'] for row in extension_rows()
+        if row['run_id'].startswith('M/')
+    }
+    assert len(semantic) == len(DIVERSITY_PROMPTS)
+    for prompt, row in zip(DIVERSITY_PROMPTS, rows):
+        argv = row['argv']
+        assert row['run_id'] == f'Mh/tall/{prompt_token(prompt)}/hybrid'
+        assert row['run_id'] not in semantic
+        assert argv[argv.index('--mode') + 1] == 'hybrid'
+        assert argv[argv.index('--structure') + 1] == 'tall'
+        assert argv[argv.index('--clip') + 1] == prompt
+        assert argv[argv.index('--experiment') + 1] == 'Mh'
+        assert argv[argv.index('--physics-beta-max') + 1] == '8'
+        assert '--coadapt' not in argv

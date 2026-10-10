@@ -1,0 +1,42 @@
+{
+  "prompt": "barbed wire",
+  "problem": "tall_building",
+  "slug": "barbed_wire",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 94.05647277832031,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 51.026161193847656,
+  "clip_loss_raw": 0.37491676211357117,
+  "dream_clip_loss": 0.40946120023727417,
+  "volume_actual": 0.3251953125,
+  "mean_physical_density": 0.29999998211860657,
+  "mass_on_scaffold": 0.8331891555474993,
+  "validity": {
+    "component_count": 5.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.017088265275637088,
+    "spanning_mass_fraction": 0.9827573241699743,
+    "mean_physical_density": 0.29999998211860657
+  },
+  "load_on_solid_fraction": 0.8062015503875969,
+  "thresholded_compliance": 2915956.281454904,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 168.6488338187337,
+  "physics_seconds": 3104.883820396848,
+  "total_seconds": 3280.1849926812574,
+  "git_commit": "2fbf1485377d896e3d76dfbae6123d3fc6a82aac-dirty",
+  "gate": null
+}

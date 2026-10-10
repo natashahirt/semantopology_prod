@@ -378,6 +378,24 @@ def extension_rows() -> list[dict]:
     return rows
 
 
+def diversity_hybrid_rows() -> list[dict]:
+    """The M prompt list as hybrids: a CLIP dream initializes and occupies.
+
+    Same 24 texts, tall building, and paper recipe as M, with ``--mode
+    hybrid`` instead of semantic. The dream is the occupancy prior and the
+    initial density, and co-adaptation stays on. Experiment id ``Mh`` keeps
+    these out of the semantic diversity set, which is every ``M`` row.
+    """
+    rows = []
+    for prompt in DIVERSITY_PROMPTS:
+        token = prompt_token(prompt)
+        rows.append(_row(
+            f'Mh/tall/{token}/hybrid', 'Mh', 'hybrid',
+            ['--mode', 'hybrid', *_structure_args('tall'), '--clip', prompt],
+        ))
+    return rows
+
+
 def typology_rows() -> list[dict]:
     """G: the same geometric-compatibility prompts on all three structures.
 
@@ -502,6 +520,7 @@ OFF_TABLE_PANELS = {
     'meaning': ('meaning.tsv', meaning_rows),
     'meaning_seeds': ('meaning_seeds.tsv', meaning_seed_rows),
     'sketch_weight_low': ('sketch_weight_low.tsv', sketch_weight_low_rows),
+    'diversity_hybrid': ('diversity_hybrid.tsv', diversity_hybrid_rows),
 }
 
 
@@ -554,6 +573,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--sketch-weight-low', action='store_true',
         help='Write only the F2b low sketch-weight panel, never the campaign TSV.')
+    parser.add_argument(
+        '--diversity-hybrid', action='store_true',
+        help='Write only the M prompts as tall hybrids, never the campaign TSV.')
     parser.add_argument(
         '--out', default=None)
     args = parser.parse_args(argv)

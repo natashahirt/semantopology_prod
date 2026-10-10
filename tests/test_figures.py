@@ -10,10 +10,12 @@ import pytest
 
 from analysis.figures import (
     MEANINGLESS_PROMPTS,
+    diversity_hybrid_panel,
     formal_table,
     semantic_floor,
     weight_headroom,
 )
+from recipe.campaign_spec import DIVERSITY_PROMPTS, prompt_token
 from guidance.blend import GRAD_MATCH_WEIGHT_MAX
 from recipe.campaign_spec import PROMPTS
 
@@ -126,3 +128,36 @@ def test_formal_table_carries_only_runs_given_a_drawing(tmp_path):
     # A run whose validity block is absent reports blanks, not zeros: zero
     # floating mass is a strong claim and must not be invented.
     assert rows['hybrid']['floating_mass_fraction'] == ''
+
+
+def test_diversity_gallery_puts_semantic_above_hybrid(tmp_path):
+    from PIL import Image
+
+    prompt = DIVERSITY_PROMPTS[0]
+    token = prompt_token(prompt)
+    semantic = tmp_path / 'results' / 'M' / 'tall' / token / 'attempt_1'
+    hybrid = tmp_path / 'results' / 'Mh' / 'tall' / token / 'hybrid' / 'attempt_1'
+    semantic.mkdir(parents=True)
+    hybrid.mkdir(parents=True)
+    Image.new('RGB', (8, 16), (200, 0, 0)).save(semantic / 'final.png')
+    Image.new('RGB', (8, 16), (0, 0, 200)).save(hybrid / 'final.png')
+    (semantic / 'DONE').write_text('')
+    (hybrid / 'DONE').write_text('')
+
+    path = diversity_hybrid_panel(tmp_path / 'results', tmp_path / 'out')
+
+    sheet = Image.open(path)
+    assert sheet.size == (
+        sheet.size[0],
+        2 * (36 + 8),
+    )
+    red_y = blue_y = None
+    for y in range(sheet.size[1]):
+        for x in range(sheet.size[0]):
+            pixel = sheet.getpixel((x, y))[:3]
+            if pixel == (200, 0, 0):
+                red_y = y
+            elif pixel == (0, 0, 200):
+                blue_y = y
+    assert red_y is not None and blue_y is not None
+    assert red_y < blue_y

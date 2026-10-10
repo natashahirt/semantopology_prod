@@ -1,0 +1,42 @@
+{
+  "prompt": "lichen",
+  "problem": "tall_building",
+  "slug": "lichen",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 89.48302459716797,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 85.30084228515625,
+  "clip_loss_raw": 0.3746297061443329,
+  "dream_clip_loss": 0.4223136305809021,
+  "volume_actual": 0.3570556640625,
+  "mean_physical_density": 0.30000001192092896,
+  "mass_on_scaffold": 0.7762776128068339,
+  "validity": {
+    "component_count": 16.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.022505632900169586,
+    "spanning_mass_fraction": 0.9774943670998304,
+    "mean_physical_density": 0.30000001192092896
+  },
+  "load_on_solid_fraction": 0.8201550387596899,
+  "thresholded_compliance": 3641896.872725349,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 233.16637612879276,
+  "physics_seconds": 4939.201332111843,
+  "total_seconds": 5180.792783709243,
+  "git_commit": "2fbf1485377d896e3d76dfbae6123d3fc6a82aac-dirty",
+  "gate": null
+}

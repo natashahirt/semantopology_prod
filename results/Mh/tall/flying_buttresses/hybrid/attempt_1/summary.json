@@ -1,0 +1,42 @@
+{
+  "prompt": "flying buttresses",
+  "problem": "tall_building",
+  "slug": "flying_buttresses",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 86.054931640625,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 59.12363815307617,
+  "clip_loss_raw": 0.38237670063972473,
+  "dream_clip_loss": 0.41677454113960266,
+  "volume_actual": 0.365203857421875,
+  "mean_physical_density": 0.30000001192092896,
+  "mass_on_scaffold": 0.771540752872611,
+  "validity": {
+    "component_count": 8.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.021903933114664778,
+    "spanning_mass_fraction": 0.9780960668853352,
+    "mean_physical_density": 0.30000001192092896
+  },
+  "load_on_solid_fraction": 0.9426356589147287,
+  "thresholded_compliance": 1846685.4346215685,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 255.35867902264,
+  "physics_seconds": 4150.613190050237,
+  "total_seconds": 4415.2689474429935,
+  "git_commit": "2fbf1485377d896e3d76dfbae6123d3fc6a82aac-dirty",
+  "gate": null
+}

@@ -13,6 +13,7 @@ import numpy as np
 from guidance.blend import GRAD_MATCH_WEIGHT_MAX
 from recipe.campaign_spec import (
     CONTROL_PROMPTS,
+    DIVERSITY_PROMPTS,
     EVAL_MODELS,
     EVAL_VIEWS,
     FERN_WORDINGS,
@@ -21,6 +22,7 @@ from recipe.campaign_spec import (
     SCRAMBLED_PROMPTS,
     eval_model_suffix,
     eval_view_suffix,
+    prompt_token,
 )
 from recipe.preset import prompt_slug
 
@@ -389,13 +391,112 @@ def fern_wording_panel(results: Path, out: Path) -> None:
     fig.save(dest / 's4_fern_wording.png')
 
 
+def _latest_final(results: Path, run_id: str) -> Path | None:
+    """Newest finished ``final.png`` for a run, or None."""
+    attempts = sorted((results / run_id).glob('attempt_*'))
+    for attempt in reversed(attempts):
+        png = attempt / 'final.png'
+        if png.exists() and (attempt / 'DONE').exists():
+            return png
+    return None
+
+
+def _rotated_label(text: str, font):
+    """A white label rotated to read upward along a row."""
+    from PIL import Image, ImageDraw
+
+    probe = ImageDraw.Draw(Image.new('RGB', (1, 1)))
+    box = probe.textbbox((0, 0), text, font=font)
+    width, height = box[2] - box[0] + 8, box[3] - box[1] + 8
+    image = Image.new('RGB', (width, height), 'white')
+    ImageDraw.Draw(image).text((4 - box[0], 4 - box[1]), text, fill='black', font=font)
+    return image.rotate(90, expand=True)
+
+
+def _label_font(size: int):
+    from PIL import ImageFont
+
+    for path in (
+            '/usr/share/fonts/dejavu/DejaVuSans.ttf',
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+            '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'):
+        if Path(path).exists():
+            return ImageFont.truetype(path, size)
+    return ImageFont.load_default()
+
+
+def diversity_hybrid_panel(results: Path, out: Path) -> Path:
+    """Semantic M above hybrid Mh, one column per diversity prompt.
+
+    The sheet is for picking favorites. A missing hybrid is a blank cell,
+    so the figure can be drawn before every rerun has finished.
+    """
+    from PIL import Image, ImageDraw
+
+    rows = (
+        ('semantic', 'M/tall/{token}'),
+        ('hybrid', 'Mh/tall/{token}/hybrid'),
+    )
+    cells = []
+    for _label, pattern in rows:
+        row = []
+        for prompt in DIVERSITY_PROMPTS:
+            token = prompt_token(prompt)
+            row.append((prompt, _latest_final(results, pattern.format(token=token))))
+        cells.append(row)
+
+    found = [png for row in cells for _, png in row if png is not None]
+    if not found:
+        raise FileNotFoundError('no finished M finals to place on the sheet')
+
+    sample = Image.open(found[0])
+    cell_w = sample.size[0] // 2
+    cell_h = sample.size[1] // 2
+    header_h = 36
+    font = _label_font(15)
+    labels = [_rotated_label(label, font) for label, _pattern in rows]
+    gutter = max(image.size[0] for image in labels) + 12
+    fig = Image.new(
+        'RGB',
+        (gutter + cell_w * len(DIVERSITY_PROMPTS), (header_h + cell_h) * len(rows)),
+        'white',
+    )
+    draw = ImageDraw.Draw(fig)
+    blank = (232, 232, 232)
+    for r, row in enumerate(cells):
+        y0 = r * (header_h + cell_h)
+        label = labels[r]
+        fig.paste(label, (4, y0 + header_h + max(0, (cell_h - label.size[1]) // 2)))
+        for c, (prompt, png) in enumerate(row):
+            x = gutter + c * cell_w
+            draw.text((x + 6, y0 + 8), prompt, fill='black', font=font)
+            box = (x, y0 + header_h, x + cell_w, y0 + header_h + cell_h)
+            if png is None:
+                draw.rectangle(box, fill=blank)
+                continue
+            image = Image.open(png).convert('RGB').resize((cell_w, cell_h))
+            fig.paste(image, (x, y0 + header_h))
+    dest = out / 'figures'
+    dest.mkdir(parents=True, exist_ok=True)
+    path = dest / 'M_semantic_hybrid.png'
+    fig.save(path)
+    return path
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--results', default=str(_REPO / 'results'))
     parser.add_argument('--out', default=str(_REPO / 'analysis' / 'out'))
+    parser.add_argument(
+        '--gallery-only', action='store_true',
+        help='Write only the M semantic-over-hybrid sheet.')
     args = parser.parse_args(argv)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+    if args.gallery_only:
+        path = diversity_hybrid_panel(Path(args.results), out)
+        print(f'wrote {path}')
+        return 0
     runs = _load_runs(Path(args.results))
     compliance_table(runs, out)
     formal_table(runs, out)
@@ -413,6 +514,7 @@ def main(argv: list[str] | None = None) -> int:
             out, suffix=model_suffix)
     contact_sheets(runs, out)
     fern_wording_panel(Path(args.results), out)
+    diversity_hybrid_panel(Path(args.results), out)
     print(f'wrote tables and figures for {len(runs)} runs -> {out}')
     return 0
 

@@ -1,0 +1,42 @@
+{
+  "prompt": "suspension bridge cables",
+  "problem": "tall_building",
+  "slug": "suspension_bridge_cables",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 85.02073669433594,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 44.35325622558594,
+  "clip_loss_raw": 0.3660794496536255,
+  "dream_clip_loss": 0.4204571545124054,
+  "volume_actual": 0.330169677734375,
+  "mean_physical_density": 0.30000001192092896,
+  "mass_on_scaffold": 0.7950468708031811,
+  "validity": {
+    "component_count": 19.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.024291813463122706,
+    "spanning_mass_fraction": 0.9739015382942795,
+    "mean_physical_density": 0.30000001192092896
+  },
+  "load_on_solid_fraction": 0.9255813953488372,
+  "thresholded_compliance": 2893986.3436289467,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 251.72786892112345,
+  "physics_seconds": 4462.144379868172,
+  "total_seconds": 4724.086417548358,
+  "git_commit": "2fbf1485377d896e3d76dfbae6123d3fc6a82aac-dirty",
+  "gate": null
+}
