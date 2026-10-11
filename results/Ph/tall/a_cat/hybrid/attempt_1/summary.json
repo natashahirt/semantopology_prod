@@ -1,0 +1,42 @@
+{
+  "prompt": "a cat",
+  "problem": "tall_building",
+  "slug": "a_cat",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 85.40181732177734,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 25.516496658325195,
+  "clip_loss_raw": 0.3978928327560425,
+  "dream_clip_loss": 0.4129725694656372,
+  "volume_actual": 0.349884033203125,
+  "mean_physical_density": 0.29999998211860657,
+  "mass_on_scaffold": 0.791932019777438,
+  "validity": {
+    "component_count": 12.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.020667290038085595,
+    "spanning_mass_fraction": 0.9792423853085439,
+    "mean_physical_density": 0.29999998211860657
+  },
+  "load_on_solid_fraction": 0.9193798449612403,
+  "thresholded_compliance": 486732.6793114557,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.5,
+  "control_grid": [
+    32,
+    16
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 12,
+  "dream_seconds": 170.19950343947858,
+  "physics_seconds": 2820.0260053453967,
+  "total_seconds": 2998.3474063184112,
+  "git_commit": "b9bfaffa232d07785692c0aad245a2e3b8c242b3-dirty",
+  "gate": null
+}

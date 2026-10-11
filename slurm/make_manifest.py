@@ -396,6 +396,24 @@ def diversity_hybrid_rows() -> list[dict]:
     return rows
 
 
+def prompt_hybrid_rows() -> list[dict]:
+    """The P prompt list as hybrids: a CLIP dream initializes and occupies.
+
+    Same nine texts, tall building, and paper recipe as P, with ``--mode
+    hybrid`` instead of semantic. Experiment id ``Ph`` keeps these out of
+    the semantic-prompt diversity set, which is every ``P`` row.
+    """
+    prompts = STRUCTURAL_PROMPTS + NONSTRUCTURAL_PROMPTS
+    rows = []
+    for prompt in prompts:
+        token = prompt_token(prompt)
+        rows.append(_row(
+            f'Ph/tall/{token}/hybrid', 'Ph', 'hybrid',
+            ['--mode', 'hybrid', *_structure_args('tall'), '--clip', prompt],
+        ))
+    return rows
+
+
 def typology_rows() -> list[dict]:
     """G: the same geometric-compatibility prompts on all three structures.
 
@@ -521,6 +539,7 @@ OFF_TABLE_PANELS = {
     'meaning_seeds': ('meaning_seeds.tsv', meaning_seed_rows),
     'sketch_weight_low': ('sketch_weight_low.tsv', sketch_weight_low_rows),
     'diversity_hybrid': ('diversity_hybrid.tsv', diversity_hybrid_rows),
+    'prompt_hybrid': ('prompt_hybrid.tsv', prompt_hybrid_rows),
 }
 
 
@@ -576,6 +595,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--diversity-hybrid', action='store_true',
         help='Write only the M prompts as tall hybrids, never the campaign TSV.')
+    parser.add_argument(
+        '--prompt-hybrid', action='store_true',
+        help='Write only the P prompts as tall hybrids, never the campaign TSV.')
     parser.add_argument(
         '--out', default=None)
     args = parser.parse_args(argv)

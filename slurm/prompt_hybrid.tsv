@@ -1,0 +1,10 @@
+run_id	argv_json
+Ph/tall/tree_branches/hybrid	["--run-id", "Ph/tall/tree_branches/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "tree branches", "--physics-beta-max", "8"]
+Ph/tall/bone_trabeculae/hybrid	["--run-id", "Ph/tall/bone_trabeculae/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "bone trabeculae", "--physics-beta-max", "8"]
+Ph/tall/spider_web/hybrid	["--run-id", "Ph/tall/spider_web/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "spider web", "--physics-beta-max", "8"]
+Ph/tall/gothic_tracery/hybrid	["--run-id", "Ph/tall/gothic_tracery/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "gothic tracery", "--physics-beta-max", "8"]
+Ph/tall/honeycomb/hybrid	["--run-id", "Ph/tall/honeycomb/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "honeycomb", "--physics-beta-max", "8"]
+Ph/tall/clouds/hybrid	["--run-id", "Ph/tall/clouds/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "clouds", "--physics-beta-max", "8"]
+Ph/tall/smoke/hybrid	["--run-id", "Ph/tall/smoke/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "smoke", "--physics-beta-max", "8"]
+Ph/tall/fur/hybrid	["--run-id", "Ph/tall/fur/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "fur", "--physics-beta-max", "8"]
+Ph/tall/a_cat/hybrid	["--run-id", "Ph/tall/a_cat/hybrid", "--experiment", "Ph", "--group", "hybrid", "--mode", "hybrid", "--structure", "tall", "--clip", "a cat", "--physics-beta-max", "8"]

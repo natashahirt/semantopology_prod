@@ -39,6 +39,7 @@ from slurm.make_manifest import (
     loose_sketch_rows,
     meaning_rows,
     meaning_seed_rows,
+    prompt_hybrid_rows,
     sketch_weight_low_rows,
     typology_rows,
 )
@@ -521,4 +522,25 @@ def test_diversity_hybrid_reruns_every_m_prompt_as_a_tall_hybrid():
         assert argv[argv.index('--clip') + 1] == prompt
         assert argv[argv.index('--experiment') + 1] == 'Mh'
         assert argv[argv.index('--physics-beta-max') + 1] == '8'
+        assert '--coadapt' not in argv
+
+
+def test_prompt_hybrid_reruns_every_p_prompt_as_a_tall_hybrid():
+    rows = prompt_hybrid_rows()
+    semantic_tokens = {
+        row['run_id'].split('/')[2]
+        for row in extension_rows()
+        if row['run_id'].startswith('P/')
+    }
+    assert len(rows) == len(semantic_tokens) == 9
+    for row in rows:
+        argv = row['argv']
+        token = row['run_id'].split('/')[2]
+        assert row['run_id'] == f'Ph/tall/{token}/hybrid'
+        assert token in semantic_tokens
+        assert argv[argv.index('--mode') + 1] == 'hybrid'
+        assert argv[argv.index('--structure') + 1] == 'tall'
+        assert argv[argv.index('--experiment') + 1] == 'Ph'
+        assert argv[argv.index('--physics-beta-max') + 1] == '8'
+        assert prompt_token(argv[argv.index('--clip') + 1]) == token
         assert '--coadapt' not in argv

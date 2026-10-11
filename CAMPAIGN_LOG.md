@@ -71,5 +71,8 @@
 - 2026-10-07 18:40 UTC: Phase 2h job 25170940 is 12/12 COMPLETED. Rescored every finished run as job 25184676 (366 on `final.png`, 363 on density). With six seeds per condition, perceptual meaning is fern gap 0.308 p=0.0005, skeletons gap 0.204 p=0.0005, pooled gap 0.256 p=0.0001. Geometry stays nonsignificant (pooled p=0.34).
 - 2026-10-10 17:00 UTC: Submitted the 24 M prompts again as tall hybrids, job 25506314 (`slurm/diversity_hybrid.tsv`, experiment `Mh`). Same paper recipe as H1: the CLIP dream is the occupancy prior and the initial density, co-adaptation on. Gallery job 25506316 waits on that array and writes `analysis/out/figures/M_semantic_hybrid.png` with semantic on top and hybrid below.
 - 2026-10-10 18:45 UTC: Job 25506314 is 24/24 COMPLETED. Gallery 25506316 wrote `analysis/out/figures/M_semantic_hybrid.png`.
+- 2026-10-10 22:05 UTC: Rescore job 25526869 is scoring every finished run, including Mh, with four evaluators and both views. `python -m`, repo root on `PYTHONPATH`, OpenMP pinned to 1 for the diversity re-solves. No new campaign rows in that job.
+- 2026-10-10 22:08 UTC: Submitted the nine P prompts as tall hybrids, job 25527322 (`slurm/prompt_hybrid.tsv`, experiment `Ph`). Same hybrid recipe as Mh. A second rescore is queued to start after 25526869 and 25527322 so Ph is in the similarity files before they are pushed.
+- 2026-10-11 16:45 UTC: Job 25526869 COMPLETED (390 z-view runs, Mh included, Ph not yet finished). Job 25527322 is 9/9 COMPLETED. Job 25527324 COMPLETED: 399 `final.png` runs and 396 density runs. `similarities_vit_l_14_z.json` has Mh 24 and Ph 9. Diversity re-solves stayed on the cache with OpenMP pinned to 1.
 
 
