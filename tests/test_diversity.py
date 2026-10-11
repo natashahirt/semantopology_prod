@@ -10,6 +10,7 @@ import pytest
 from analysis.diversity import (
     bootstrap_mean_distance,
     comparison_set,
+    hybrid_comparison_set,
     geometric_map,
     load_path_map,
     quality,
@@ -125,6 +126,35 @@ def test_legacy_run_arguments_are_recovered_from_manifest(tmp_path):
 )
 def test_comparison_set(meta, expected):
     assert comparison_set(meta) == expected
+
+
+@pytest.mark.parametrize(
+    ('meta', 'expected'),
+    [
+        ({'experiment': 'H1', 'structure': 'tall', 'mode': 'hybrid',
+          'prompt': 'fern fronds'}, 'campaign hybrids'),
+        ({'experiment': 'Mh', 'structure': 'tall', 'mode': 'hybrid',
+          'prompt': 'lace'}, 'diversity hybrids'),
+        ({'experiment': 'Ph', 'structure': 'tall', 'mode': 'hybrid',
+          'prompt': 'honeycomb'}, 'panel hybrids'),
+        ({'experiment': 'S4', 'structure': 'tall', 'mode': 'hybrid',
+          'prompt': 'fern frond'}, 'wording hybrids'),
+        ({'experiment': 'H4', 'structure': 'tall', 'mode': 'hybrid',
+          'prompt': 'skeletons'}, 'coadapt off'),
+        ({'experiment': 'H5', 'structure': 'tall', 'mode': 'hybrid',
+          'prompt': 'skeletons'}, 'self-weight'),
+        ({'experiment': 'H2', 'structure': 'bridge', 'mode': 'hybrid',
+          'prompt': 'fern fronds'}, None),
+        ({'experiment': 'H1', 'structure': 'tall', 'mode': 'dream_only',
+          'prompt': 'fern fronds'}, None),
+        ({'experiment': 'GATE', 'structure': 'tall', 'mode': 'hybrid',
+          'prompt': 'fern fronds'}, None),
+        ({'experiment': 'B', 'structure': 'tall', 'prompt': None},
+         'unguided seeds'),
+    ],
+)
+def test_hybrid_comparison_set(meta, expected):
+    assert hybrid_comparison_set(meta) == expected
 
 
 def test_legacy_cli_without_sketch_weight_start_uses_the_paper_default():

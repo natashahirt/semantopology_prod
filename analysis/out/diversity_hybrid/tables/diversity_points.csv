@@ -1,0 +1,233 @@
+attempt,run_id,set,measure,band,pc1,pc2
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,structural,all,-0.5148618059531009,0.11311910523444198
+results/H1/tall/butterfly_wing_venation/hybrid/attempt_1,H1/tall/butterfly_wing_venation/hybrid,campaign hybrids,structural,all,-0.5043486672917787,-0.013106460253837167
+results/H1/tall/fern_fronds/hybrid/attempt_2,H1/tall/fern_fronds/hybrid,campaign hybrids,structural,all,-0.27460730510110787,-0.48078467898961275
+results/H1/tall/skeletons/hybrid/attempt_1,H1/tall/skeletons/hybrid,campaign hybrids,structural,all,0.47481796118291675,-0.15275049869834811
+results/H4/tall/butterfly_wing_venation/coadapt-off/attempt_1,H4/tall/butterfly_wing_venation/coadapt-off,coadapt off,structural,all,-0.49566632562945645,-0.020291613939061173
+results/H4/tall/fern_fronds/coadapt-off/attempt_1,H4/tall/fern_fronds/coadapt-off,coadapt off,structural,all,-0.27794372998276273,-0.4713105779410005
+results/H4/tall/skeletons/coadapt-off/attempt_1,H4/tall/skeletons/coadapt-off,coadapt off,structural,all,0.4666606299388658,-0.1699680187638089
+results/H5/tall/butterfly_wing_venation/hybrid/attempt_1,H5/tall/butterfly_wing_venation/hybrid,self-weight,structural,all,-0.4589577811591753,0.06755409993676677
+results/H5/tall/fern_fronds/hybrid/attempt_1,H5/tall/fern_fronds/hybrid,self-weight,structural,all,-0.2786827299492898,-0.47242372343673655
+results/H5/tall/skeletons/hybrid/attempt_1,H5/tall/skeletons/hybrid,self-weight,structural,all,0.4628944026845211,-0.16491298166337176
+results/Mh/tall/art_nouveau_ironwork/hybrid/attempt_1,Mh/tall/art_nouveau_ironwork/hybrid,diversity hybrids,structural,all,0.35159232335526347,0.19901344268312315
+results/Mh/tall/bamboo_scaffolding/hybrid/attempt_1,Mh/tall/bamboo_scaffolding/hybrid,diversity hybrids,structural,all,0.37593401992402803,0.17974459056719533
+results/Mh/tall/barbed_wire/hybrid/attempt_1,Mh/tall/barbed_wire/hybrid,diversity hybrids,structural,all,0.18163258713786548,-0.059126795873668814
+results/Mh/tall/chain_link_fence/hybrid/attempt_1,Mh/tall/chain_link_fence/hybrid,diversity hybrids,structural,all,-0.22491814523173098,0.2101034314639127
+results/Mh/tall/circuit_board/hybrid/attempt_1,Mh/tall/circuit_board/hybrid,diversity hybrids,structural,all,0.2358539455583283,0.1431695408357199
+results/Mh/tall/coral_reef/hybrid/attempt_1,Mh/tall/coral_reef/hybrid,diversity hybrids,structural,all,0.3595760315104413,-0.04927919695971478
+results/Mh/tall/cracked_mud/hybrid/attempt_1,Mh/tall/cracked_mud/hybrid,diversity hybrids,structural,all,0.167654219941656,0.488792962038064
+results/Mh/tall/dragonfly_wing/hybrid/attempt_1,Mh/tall/dragonfly_wing/hybrid,diversity hybrids,structural,all,-0.477882761871999,-0.01368727779321801
+results/Mh/tall/flying_buttresses/hybrid/attempt_1,Mh/tall/flying_buttresses/hybrid,diversity hybrids,structural,all,-0.2917925037168384,-0.221708586315359
+results/Mh/tall/ice_crystals/hybrid/attempt_1,Mh/tall/ice_crystals/hybrid,diversity hybrids,structural,all,-0.03824357340455735,-0.19988923645109882
+results/Mh/tall/lace/hybrid/attempt_1,Mh/tall/lace/hybrid,diversity hybrids,structural,all,-0.022302760204683122,-0.19589508756231794
+results/Mh/tall/lattice_tower/hybrid/attempt_1,Mh/tall/lattice_tower/hybrid,diversity hybrids,structural,all,-0.09203647711285891,-0.3170772773941511
+results/Mh/tall/lichen/hybrid/attempt_1,Mh/tall/lichen/hybrid,diversity hybrids,structural,all,0.007487810712953912,0.04662769065898697
+results/Mh/tall/mangrove_roots/hybrid/attempt_1,Mh/tall/mangrove_roots/hybrid,diversity hybrids,structural,all,0.18573696389568564,-0.04835173338942327
+results/Mh/tall/marble_veins/hybrid/attempt_1,Mh/tall/marble_veins/hybrid,diversity hybrids,structural,all,-0.21970350208780567,0.06667001237082323
+results/Mh/tall/neurons/hybrid/attempt_1,Mh/tall/neurons/hybrid,diversity hybrids,structural,all,0.4788509443446095,0.05534465958072582
+results/Mh/tall/pine_cone/hybrid/attempt_1,Mh/tall/pine_cone/hybrid,diversity hybrids,structural,all,0.187394979319839,-0.06055582475321607
+results/Mh/tall/river_delta/hybrid/attempt_1,Mh/tall/river_delta/hybrid,diversity hybrids,structural,all,0.3156849187835058,0.42462061839973453
+results/Mh/tall/seashell_spiral/hybrid/attempt_1,Mh/tall/seashell_spiral/hybrid,diversity hybrids,structural,all,0.235501607376832,0.164866541756283
+results/Mh/tall/sound_waves/hybrid/attempt_1,Mh/tall/sound_waves/hybrid,diversity hybrids,structural,all,-0.16112067127118646,-0.037123284427647826
+results/Mh/tall/spiral_galaxy/hybrid/attempt_1,Mh/tall/spiral_galaxy/hybrid,diversity hybrids,structural,all,0.13539709340048428,0.04883585235599638
+results/Mh/tall/stained_glass_window/hybrid/attempt_1,Mh/tall/stained_glass_window/hybrid,diversity hybrids,structural,all,0.35405050795174897,-0.16583023096108365
+results/Mh/tall/suspension_bridge_cables/hybrid/attempt_1,Mh/tall/suspension_bridge_cables/hybrid,diversity hybrids,structural,all,0.006830565557783309,-0.4129464888033203
+results/Mh/tall/woven_basket/hybrid/attempt_1,Mh/tall/woven_basket/hybrid,diversity hybrids,structural,all,0.4032628520908349,0.10600414955553292
+results/Ph/tall/a_cat/hybrid/attempt_1,Ph/tall/a_cat/hybrid,panel hybrids,structural,all,0.23262191585673714,0.023475332889665107
+results/Ph/tall/bone_trabeculae/hybrid/attempt_1,Ph/tall/bone_trabeculae/hybrid,panel hybrids,structural,all,-0.4358423254021444,-0.06047595934244287
+results/Ph/tall/clouds/hybrid/attempt_1,Ph/tall/clouds/hybrid,panel hybrids,structural,all,0.2622019081585509,-0.38078669520785735
+results/Ph/tall/fur/hybrid/attempt_1,Ph/tall/fur/hybrid,panel hybrids,structural,all,-0.09891245960716849,-0.11671005036489746
+results/Ph/tall/gothic_tracery/hybrid/attempt_1,Ph/tall/gothic_tracery/hybrid,panel hybrids,structural,all,-0.14532330077276734,0.3955244054342416
+results/Ph/tall/honeycomb/hybrid/attempt_1,Ph/tall/honeycomb/hybrid,panel hybrids,structural,all,0.25560873325086936,-0.2617191859884618
+results/Ph/tall/smoke/hybrid/attempt_1,Ph/tall/smoke/hybrid,panel hybrids,structural,all,0.41229728685911604,0.29987225619205243
+results/Ph/tall/spider_web/hybrid/attempt_1,Ph/tall/spider_web/hybrid,panel hybrids,structural,all,0.08167578101602666,0.26095480950578986
+results/Ph/tall/tree_branches/hybrid/attempt_1,Ph/tall/tree_branches/hybrid,panel hybrids,structural,all,0.38794190147817065,0.02242165692098699
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,structural,all,-0.4903754885567068,0.31291060528809345
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,structural,all,-0.4898832476121503,0.2616907813166144
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,structural,all,-0.46773234245691064,0.2966991918292051
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,structural,all,-0.5034430015095829,0.24092804518981337
+results/S4/tall/fern_frond/hybrid/attempt_1,S4/tall/fern_frond/hybrid,wording hybrids,structural,all,-0.40722810857603275,-0.03122855448903096
+results/S4/tall/field_of_ferns/hybrid/attempt_1,S4/tall/field_of_ferns/hybrid,wording hybrids,structural,all,0.08197257128740063,0.2897309386930439
+results/S4/tall/many_fern_fronds/hybrid/attempt_1,S4/tall/many_fern_fronds/hybrid,wording hybrids,structural,all,0.10245974632692706,-0.20797543046407393
+results/S4/tall/unfurling_fern_fronds/hybrid/attempt_1,S4/tall/unfurling_fern_fronds/hybrid,wording hybrids,structural,all,0.16821480555983345,0.06724072952994828
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,geometric,all,-5.129272152863942,2.5318381523175777
+results/H1/tall/butterfly_wing_venation/hybrid/attempt_1,H1/tall/butterfly_wing_venation/hybrid,campaign hybrids,geometric,all,-5.539283411110948,-0.963260761929291
+results/H1/tall/fern_fronds/hybrid/attempt_2,H1/tall/fern_fronds/hybrid,campaign hybrids,geometric,all,-3.4013711504871806,-2.8546624475006515
+results/H1/tall/skeletons/hybrid/attempt_1,H1/tall/skeletons/hybrid,campaign hybrids,geometric,all,4.633990142136687,-1.1232211900572595
+results/H4/tall/butterfly_wing_venation/coadapt-off/attempt_1,H4/tall/butterfly_wing_venation/coadapt-off,coadapt off,geometric,all,-4.952897091952496,-0.8659332747667268
+results/H4/tall/fern_fronds/coadapt-off/attempt_1,H4/tall/fern_fronds/coadapt-off,coadapt off,geometric,all,-3.2789744480410628,-2.8302039150920413
+results/H4/tall/skeletons/coadapt-off/attempt_1,H4/tall/skeletons/coadapt-off,coadapt off,geometric,all,4.441111666133948,-1.2134349398150135
+results/H5/tall/butterfly_wing_venation/hybrid/attempt_1,H5/tall/butterfly_wing_venation/hybrid,self-weight,geometric,all,-5.363641908401899,-0.45426073405220946
+results/H5/tall/fern_fronds/hybrid/attempt_1,H5/tall/fern_fronds/hybrid,self-weight,geometric,all,-3.3085592206341023,-2.91884271792013
+results/H5/tall/skeletons/hybrid/attempt_1,H5/tall/skeletons/hybrid,self-weight,geometric,all,4.733941472854826,-1.015042953819422
+results/Mh/tall/art_nouveau_ironwork/hybrid/attempt_1,Mh/tall/art_nouveau_ironwork/hybrid,diversity hybrids,geometric,all,3.5195163427436436,0.8096068846177211
+results/Mh/tall/bamboo_scaffolding/hybrid/attempt_1,Mh/tall/bamboo_scaffolding/hybrid,diversity hybrids,geometric,all,3.2027289569805317,0.9334780932098271
+results/Mh/tall/barbed_wire/hybrid/attempt_1,Mh/tall/barbed_wire/hybrid,diversity hybrids,geometric,all,2.533900479444606,1.6754425168362446
+results/Mh/tall/chain_link_fence/hybrid/attempt_1,Mh/tall/chain_link_fence/hybrid,diversity hybrids,geometric,all,-1.7216768071710686,1.0723178700172988
+results/Mh/tall/circuit_board/hybrid/attempt_1,Mh/tall/circuit_board/hybrid,diversity hybrids,geometric,all,2.546970426559174,2.967086135521748
+results/Mh/tall/coral_reef/hybrid/attempt_1,Mh/tall/coral_reef/hybrid,diversity hybrids,geometric,all,3.5776125364914346,0.6253778360338972
+results/Mh/tall/cracked_mud/hybrid/attempt_1,Mh/tall/cracked_mud/hybrid,diversity hybrids,geometric,all,2.310755628568362,3.4524044142826105
+results/Mh/tall/dragonfly_wing/hybrid/attempt_1,Mh/tall/dragonfly_wing/hybrid,diversity hybrids,geometric,all,-4.328208964707148,-0.9270970290758088
+results/Mh/tall/flying_buttresses/hybrid/attempt_1,Mh/tall/flying_buttresses/hybrid,diversity hybrids,geometric,all,-2.4436733886715367,-2.698755019268396
+results/Mh/tall/ice_crystals/hybrid/attempt_1,Mh/tall/ice_crystals/hybrid,diversity hybrids,geometric,all,0.0037268269112666064,-1.3249761907749864
+results/Mh/tall/lace/hybrid/attempt_1,Mh/tall/lace/hybrid,diversity hybrids,geometric,all,0.6445650081695414,-1.0331386022473925
+results/Mh/tall/lattice_tower/hybrid/attempt_1,Mh/tall/lattice_tower/hybrid,diversity hybrids,geometric,all,-0.934765388771748,-2.178000104840257
+results/Mh/tall/lichen/hybrid/attempt_1,Mh/tall/lichen/hybrid,diversity hybrids,geometric,all,0.07642921427125571,-1.157367687060201
+results/Mh/tall/mangrove_roots/hybrid/attempt_1,Mh/tall/mangrove_roots/hybrid,diversity hybrids,geometric,all,2.3477850569038,1.8945096700282253
+results/Mh/tall/marble_veins/hybrid/attempt_1,Mh/tall/marble_veins/hybrid,diversity hybrids,geometric,all,-2.827874486759831,-1.7336397944906232
+results/Mh/tall/neurons/hybrid/attempt_1,Mh/tall/neurons/hybrid,diversity hybrids,geometric,all,4.522825201331368,0.35933211120016834
+results/Mh/tall/pine_cone/hybrid/attempt_1,Mh/tall/pine_cone/hybrid,diversity hybrids,geometric,all,1.6076311865371549,-2.2084028476929958
+results/Mh/tall/river_delta/hybrid/attempt_1,Mh/tall/river_delta/hybrid,diversity hybrids,geometric,all,2.5174461143527846,2.9278031677712386
+results/Mh/tall/seashell_spiral/hybrid/attempt_1,Mh/tall/seashell_spiral/hybrid,diversity hybrids,geometric,all,3.2252656854744775,3.8046003312508927
+results/Mh/tall/sound_waves/hybrid/attempt_1,Mh/tall/sound_waves/hybrid,diversity hybrids,geometric,all,-0.6538731236451516,-1.816153192692232
+results/Mh/tall/spiral_galaxy/hybrid/attempt_1,Mh/tall/spiral_galaxy/hybrid,diversity hybrids,geometric,all,1.3037930569213891,-1.6734423694655505
+results/Mh/tall/stained_glass_window/hybrid/attempt_1,Mh/tall/stained_glass_window/hybrid,diversity hybrids,geometric,all,3.657944640137564,-0.646852053858803
+results/Mh/tall/suspension_bridge_cables/hybrid/attempt_1,Mh/tall/suspension_bridge_cables/hybrid,diversity hybrids,geometric,all,0.14987723200466213,-1.4675397613268295
+results/Mh/tall/woven_basket/hybrid/attempt_1,Mh/tall/woven_basket/hybrid,diversity hybrids,geometric,all,3.5783563655891144,0.18670396923504173
+results/Ph/tall/a_cat/hybrid/attempt_1,Ph/tall/a_cat/hybrid,panel hybrids,geometric,all,1.963974373318007,-1.1362921852748316
+results/Ph/tall/bone_trabeculae/hybrid/attempt_1,Ph/tall/bone_trabeculae/hybrid,panel hybrids,geometric,all,-4.93317652478313,-0.05977889679296833
+results/Ph/tall/clouds/hybrid/attempt_1,Ph/tall/clouds/hybrid,panel hybrids,geometric,all,2.9045838196531477,-2.964346634844897
+results/Ph/tall/fur/hybrid/attempt_1,Ph/tall/fur/hybrid,panel hybrids,geometric,all,-0.29582450610808264,-2.3043116549925085
+results/Ph/tall/gothic_tracery/hybrid/attempt_1,Ph/tall/gothic_tracery/hybrid,panel hybrids,geometric,all,-1.5325561120174929,3.3463121979976034
+results/Ph/tall/honeycomb/hybrid/attempt_1,Ph/tall/honeycomb/hybrid,panel hybrids,geometric,all,2.29736987506744,-0.8731184391059946
+results/Ph/tall/smoke/hybrid/attempt_1,Ph/tall/smoke/hybrid,panel hybrids,geometric,all,3.9524476040763874,1.4013426236349789
+results/Ph/tall/spider_web/hybrid/attempt_1,Ph/tall/spider_web/hybrid,panel hybrids,geometric,all,0.9938483905982572,1.323174543934654
+results/Ph/tall/tree_branches/hybrid/attempt_1,Ph/tall/tree_branches/hybrid,panel hybrids,geometric,all,3.415707321496089,-1.4033441275998706
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,geometric,all,-4.919690669536844,3.8695732238684806
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,geometric,all,-4.947481712193856,3.4161993539143634
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,geometric,all,-4.7019232614033,3.5371487000589514
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,geometric,all,-5.0869250528872865,3.4393238549254583
+results/S4/tall/fern_frond/hybrid/attempt_1,S4/tall/fern_frond/hybrid,wording hybrids,geometric,all,-3.8179958434562726,-1.6223699076409135
+results/S4/tall/field_of_ferns/hybrid/attempt_1,S4/tall/field_of_ferns/hybrid,wording hybrids,geometric,all,1.9855256961167975,3.572524780822298
+results/S4/tall/many_fern_fronds/hybrid/attempt_1,S4/tall/many_fern_fronds/hybrid,wording hybrids,geometric,all,0.8086414968104657,-1.5044650533272974
+results/S4/tall/unfurling_fern_fronds/hybrid/attempt_1,S4/tall/unfurling_fern_fronds/hybrid,wording hybrids,geometric,all,0.6613734079502003,-2.1738459441531774
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,perceptual,all,-0.16608995480162114,0.19497156352071277
+results/H1/tall/butterfly_wing_venation/hybrid/attempt_1,H1/tall/butterfly_wing_venation/hybrid,campaign hybrids,perceptual,all,-0.05794993150955988,-0.06889360729457392
+results/H1/tall/fern_fronds/hybrid/attempt_2,H1/tall/fern_fronds/hybrid,campaign hybrids,perceptual,all,-0.19016780042686982,-0.1864173249073746
+results/H1/tall/skeletons/hybrid/attempt_1,H1/tall/skeletons/hybrid,campaign hybrids,perceptual,all,0.11651077000998422,0.19450597492191446
+results/H4/tall/butterfly_wing_venation/coadapt-off/attempt_1,H4/tall/butterfly_wing_venation/coadapt-off,coadapt off,perceptual,all,-0.1557828389316594,-0.021506211723162583
+results/H4/tall/fern_fronds/coadapt-off/attempt_1,H4/tall/fern_fronds/coadapt-off,coadapt off,perceptual,all,-0.2097868604623293,-0.1796577357691435
+results/H4/tall/skeletons/coadapt-off/attempt_1,H4/tall/skeletons/coadapt-off,coadapt off,perceptual,all,0.1250070505647689,0.21609065950399622
+results/H5/tall/butterfly_wing_venation/hybrid/attempt_1,H5/tall/butterfly_wing_venation/hybrid,self-weight,perceptual,all,-0.08922932106699237,-0.032739366658563036
+results/H5/tall/fern_fronds/hybrid/attempt_1,H5/tall/fern_fronds/hybrid,self-weight,perceptual,all,-0.18492419471927568,-0.18614876879823866
+results/H5/tall/skeletons/hybrid/attempt_1,H5/tall/skeletons/hybrid,self-weight,perceptual,all,0.17403020559335486,0.188227455351667
+results/Mh/tall/art_nouveau_ironwork/hybrid/attempt_1,Mh/tall/art_nouveau_ironwork/hybrid,diversity hybrids,perceptual,all,-0.04018781772138523,0.08085023097614469
+results/Mh/tall/bamboo_scaffolding/hybrid/attempt_1,Mh/tall/bamboo_scaffolding/hybrid,diversity hybrids,perceptual,all,0.09698398479193805,0.15628837556046782
+results/Mh/tall/barbed_wire/hybrid/attempt_1,Mh/tall/barbed_wire/hybrid,diversity hybrids,perceptual,all,0.1425832359883586,0.08991250261702015
+results/Mh/tall/chain_link_fence/hybrid/attempt_1,Mh/tall/chain_link_fence/hybrid,diversity hybrids,perceptual,all,0.1308519402043184,-0.02473513165922566
+results/Mh/tall/circuit_board/hybrid/attempt_1,Mh/tall/circuit_board/hybrid,diversity hybrids,perceptual,all,0.1397279650286159,-0.00216216637205743
+results/Mh/tall/coral_reef/hybrid/attempt_1,Mh/tall/coral_reef/hybrid,diversity hybrids,perceptual,all,-0.06788865794824031,-0.1252778701277167
+results/Mh/tall/cracked_mud/hybrid/attempt_1,Mh/tall/cracked_mud/hybrid,diversity hybrids,perceptual,all,0.20027350570394584,-0.06299695920988671
+results/Mh/tall/dragonfly_wing/hybrid/attempt_1,Mh/tall/dragonfly_wing/hybrid,diversity hybrids,perceptual,all,0.01065769359413763,-0.04977468697061376
+results/Mh/tall/flying_buttresses/hybrid/attempt_1,Mh/tall/flying_buttresses/hybrid,diversity hybrids,perceptual,all,-0.09493559387104791,0.11899296406173904
+results/Mh/tall/ice_crystals/hybrid/attempt_1,Mh/tall/ice_crystals/hybrid,diversity hybrids,perceptual,all,0.08798696178150635,-0.08275922987732737
+results/Mh/tall/lace/hybrid/attempt_1,Mh/tall/lace/hybrid,diversity hybrids,perceptual,all,-0.018392560515831803,-0.009448566796243871
+results/Mh/tall/lattice_tower/hybrid/attempt_1,Mh/tall/lattice_tower/hybrid,diversity hybrids,perceptual,all,0.17266733872552015,0.13485685216193083
+results/Mh/tall/lichen/hybrid/attempt_1,Mh/tall/lichen/hybrid,diversity hybrids,perceptual,all,0.029050210402942284,-0.026366356520882525
+results/Mh/tall/mangrove_roots/hybrid/attempt_1,Mh/tall/mangrove_roots/hybrid,diversity hybrids,perceptual,all,0.031903805803959955,0.0018216195744327904
+results/Mh/tall/marble_veins/hybrid/attempt_1,Mh/tall/marble_veins/hybrid,diversity hybrids,perceptual,all,0.13209299039322614,-0.02705337612973701
+results/Mh/tall/neurons/hybrid/attempt_1,Mh/tall/neurons/hybrid,diversity hybrids,perceptual,all,0.1955389406596353,-0.0272897988353706
+results/Mh/tall/pine_cone/hybrid/attempt_1,Mh/tall/pine_cone/hybrid,diversity hybrids,perceptual,all,-0.113144104425008,-0.04471288206118937
+results/Mh/tall/river_delta/hybrid/attempt_1,Mh/tall/river_delta/hybrid,diversity hybrids,perceptual,all,0.1401247771255693,-0.08259512917655362
+results/Mh/tall/seashell_spiral/hybrid/attempt_1,Mh/tall/seashell_spiral/hybrid,diversity hybrids,perceptual,all,-0.02110144374678652,-0.13544573483843841
+results/Mh/tall/sound_waves/hybrid/attempt_1,Mh/tall/sound_waves/hybrid,diversity hybrids,perceptual,all,0.13838021828267044,-0.10329150151513451
+results/Mh/tall/spiral_galaxy/hybrid/attempt_1,Mh/tall/spiral_galaxy/hybrid,diversity hybrids,perceptual,all,0.12032638995398032,-0.055914827083069565
+results/Mh/tall/stained_glass_window/hybrid/attempt_1,Mh/tall/stained_glass_window/hybrid,diversity hybrids,perceptual,all,-0.1933316995576172,0.11623199952556643
+results/Mh/tall/suspension_bridge_cables/hybrid/attempt_1,Mh/tall/suspension_bridge_cables/hybrid,diversity hybrids,perceptual,all,0.05997695222596141,0.10457327997891253
+results/Mh/tall/woven_basket/hybrid/attempt_1,Mh/tall/woven_basket/hybrid,diversity hybrids,perceptual,all,0.03857055923126013,-0.03222741112443461
+results/Ph/tall/a_cat/hybrid/attempt_1,Ph/tall/a_cat/hybrid,panel hybrids,perceptual,all,-0.009693573335815333,0.014454090628801274
+results/Ph/tall/bone_trabeculae/hybrid/attempt_1,Ph/tall/bone_trabeculae/hybrid,panel hybrids,perceptual,all,0.05617576445054348,0.052552031935468424
+results/Ph/tall/clouds/hybrid/attempt_1,Ph/tall/clouds/hybrid,panel hybrids,perceptual,all,0.09000897924719747,-0.1017180653985923
+results/Ph/tall/fur/hybrid/attempt_1,Ph/tall/fur/hybrid,panel hybrids,perceptual,all,-0.021181687141301232,-0.0025867967793446675
+results/Ph/tall/gothic_tracery/hybrid/attempt_1,Ph/tall/gothic_tracery/hybrid,panel hybrids,perceptual,all,-0.19212595554214704,0.11251217458705745
+results/Ph/tall/honeycomb/hybrid/attempt_1,Ph/tall/honeycomb/hybrid,panel hybrids,perceptual,all,0.11303857319059182,-0.10888488947031744
+results/Ph/tall/smoke/hybrid/attempt_1,Ph/tall/smoke/hybrid,panel hybrids,perceptual,all,0.19157275380286382,-0.09513612399756888
+results/Ph/tall/spider_web/hybrid/attempt_1,Ph/tall/spider_web/hybrid,panel hybrids,perceptual,all,0.14816192052383678,-0.07238394620283112
+results/Ph/tall/tree_branches/hybrid/attempt_1,Ph/tall/tree_branches/hybrid,panel hybrids,perceptual,all,0.06833634690155474,0.018633451746651986
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,perceptual,all,-0.19611779467822477,0.18293926619288625
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,perceptual,all,-0.16990899354047806,0.19660187068260815
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,perceptual,all,-0.1598089098674895,0.19384157663132462
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,perceptual,all,-0.1668959367826146,0.19817632050359857
+results/S4/tall/fern_frond/hybrid/attempt_1,S4/tall/fern_frond/hybrid,wording hybrids,perceptual,all,-0.14449418274882952,-0.150910281311158
+results/S4/tall/field_of_ferns/hybrid/attempt_1,S4/tall/field_of_ferns/hybrid,wording hybrids,perceptual,all,-0.11591065226124284,-0.1050590404348463
+results/S4/tall/many_fern_fronds/hybrid/attempt_1,S4/tall/many_fern_fronds/hybrid,wording hybrids,perceptual,all,-0.11236261613002697,-0.15430861908078342
+results/S4/tall/unfurling_fern_fronds/hybrid/attempt_1,S4/tall/unfurling_fern_fronds/hybrid,wording hybrids,perceptual,all,-0.05912675244984782,-0.20863185453852137
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,structural_binary,all,-0.22285093559342264,0.48024467707687635
+results/H1/tall/butterfly_wing_venation/hybrid/attempt_1,H1/tall/butterfly_wing_venation/hybrid,campaign hybrids,structural_binary,all,-0.1900526052578893,0.01967750352307393
+results/H1/tall/fern_fronds/hybrid/attempt_2,H1/tall/fern_fronds/hybrid,campaign hybrids,structural_binary,all,-0.5599663230874311,-0.3397455121024721
+results/H1/tall/skeletons/hybrid/attempt_1,H1/tall/skeletons/hybrid,campaign hybrids,structural_binary,all,0.24132719137941824,-0.2728055820808062
+results/H4/tall/butterfly_wing_venation/coadapt-off/attempt_1,H4/tall/butterfly_wing_venation/coadapt-off,coadapt off,structural_binary,all,-0.5344265076346657,-0.2900615308756237
+results/H4/tall/fern_fronds/coadapt-off/attempt_1,H4/tall/fern_fronds/coadapt-off,coadapt off,structural_binary,all,-0.547132346641811,-0.32627661263859636
+results/H4/tall/skeletons/coadapt-off/attempt_1,H4/tall/skeletons/coadapt-off,coadapt off,structural_binary,all,0.25384409284230514,-0.3413163175527335
+results/H5/tall/butterfly_wing_venation/hybrid/attempt_1,H5/tall/butterfly_wing_venation/hybrid,self-weight,structural_binary,all,-0.31961501383238056,0.17912098841583335
+results/H5/tall/fern_fronds/hybrid/attempt_1,H5/tall/fern_fronds/hybrid,self-weight,structural_binary,all,-0.5451925222182227,-0.3991083301936695
+results/H5/tall/skeletons/hybrid/attempt_1,H5/tall/skeletons/hybrid,self-weight,structural_binary,all,0.42402024802331406,-0.15471931188357757
+results/Mh/tall/art_nouveau_ironwork/hybrid/attempt_1,Mh/tall/art_nouveau_ironwork/hybrid,diversity hybrids,structural_binary,all,0.3356501336725307,0.04079931946837685
+results/Mh/tall/bamboo_scaffolding/hybrid/attempt_1,Mh/tall/bamboo_scaffolding/hybrid,diversity hybrids,structural_binary,all,0.548888024981591,-0.06927443906607511
+results/Mh/tall/barbed_wire/hybrid/attempt_1,Mh/tall/barbed_wire/hybrid,diversity hybrids,structural_binary,all,0.2750728462111305,-0.24710923728067513
+results/Mh/tall/chain_link_fence/hybrid/attempt_1,Mh/tall/chain_link_fence/hybrid,diversity hybrids,structural_binary,all,-0.25962662629205524,-0.10384103287134361
+results/Mh/tall/circuit_board/hybrid/attempt_1,Mh/tall/circuit_board/hybrid,diversity hybrids,structural_binary,all,0.3952092906216421,0.10824924972259561
+results/Mh/tall/coral_reef/hybrid/attempt_1,Mh/tall/coral_reef/hybrid,diversity hybrids,structural_binary,all,-0.05305346784771296,-0.10257618199564543
+results/Mh/tall/cracked_mud/hybrid/attempt_1,Mh/tall/cracked_mud/hybrid,diversity hybrids,structural_binary,all,0.2565181630033821,0.3573580944349958
+results/Mh/tall/dragonfly_wing/hybrid/attempt_1,Mh/tall/dragonfly_wing/hybrid,diversity hybrids,structural_binary,all,-0.12249224324363567,0.25480019770456663
+results/Mh/tall/flying_buttresses/hybrid/attempt_1,Mh/tall/flying_buttresses/hybrid,diversity hybrids,structural_binary,all,-0.16089532265093698,0.31290518033048853
+results/Mh/tall/ice_crystals/hybrid/attempt_1,Mh/tall/ice_crystals/hybrid,diversity hybrids,structural_binary,all,0.08541365492502759,-0.03442632350396331
+results/Mh/tall/lace/hybrid/attempt_1,Mh/tall/lace/hybrid,diversity hybrids,structural_binary,all,0.33080335456957255,-0.020581829556885575
+results/Mh/tall/lattice_tower/hybrid/attempt_1,Mh/tall/lattice_tower/hybrid,diversity hybrids,structural_binary,all,0.005532614464370171,0.19260302305819135
+results/Mh/tall/lichen/hybrid/attempt_1,Mh/tall/lichen/hybrid,diversity hybrids,structural_binary,all,0.06037467744000001,-0.05567428907895148
+results/Mh/tall/mangrove_roots/hybrid/attempt_1,Mh/tall/mangrove_roots/hybrid,diversity hybrids,structural_binary,all,0.4257999913286375,0.05333677378490027
+results/Mh/tall/marble_veins/hybrid/attempt_1,Mh/tall/marble_veins/hybrid,diversity hybrids,structural_binary,all,-0.29594875647340235,-0.18237646261501925
+results/Mh/tall/neurons/hybrid/attempt_1,Mh/tall/neurons/hybrid,diversity hybrids,structural_binary,all,0.1062325719924798,0.046086191962022974
+results/Mh/tall/pine_cone/hybrid/attempt_1,Mh/tall/pine_cone/hybrid,diversity hybrids,structural_binary,all,-0.26497172540955655,-0.14195073235794825
+results/Mh/tall/river_delta/hybrid/attempt_1,Mh/tall/river_delta/hybrid,diversity hybrids,structural_binary,all,0.16064757580709665,0.162006445286616
+results/Mh/tall/seashell_spiral/hybrid/attempt_1,Mh/tall/seashell_spiral/hybrid,diversity hybrids,structural_binary,all,0.32862903460307336,-0.21886938883321144
+results/Mh/tall/sound_waves/hybrid/attempt_1,Mh/tall/sound_waves/hybrid,diversity hybrids,structural_binary,all,-0.2825502830626124,-0.2471062719917657
+results/Mh/tall/spiral_galaxy/hybrid/attempt_1,Mh/tall/spiral_galaxy/hybrid,diversity hybrids,structural_binary,all,0.13962995748206775,-0.043342119657083164
+results/Mh/tall/stained_glass_window/hybrid/attempt_1,Mh/tall/stained_glass_window/hybrid,diversity hybrids,structural_binary,all,0.38104380416315425,0.1171204071728277
+results/Mh/tall/suspension_bridge_cables/hybrid/attempt_1,Mh/tall/suspension_bridge_cables/hybrid,diversity hybrids,structural_binary,all,0.18075038618274972,-0.1846293763079585
+results/Mh/tall/woven_basket/hybrid/attempt_1,Mh/tall/woven_basket/hybrid,diversity hybrids,structural_binary,all,0.5364130325767781,-0.010330817614214824
+results/Ph/tall/a_cat/hybrid/attempt_1,Ph/tall/a_cat/hybrid,panel hybrids,structural_binary,all,0.37048334000589644,-0.1901194851416782
+results/Ph/tall/bone_trabeculae/hybrid/attempt_1,Ph/tall/bone_trabeculae/hybrid,panel hybrids,structural_binary,all,-0.5928985243621478,-0.10227296467179843
+results/Ph/tall/clouds/hybrid/attempt_1,Ph/tall/clouds/hybrid,panel hybrids,structural_binary,all,-0.24828530746516403,-0.373359856053934
+results/Ph/tall/fur/hybrid/attempt_1,Ph/tall/fur/hybrid,panel hybrids,structural_binary,all,-0.19289474242663412,-0.08386824308822007
+results/Ph/tall/gothic_tracery/hybrid/attempt_1,Ph/tall/gothic_tracery/hybrid,panel hybrids,structural_binary,all,0.10370007630781897,0.3642758852087298
+results/Ph/tall/honeycomb/hybrid/attempt_1,Ph/tall/honeycomb/hybrid,panel hybrids,structural_binary,all,0.24165505983889635,-0.08250547167161326
+results/Ph/tall/smoke/hybrid/attempt_1,Ph/tall/smoke/hybrid,panel hybrids,structural_binary,all,0.1271589567787514,0.0729278098856151
+results/Ph/tall/spider_web/hybrid/attempt_1,Ph/tall/spider_web/hybrid,panel hybrids,structural_binary,all,0.3890838291396841,-0.10604592090610931
+results/Ph/tall/tree_branches/hybrid/attempt_1,Ph/tall/tree_branches/hybrid,panel hybrids,structural_binary,all,0.1851595242900504,-0.3974241789709856
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,structural_binary,all,-0.2032870040798475,0.5872362128282042
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,structural_binary,all,-0.19168514453594557,0.601081385003504
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,structural_binary,all,-0.2918471198595714,0.6235624904126736
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,structural_binary,all,-0.22495276416321536,0.6094042126076211
+results/S4/tall/fern_frond/hybrid/attempt_1,S4/tall/fern_frond/hybrid,wording hybrids,structural_binary,all,-0.300374125506403,-0.10401440691922248
+results/S4/tall/field_of_ferns/hybrid/attempt_1,S4/tall/field_of_ferns/hybrid,wording hybrids,structural_binary,all,0.1478220585893955,0.11573077520242982
+results/S4/tall/many_fern_fronds/hybrid/attempt_1,S4/tall/many_fern_fronds/hybrid,wording hybrids,structural_binary,all,-0.19416355227937393,-0.05349887664858759
+results/S4/tall/unfurling_fern_fronds/hybrid/attempt_1,S4/tall/unfurling_fern_fronds/hybrid,wording hybrids,structural_binary,all,-0.23770052729677546,-0.019295718959775762
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,structural,quality 0.75-1.05,-0.2115378746499727,0.12443503823193122
+results/Ph/tall/gothic_tracery/hybrid/attempt_1,Ph/tall/gothic_tracery/hybrid,panel hybrids,structural,quality 0.75-1.05,0.1847635589815244,-0.5359625456308537
+results/Ph/tall/tree_branches/hybrid/attempt_1,Ph/tall/tree_branches/hybrid,panel hybrids,structural,quality 0.75-1.05,0.8989315586090092,0.1927528591689745
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,structural,quality 0.75-1.05,-0.22223757030326846,0.015438919684414281
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,structural,quality 0.75-1.05,-0.21838349119740635,0.08401009350430039
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,structural,quality 0.75-1.05,-0.1975533870228206,0.04872749752432628
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,structural,quality 0.75-1.05,-0.2339827944170656,0.07059813751690697
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,geometric,quality 0.75-1.05,-2.262465138389026,-1.1576771058709945
+results/Ph/tall/gothic_tracery/hybrid/attempt_1,Ph/tall/gothic_tracery/hybrid,panel hybrids,geometric,quality 0.75-1.05,2.2914098247905716,5.113988066034587
+results/Ph/tall/tree_branches/hybrid/attempt_1,Ph/tall/tree_branches/hybrid,panel hybrids,geometric,quality 0.75-1.05,9.00376795665094,-2.0781195515622684
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,geometric,quality 0.75-1.05,-2.214987564094123,0.0747183060751304
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,geometric,quality 0.75-1.05,-2.3108194777069118,-0.8629579170392515
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,geometric,quality 0.75-1.05,-2.038283604305477,-0.3389406885209298
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,geometric,quality 0.75-1.05,-2.4686219969459735,-0.7510111091162726
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,perceptual,quality 0.75-1.05,-0.09826742543903297,-0.007985545101784224
+results/Ph/tall/gothic_tracery/hybrid/attempt_1,Ph/tall/gothic_tracery/hybrid,panel hybrids,perceptual,quality 0.75-1.05,0.16859636257886074,0.275619665493275
+results/Ph/tall/tree_branches/hybrid/attempt_1,Ph/tall/tree_branches/hybrid,panel hybrids,perceptual,quality 0.75-1.05,0.30558811126026225,-0.18143285450986973
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,perceptual,quality 0.75-1.05,-0.09259530082680072,0.011005882443980743
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,perceptual,quality 0.75-1.05,-0.1002120129313793,-0.03725629136489207
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,perceptual,quality 0.75-1.05,-0.08991534607089091,-0.03384741126279896
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,perceptual,quality 0.75-1.05,-0.09319438857101908,-0.026103445697910732
+results/B/tall/unguided/attempt_3,B/tall/unguided,unguided seeds,structural_binary,quality 0.75-1.05,-0.123602638704566,-0.00537224367640635
+results/Ph/tall/gothic_tracery/hybrid/attempt_1,Ph/tall/gothic_tracery/hybrid,panel hybrids,structural_binary,quality 0.75-1.05,0.34643177099410694,-0.746223542384145
+results/Ph/tall/tree_branches/hybrid/attempt_1,Ph/tall/tree_branches/hybrid,panel hybrids,structural_binary,quality 0.75-1.05,0.9431926080202877,0.3883952236321737
+results/R/tall/unguided/seed-101/attempt_1,R/tall/unguided/seed-101,unguided seeds,structural_binary,quality 0.75-1.05,-0.27738449850195934,0.059440761855163074
+results/R/tall/unguided/seed-202/attempt_1,R/tall/unguided/seed-202,unguided seeds,structural_binary,quality 0.75-1.05,-0.2571256890139921,0.07209754125440937
+results/R/tall/unguided/seed-303/attempt_1,R/tall/unguided/seed-303,unguided seeds,structural_binary,quality 0.75-1.05,-0.31193986673889496,0.0758391416363297
+results/R/tall/unguided/seed-404/attempt_1,R/tall/unguided/seed-404,unguided seeds,structural_binary,quality 0.75-1.05,-0.3195716860549826,0.1558231176824756

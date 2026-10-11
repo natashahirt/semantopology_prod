@@ -37,6 +37,32 @@ _SET_ORDER = (
 # only because it varies one thing at a time.
 _CONVENTIONAL = ('unguided seeds', 'parameter sweep', 'volume sweep')
 _UNION = 'conventional union'
+# Tall hybrids only. Short and bridge designs do not share this grid, and the
+# projection-gate hybrids are not the paper recipe.
+_HYBRID_SET_ORDER = (
+    'unguided seeds',
+    'campaign hybrids',
+    'diversity hybrids',
+    'panel hybrids',
+    'wording hybrids',
+    'coadapt off',
+    'self-weight',
+)
+_HYBRID_MEMBERS = _HYBRID_SET_ORDER[1:]
+_HYBRID_UNION = 'all hybrids'
+_PALETTE = {
+    'unguided seeds': '#4c78a8',
+    'parameter sweep': '#f58518',
+    'volume sweep': '#9d755d',
+    'ours': '#54a24b',
+    'semantic prompts': '#b279a2',
+    'campaign hybrids': '#e45756',
+    'diversity hybrids': '#54a24b',
+    'panel hybrids': '#b279a2',
+    'wording hybrids': '#f58518',
+    'coadapt off': '#79706e',
+    'self-weight': '#9d755d',
+}
 _MEASURES = ('structural', 'geometric', 'perceptual')
 # Quality is a compliance ratio against the unguided baseline, so it only
 # means anything between designs that were given the same material budget.
@@ -138,6 +164,31 @@ def comparison_set(meta: dict) -> str | None:
     if experiment in ('P', 'L'):
         return 'semantic prompts'
     return None
+
+
+def hybrid_comparison_set(meta: dict) -> str | None:
+    """Assign one tall hybrid, or an unguided baseline seed, to a set.
+
+    The unguided seeds are only the quality reference. Every other accepted
+    row is mode ``hybrid`` on the tall building. Short, bridge, and the
+    projection-gate hybrids are omitted.
+    """
+    if meta.get('structure') != 'tall':
+        return None
+    experiment = meta.get('experiment')
+    prompt = meta.get('prompt')
+    if experiment == 'B' or (experiment == 'R' and prompt is None):
+        return 'unguided seeds'
+    if meta.get('mode') != 'hybrid':
+        return None
+    return {
+        'H1': 'campaign hybrids',
+        'Mh': 'diversity hybrids',
+        'Ph': 'panel hybrids',
+        'S4': 'wording hybrids',
+        'H4': 'coadapt off',
+        'H5': 'self-weight',
+    }.get(experiment)
 
 
 def display_path(path: Path) -> str:
@@ -303,7 +354,9 @@ def embedding_lookup(evaluate_dir: Path) -> dict[str, np.ndarray]:
     }
 
 
-def collect_points(results: Path, cache: Path, evaluate_dir: Path) -> list[dict]:
+def collect_points(
+        results: Path, cache: Path, evaluate_dir: Path,
+        select=comparison_set) -> list[dict]:
     """Load aligned features and quality data for valid selected runs."""
     embeddings = embedding_lookup(evaluate_dir)
     points = []
@@ -312,7 +365,7 @@ def collect_points(results: Path, cache: Path, evaluate_dir: Path) -> list[dict]
             meta = read_meta(attempt)
         except (FileNotFoundError, json.JSONDecodeError):
             continue
-        group = comparison_set(meta)
+        group = select(meta)
         energy_path = cache_path(attempt, cache)
         key = display_path(attempt)
         if group is None or not energy_path.exists() or key not in embeddings:
@@ -395,16 +448,22 @@ def quality_band(points: list[dict], low: float, high: float) -> list[dict]:
     return kept
 
 
-def _set_indices(points: list[dict], group: str) -> list[int]:
-    """Row indices for a comparison set, or for the conventional union."""
-    if group == _UNION:
-        return [i for i, p in enumerate(points) if p['set'] in _CONVENTIONAL]
+def _set_indices(
+        points: list[dict], group: str, *,
+        union_name: str, union_members: tuple[str, ...]) -> list[int]:
+    """Row indices for a comparison set, or for a named union of sets."""
+    if group == union_name:
+        return [i for i, p in enumerate(points) if p['set'] in union_members]
     return [i for i, p in enumerate(points) if p['set'] == group]
 
 
 def summarize(
         points: list[dict], measure: str,
-        band: str = 'all') -> tuple[list[dict], list[dict], np.ndarray]:
+        band: str = 'all', *,
+        groups: tuple[str, ...] = _SET_ORDER,
+        union_name: str = _UNION,
+        union_members: tuple[str, ...] = _CONVENTIONAL,
+        ) -> tuple[list[dict], list[dict], np.ndarray]:
     """Fit joint PCA and return per-set summaries and per-design coordinates."""
     values = np.stack([point[measure] for point in points])
     scores, components, variance = fit_pca(values)
@@ -420,8 +479,9 @@ def summarize(
             'pc1': scores[index, 0],
             'pc2': scores[index, 1],
         })
-    for group in (*_SET_ORDER, _UNION):
-        indices = _set_indices(points, group)
+    for group in (*groups, union_name):
+        indices = _set_indices(
+            points, group, union_name=union_name, union_members=union_members)
         if not indices:
             continue
         mean, low, high = bootstrap_mean_distance(values[indices])
@@ -445,21 +505,21 @@ def summarize(
     return table, coordinates, components
 
 
-def _plot_map(points: list[dict], coordinates: list[dict], measure: str, path: Path) -> None:
+def _plot_map(
+        points: list[dict], coordinates: list[dict], measure: str, path: Path,
+        groups: tuple[str, ...] = _SET_ORDER) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.offsetbox import AnnotationBbox, OffsetImage
     from PIL import Image
 
-    palette = dict(zip(
-        _SET_ORDER, ('#4c78a8', '#f58518', '#9d755d', '#54a24b', '#b279a2')))
     figure, axis = plt.subplots(figsize=(8, 6))
-    for group in _SET_ORDER:
+    for group in groups:
         rows = [(p, c) for p, c in zip(points, coordinates) if p['set'] == group]
         if not rows:
             continue
         x = [row[1]['pc1'] for row in rows]
         y = [row[1]['pc2'] for row in rows]
-        axis.scatter(x, y, s=28, color=palette[group], label=group, zorder=2)
+        axis.scatter(x, y, s=28, color=_PALETTE[group], label=group, zorder=2)
         for point, coordinate in rows:
             if not point['image'].exists():
                 continue
@@ -508,18 +568,24 @@ def _plot_components(
 
 def _summarize_measures(
         points: list[dict], out: Path, band: str,
-        figures: bool) -> tuple[list[dict], list[dict]]:
+        figures: bool, *,
+        groups: tuple[str, ...] = _SET_ORDER,
+        union_name: str = _UNION,
+        union_members: tuple[str, ...] = _CONVENTIONAL,
+        ) -> tuple[list[dict], list[dict]]:
     """Every measure, including the binary variant, for one set of designs."""
     table_rows, coordinate_rows = [], []
     for measure in (*_MEASURES, 'structural_binary'):
-        table, coordinates, components = summarize(points, measure, band)
+        table, coordinates, components = summarize(
+            points, measure, band, groups=groups,
+            union_name=union_name, union_members=union_members)
         table_rows.extend(table)
         coordinate_rows.extend(coordinates)
         if not figures:
             continue
         _plot_map(
             points, coordinates, measure,
-            out / 'figures' / f'diversity_{measure}.png')
+            out / 'figures' / f'diversity_{measure}.png', groups)
         if measure in ('structural', 'geometric'):
             _plot_components(
                 points, measure, components,
@@ -529,11 +595,17 @@ def _summarize_measures(
 
 def report(
         results: Path, cache: Path, evaluate_dir: Path, out: Path,
-        band: tuple[float, float] | None = None) -> None:
-    points = collect_points(results, cache, evaluate_dir)
+        band: tuple[float, float] | None = None, *,
+        select=comparison_set,
+        groups: tuple[str, ...] = _SET_ORDER,
+        union_name: str = _UNION,
+        union_members: tuple[str, ...] = _CONVENTIONAL) -> None:
+    points = collect_points(results, cache, evaluate_dir, select)
     if len(points) < 2:
         raise ValueError('at least two aligned, valid designs are required')
-    table_rows, coordinate_rows = _summarize_measures(points, out, 'all', True)
+    table_rows, coordinate_rows = _summarize_measures(
+        points, out, 'all', True, groups=groups,
+        union_name=union_name, union_members=union_members)
     if band is not None:
         label = f'quality {band[0]:.2f}-{band[1]:.2f}'
         banded = quality_band(points, *band)
@@ -541,7 +613,9 @@ def report(
             raise ValueError(f'{label} holds {len(banded)} designs; widen it')
         # The band is a table-only comparison: the unbanded maps stay the
         # figures, so a reader is never shown a PCA fit on a filtered subset.
-        rows, coordinates = _summarize_measures(banded, out, label, False)
+        rows, coordinates = _summarize_measures(
+            banded, out, label, False, groups=groups,
+            union_name=union_name, union_members=union_members)
         table_rows.extend(rows)
         coordinate_rows.extend(coordinates)
     _write_csv(
@@ -562,6 +636,9 @@ def main(argv: list[str] | None = None) -> int:
         '--cache', type=Path, default=_REPO / 'analysis' / 'out' / 'diversity' / 'energy')
     solve = subparsers.add_parser('solve', parents=[common])
     solve.add_argument('--force', action='store_true')
+    solve.add_argument(
+        '--hybrids', action='store_true',
+        help='Re-solve tall hybrids instead of the semantic comparison sets.')
     report_parser = subparsers.add_parser('report', parents=[common])
     report_parser.add_argument(
         '--evaluate', type=Path, default=_REPO / 'analysis' / 'out' / 'evaluate')
@@ -574,6 +651,10 @@ def main(argv: list[str] | None = None) -> int:
     report_parser.add_argument(
         '--no-quality-band', dest='quality_band', action='store_const',
         const=None, help='skip the quality-matched table')
+    report_parser.add_argument(
+        '--hybrids', action='store_true',
+        help='Report tall hybrids. Writes under analysis/out/diversity_hybrid '
+             'unless --out is set.')
     one = subparsers.add_parser('resolve-one')
     one.add_argument('--attempt', type=Path, required=True)
     one.add_argument('--destination', type=Path, required=True)
@@ -581,11 +662,21 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == 'resolve-one':
         print(json.dumps(resolve_attempt(args.attempt, args.destination)))
     elif args.command == 'solve':
-        records = solve_all(args.results, args.cache, force=args.force)
+        select = hybrid_comparison_set if args.hybrids else comparison_set
+        records = solve_all(
+            args.results, args.cache, force=args.force, select=select)
         print(json.dumps(records, indent=2))
     else:
         band = None if args.quality_band is None else tuple(args.quality_band)
-        report(args.results, args.cache, args.evaluate, args.out, band)
+        if args.hybrids and args.out == _REPO / 'analysis' / 'out' / 'diversity':
+            args.out = _REPO / 'analysis' / 'out' / 'diversity_hybrid'
+        if args.hybrids:
+            report(
+                args.results, args.cache, args.evaluate, args.out, band,
+                select=hybrid_comparison_set, groups=_HYBRID_SET_ORDER,
+                union_name=_HYBRID_UNION, union_members=_HYBRID_MEMBERS)
+        else:
+            report(args.results, args.cache, args.evaluate, args.out, band)
     return 0
 
 
