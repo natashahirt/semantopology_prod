@@ -269,6 +269,21 @@ STRUCTURES = {
         control_height=20,
         control_width=24,
     ),
+    # Same pattern at twice the resolution. Training starts on the 192×160
+    # tee and upsamples once. Interval 80 keeps the four collar ripples.
+    # The dream grid stays eight times coarser than the mesh.
+    'tee_fine': StructureSpec(
+        key='tee_fine',
+        problem_name='tee_shirt',
+        width=384,
+        height=320,
+        interval=80,
+        density=0.3,
+        kind='building',
+        resize_num=1,
+        control_height=40,
+        control_width=48,
+    ),
     'bridge3': StructureSpec(
         key='bridge3',
         problem_name='three_decker_bridge',

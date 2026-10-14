@@ -1,0 +1,3 @@
+run_id	argv_json
+tee/spiral_galaxies/seed-101/hybrid	["--run-id", "tee/spiral_galaxies/seed-101/hybrid", "--experiment", "tee", "--group", "hybrid", "--mode", "hybrid", "--structure", "tee_full", "--clip", "spiral galaxies", "--seed", "101", "--physics-beta-max", "8"]
+tee/creeping_ivy/seed-101/hybrid	["--run-id", "tee/creeping_ivy/seed-101/hybrid", "--experiment", "tee", "--group", "hybrid", "--mode", "hybrid", "--structure", "tee_full", "--clip", "creeping ivy", "--seed", "101", "--physics-beta-max", "8"]

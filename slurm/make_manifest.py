@@ -428,6 +428,39 @@ def tee_hybrid_rows() -> list[dict]:
     )]
 
 
+def tee_fine_rows() -> list[dict]:
+    """One finer tee hybrid: 384×320, trained from the 192×160 pattern.
+
+    ``tee_fine`` upsamples once, so the first stage is the existing tee and
+    the second stage can hold members half as thick. Seed 101 matches the
+    full-grid solve already on disk. Off the campaign table.
+    """
+    prompt = 'spiral galaxy'
+    seed = REPLICATE_SEEDS[0]
+    return [_row(
+        f'tee/{prompt_token(prompt)}/{seed_token(seed)}/fine',
+        'tee', 'hybrid',
+        ['--mode', 'hybrid', *_structure_args('tee_fine'),
+         '--clip', prompt, '--seed', str(seed)],
+    )]
+
+
+def tee_prompt_rows() -> list[dict]:
+    """Full-grid tee hybrids for two extra prompts, at seed 101.
+
+    Same recipe as the pinned ``tee_full`` solves: 192×160 for the whole
+    run. Off the campaign table.
+    """
+    seed = REPLICATE_SEEDS[0]
+    prompts = ('spiral galaxies', 'creeping ivy')
+    return [_row(
+        f'tee/{prompt_token(prompt)}/{seed_token(seed)}/hybrid',
+        'tee', 'hybrid',
+        ['--mode', 'hybrid', *_structure_args('tee_full'),
+         '--clip', prompt, '--seed', str(seed)],
+    ) for prompt in prompts]
+
+
 def tee_full_rows() -> list[dict]:
     """The tee hybrid at full grid size, one row per replicate seed.
 
@@ -590,6 +623,8 @@ OFF_TABLE_PANELS = {
     'prompt_hybrid': ('prompt_hybrid.tsv', prompt_hybrid_rows),
     'tee_hybrid': ('tee_hybrid.tsv', tee_hybrid_rows),
     'tee_full': ('tee_full.tsv', tee_full_rows),
+    'tee_fine': ('tee_fine.tsv', tee_fine_rows),
+    'tee_prompts': ('tee_prompts.tsv', tee_prompt_rows),
     'joint_dial': ('joint_dial.tsv', joint_dial_rows),
 }
 
@@ -655,6 +690,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--tee-full', action='store_true',
         help='Write the full-grid tee hybrid at the replicate seeds, never the campaign TSV.')
+    parser.add_argument(
+        '--tee-fine', action='store_true',
+        help='Write the doubled-resolution tee hybrid, never the campaign TSV.')
+    parser.add_argument(
+        '--tee-prompts', action='store_true',
+        help='Write the extra-prompt full-grid tees, never the campaign TSV.')
     parser.add_argument(
         '--joint-dial', action='store_true',
         help='Write the S2 dial with both CLIP mixers tied together, never the campaign TSV.')

@@ -42,6 +42,8 @@ from slurm.make_manifest import (
     meaning_seed_rows,
     prompt_hybrid_rows,
     sketch_weight_low_rows,
+    tee_fine_rows,
+    tee_prompt_rows,
     tee_full_rows,
     tee_hybrid_rows,
     typology_rows,
@@ -563,6 +565,53 @@ def test_tee_hybrid_is_one_spiral_galaxy_row_off_the_campaign():
     assert argv[argv.index('--experiment') + 1] == 'tee'
     assert argv[argv.index('--physics-beta-max') + 1] == '8'
     assert '--coadapt' not in argv
+
+
+def test_tee_fine_doubles_the_grid_and_keeps_one_upsample():
+    from recipe.campaign_spec import REPLICATE_SEEDS, STRUCTURES
+    spec = STRUCTURES['tee_fine']
+    assert spec.width == 2 * STRUCTURES['tee'].width
+    assert spec.height == 2 * STRUCTURES['tee'].height
+    assert spec.interval == 2 * STRUCTURES['tee'].interval
+    assert spec.resize_num == 1
+    assert (spec.control_height, spec.control_width) == (40, 48)
+    campaign = experiment_rows(include_s1b=False)
+    assert all(not row['run_id'].endswith('/fine') for row in campaign)
+    rows = tee_fine_rows()
+    assert len(rows) == 1
+    argv = rows[0]['argv']
+    seed = REPLICATE_SEEDS[0]
+    assert rows[0]['run_id'] == f'tee/spiral_galaxy/seed-{seed}/fine'
+    assert argv[argv.index('--structure') + 1] == 'tee_fine'
+    assert argv[argv.index('--seed') + 1] == str(seed)
+    assert argv[argv.index('--clip') + 1] == 'spiral galaxy'
+    assert argv[argv.index('--mode') + 1] == 'hybrid'
+    preset = preset_from_args(build_parser().parse_args(argv))
+    assert (preset.width, preset.height, preset.interval) == (384, 320, 80)
+    assert preset.resize_num == 1
+    assert (preset.control_height, preset.control_width) == (40, 48)
+
+
+def test_tee_prompts_are_two_full_grid_hybrids_at_seed_101():
+    from recipe.campaign_spec import REPLICATE_SEEDS
+    campaign = experiment_rows(include_s1b=False)
+    rows = tee_prompt_rows()
+    assert len(rows) == 2
+    seed = REPLICATE_SEEDS[0]
+    seen = []
+    for row in rows:
+        argv = row['argv']
+        prompt = argv[argv.index('--clip') + 1]
+        assert row['run_id'] == f'tee/{prompt_token(prompt)}/seed-{seed}/hybrid'
+        assert all(other['run_id'] != row['run_id'] for other in campaign)
+        assert argv[argv.index('--structure') + 1] == 'tee_full'
+        assert argv[argv.index('--mode') + 1] == 'hybrid'
+        assert argv[argv.index('--seed') + 1] == str(seed)
+        preset = preset_from_args(build_parser().parse_args(argv))
+        assert preset.resize_num == 0
+        assert (preset.width, preset.height) == (192, 160)
+        seen.append(prompt)
+    assert seen == ['spiral galaxies', 'creeping ivy']
 
 
 def test_tee_full_is_the_same_pattern_at_full_grid_size_and_three_seeds():

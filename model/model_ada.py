@@ -7,7 +7,8 @@ differ in ways that decide whether a legacy run reproduces:
 * `forward` returns the design parameter RAW. The parameter is a density-like
   field that `physics.physical_density` squashes itself, so it is unbounded --
   the reference run's tensor spans -11.78 to 13.12. Nothing is applied at the
-  model boundary.
+  model boundary on an unmasked grid. A shaped domain pins its void cells to
+  empty here, so they are not design variables.
 * Training STARTS coarse, at the configured resolution divided by
   `resize_scale ** resize_num`. `interval` -- the row spacing between the
   loaded floors of `multistory_building` -- is divided with it, so every stage
@@ -197,8 +198,40 @@ class AdaptivePixelModel(Model):
         return self.resizes < self.resize_num
 
     def forward(self) -> torch.Tensor:
-        """Forward pass - return the design parameters raw and unbounded."""
-        return self.z
+        """Raw design. Void cells of a shaped domain are fixed empty.
+
+        An unmasked grid returns ``z`` itself. A mask of zeros is not a
+        design region: those cells are replaced with a constant 0 that does
+        not depend on ``z``, so raw-z CLIP cannot draw in the hole and the
+        saved render matches the physical density there.
+        """
+        z = self.z
+        raw_mask = self.args.get('mask', 1)
+        if np.isscalar(raw_mask):
+            return z
+        mask = self._get_mask_3d(int(z.shape[-2]), int(z.shape[-1]))
+        void = mask <= 0
+        if not bool(void.any()):
+            return z
+        return torch.where(void, z.new_zeros(()), z)
+
+    def _pin_void(self, field: torch.Tensor) -> torch.Tensor:
+        """Copy ``field`` with void cells set to empty. Unmasked grids pass through.
+
+        Used when a new parameter is created (an upsample). The live forward
+        pins the same cells without writing the parameter, so an unmasked
+        step still sees ``z`` itself.
+        """
+        raw_mask = self.args.get('mask', 1)
+        if np.isscalar(raw_mask):
+            return field
+        mask = self._get_mask_3d(int(field.shape[-2]), int(field.shape[-1]))
+        void = mask <= 0
+        if not bool(void.any()):
+            return field
+        pinned = field.detach().clone()
+        pinned.masked_fill_(void, 0)
+        return pinned
 
     def loss(self, logits: Optional[torch.Tensor] = None) -> torch.Tensor:
         """Compute the total loss, for the current design unless given one."""
@@ -222,6 +255,7 @@ class AdaptivePixelModel(Model):
         The parameter is resized bilinearly and carried over as-is. Venice does
         no logit-space transfer, no mean preservation, and no clamping here,
         and each of those would change the field the physics backend sees.
+        Void cells of a shaped domain are set back to empty after the resize.
 
         Raises:
             RuntimeError: if the schedule has no upsamples left.
@@ -255,4 +289,6 @@ class AdaptivePixelModel(Model):
         self.analysis_factor = 1
         self.analysis_env = self.env
 
-        self.z = nn.Parameter(z_fine, requires_grad=True)
+        # Bilinear resize smears cloth into the hole. The hole is not a
+        # variable on the new grid either.
+        self.z = nn.Parameter(self._pin_void(z_fine), requires_grad=True)

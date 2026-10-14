@@ -1,0 +1,2 @@
+run_id	argv_json
+tee/spiral_galaxy/seed-101/fine	["--run-id", "tee/spiral_galaxy/seed-101/fine", "--experiment", "tee", "--group", "hybrid", "--mode", "hybrid", "--structure", "tee_fine", "--clip", "spiral galaxy", "--seed", "101", "--physics-beta-max", "8"]

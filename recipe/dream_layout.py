@@ -194,6 +194,20 @@ def run_clip_dream(model, preset: DreamLayoutPreset):
     return losses, field.detach(), control.detach()
 
 
+def domain_mask(preset: DreamLayoutPreset):
+    """Design mask of the full problem.
+
+    The physics model may still be on a coarse stage, whose mask is smaller
+    than the scaffold. The scaffold is stored at the full grid and only
+    resampled when it is applied, so the mask has to be the full pattern.
+    A rectangular domain returns a scalar and the scaffold is left unchanged.
+    """
+    mask = structural_params(preset).get_problem().mask
+    if np.isscalar(mask):
+        return mask
+    return np.asarray(mask)
+
+
 def extract_soft_scaffold(dream_field: np.ndarray, preset: DreamLayoutPreset):
     """Upsample the dream and keep its percentile ranks as occupancy in [0, 1]."""
     upsampled = resample_field(dream_field, preset.height, preset.width)
@@ -230,9 +244,12 @@ def _coadapt_hook(mask, preset: DreamLayoutPreset, freeze_after: int):
 
 
 def _attach_final(ds, model):
-    raw = model.z.detach().cpu().numpy()[0]
+    # The scored field, not the stored parameter: a shaped domain's void is
+    # fixed empty in ``forward`` and is not part of ``z``'s free set.
+    logits = model()
+    raw = logits.detach().cpu().numpy()[0]
     ds['final_design_raw'] = (('raw_y', 'raw_x'), raw)
-    density = _plane(model.get_physical_density(model.z).detach().cpu().numpy())
+    density = _plane(model.get_physical_density(logits).detach().cpu().numpy())
     if density.shape != raw.shape:
         raise ValueError(
             f'physical density shape {density.shape} does not match raw {raw.shape}')
@@ -306,7 +323,8 @@ def run_dream_layout(preset: DreamLayoutPreset, output_dir: Path) -> dict:
     physics_model = build_model(preset, physics_clip)
     # A shaped domain (the tee) is void outside the cloth. The dream is a
     # rectangle, so drop it there before it becomes the occupancy prior.
-    design = physics_model.env.args.get('mask', 1)
+    # Use the full pattern, not the stage the model happens to be on.
+    design = domain_mask(preset)
     if not np.isscalar(design):
         design = np.asarray(design, dtype=np.float32)
         if design.shape != scaffold.shape:

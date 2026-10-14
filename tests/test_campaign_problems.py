@@ -179,6 +179,76 @@ class TeeShirtTest(absltest.TestCase):
         self.assertGreater(int(np.count_nonzero(problem.forces)), 0)
         _factors(problem)
 
+    def test_void_logits_are_fixed_empty(self):
+        import torch
+        from model.model_ada import AdaptivePixelModel
+
+        model = AdaptivePixelModel(
+            structural_params=StructuralParams(
+                problem_name='tee_shirt', width=48, height=40,
+                density=0.3, interval=10, filter_width=1.5),
+            clip_loss=None, seed=0, resize_num=0, resize_scale=2)
+        with torch.no_grad():
+            model.z.add_(1.0)
+        logits = model()
+        void = model._get_mask_3d(40, 48) <= 0
+        self.assertTrue(bool(void.any()))
+        self.assertTrue(torch.all(logits[void] == 0))
+        opt = torch.optim.Adam([model.z], lr=0.5)
+        opt.zero_grad()
+        model().sum().backward()
+        self.assertTrue(torch.all(model.z.grad[void] == 0))
+        self.assertTrue(torch.all(model.z.grad[~void] == 1))
+        before = model.z.detach().clone()
+        opt.step()
+        self.assertTrue(torch.equal(model.z[void], before[void]))
+        self.assertFalse(torch.equal(model.z[~void], before[~void]))
+
+        plain = AdaptivePixelModel(
+            structural_params=StructuralParams(
+                problem_name='multistory_building', width=16, height=32,
+                density=0.3, interval=8, filter_width=1.5),
+            clip_loss=None, seed=0, resize_num=0, resize_scale=2)
+        self.assertIs(plain(), plain.z)
+
+    def test_doubled_grid_keeps_four_ripples(self):
+        # tee_fine is this grid. The coarse stage is the 192×160 pattern.
+        problem = tee_shirt(width=384, height=320, interval=80)
+        self.assertEqual(problem.mask.shape, (320, 384))
+        self.assertEqual(problem.mask[-1, 0], 0.0)
+        self.assertEqual(problem.mask[0, 192], 0.0)
+        self.assertEqual(problem.mask[200, 192], 1.0)
+        self.assertTrue(np.all(problem.normals[168:217, -1, :] == 1))
+        self.assertTrue(np.all(problem.normals[96:168, -1, :] == 0))
+        self.assertTrue(np.all(problem.normals[217:289, -1, :] == 0))
+        self.assertTrue(np.all(problem.normals[0, :97, :] == 1))
+        self.assertAlmostEqual(problem.forces[192, 160, X], 0.0)
+        self.assertAlmostEqual(problem.forces[192, 160, Y], -1.0 / 384)
+        self.assertLess(problem.forces[40, 48, X], 0.0)
+        loaded = np.hypot(problem.forces[..., X], problem.forces[..., Y]) > 0
+        distances = np.hypot(
+            np.nonzero(loaded)[0] - 192, np.nonzero(loaded)[1])
+        stories = np.unique(np.round(distances / 80.0))
+        np.testing.assert_array_equal(stories, [1, 2, 3, 4])
+
+    def test_domain_mask_is_the_full_pattern(self):
+        from dataclasses import replace
+
+        from recipe.dream_layout import domain_mask
+        from recipe.preset import PAPER
+
+        fine = replace(
+            PAPER, problem_name='tee_shirt', width=384, height=320,
+            interval=80, density=0.3)
+        mask = domain_mask(fine)
+        self.assertEqual(mask.shape, (320, 384))
+        self.assertEqual(mask[-1, 0], 0.0)
+        self.assertEqual(mask[200, 192], 1.0)
+        tall = replace(
+            PAPER, problem_name='tall_building', width=32, height=64,
+            interval=16)
+        self.assertTrue(np.isscalar(domain_mask(tall)))
+
     def test_factors(self):
         _factors(tee_shirt())
 
