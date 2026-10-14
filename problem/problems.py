@@ -804,6 +804,135 @@ def double_decker_bridge(width=448, height=72, density=0.3):
   return problem
 
 
+def _tee_touches_cloth(mask, x, y):
+  """True when node ``(x, y)`` borders at least one cloth element."""
+  height, width = mask.shape
+  for ey in (y - 1, y):
+    if ey < 0 or ey >= height:
+      continue
+    for ex in (x - 1, x):
+      if 0 <= ex < width and mask[ey, ex] > 0.0:
+        return True
+  return False
+
+
+def _tee_lower_contour(mask, x0, x1):
+  """Nodes along the lower edge of cloth for elements ``x`` in ``[x0, x1)``."""
+  height, _width = mask.shape
+  nodes = set()
+  for x in range(x0, x1):
+    for y in range(height):
+      if mask[y, x] <= 0.0:
+        continue
+      if y + 1 < height and mask[y + 1, x] > 0.0:
+        continue
+      nodes.add((x, y + 1))
+      nodes.add((x + 1, y + 1))
+  return nodes
+
+
+def tee_shirt(width=192, height=160, density=0.3, interval=40,
+              body_width=96, sleeve_height=48, hem_support=0.25,
+              neck_width=0.34, neck_depth=40, armscye_radius=16):
+  """A tee front stood on the hem, with each sleeve held at its cuff.
+
+  The design region is one flat pattern piece: a body, two sleeves, a scooped
+  neck, and an armscye at each underarm. Everything outside that outline is
+  void. The footing is the middle ``hem_support`` fraction of the hem, fixed
+  in X and Y. Each cuff, the outer edge of a sleeve, is fixed in X and Y
+  along its whole height.
+
+  Loads leave the collar and ripple outward. Each story is an arc at a
+  multiple of ``interval`` from the collar, and every loaded node is pushed
+  radially away from it, the same per-node size as a tall-building floor.
+  The arcs cross the chest, the sleeves, and the lower body.
+
+  ``y = 0`` is the shoulder line. ``width`` and ``height`` are the bounding
+  box, and ``body_width`` is the hem. Both sleeves share the leftover width.
+
+  Pixel sizes are for the 192×160 pattern. AdaptivePixel rebuilds this
+  problem at each coarser stage with only ``width``, ``height``, and
+  ``interval`` changed, so a smaller grid scales the pattern with it.
+  """
+  if (width, height) != (192, 160):
+    scale_x = width / 192.0
+    scale_y = height / 160.0
+    body_width = int(round(body_width * scale_x))
+    sleeve_height = max(1, int(round(sleeve_height * scale_y)))
+    neck_depth = max(1, int(round(neck_depth * scale_y)))
+    armscye_radius = max(0, int(round(armscye_radius * scale_x)))
+  if width <= body_width or (width - body_width) % 2 != 0:
+    raise ValueError(
+        f'sleeve span must be a positive even remainder, got width={width} '
+        f'body_width={body_width}')
+  if not 0.0 < hem_support < 1.0:
+    raise ValueError(f'hem_support must lie in (0, 1), got {hem_support}')
+  if sleeve_height <= 0 or sleeve_height >= height:
+    raise ValueError(
+        f'sleeve_height must lie in (0, height), got {sleeve_height}')
+  sleeve_len = (width - body_width) // 2
+  support_elems = max(1, int(round(hem_support * body_width)))
+  if support_elems > body_width:
+    raise ValueError('hem support is wider than the hem')
+
+  mask = np.zeros((height, width), dtype=np.float64)
+  mask[:, sleeve_len:sleeve_len + body_width] = 1.0
+  mask[:sleeve_height, :sleeve_len] = 1.0
+  mask[:sleeve_height, sleeve_len + body_width:] = 1.0
+
+  cx = width / 2.0
+  rx = neck_width * body_width / 2.0
+  ry = float(neck_depth)
+  ys, xs = np.ogrid[:height, :width]
+  neck = ((xs + 0.5 - cx) / rx) ** 2 + ((ys + 0.5) / ry) ** 2 <= 1.0
+  mask[neck & (ys < neck_depth)] = 0.0
+
+  if armscye_radius > 0:
+    for corner_x in (sleeve_len, sleeve_len + body_width):
+      dist2 = (xs + 0.5 - corner_x) ** 2 + (ys + 0.5 - sleeve_height) ** 2
+      mask[dist2 <= armscye_radius ** 2] = 0.0
+
+  normals = np.zeros((width + 1, height + 1, 2))
+  inset = (body_width - support_elems) // 2
+  hem_x0 = sleeve_len + inset
+  hem_x1 = hem_x0 + support_elems
+  for x, y in _tee_lower_contour(mask, hem_x0, hem_x1):
+    normals[x, y, X] = 1
+    normals[x, y, Y] = 1
+  for x_edge in (0, width):
+    for y in range(sleeve_height + 1):
+      if _tee_touches_cloth(mask, x_edge, y):
+        normals[x_edge, y, X] = 1
+        normals[x_edge, y, Y] = 1
+
+  forces = np.zeros((width + 1, height + 1, 2))
+  # Collar at the top center. Positive index-y points at the hem, and the
+  # solver's downward load is negative Y, so the radial Y component is flipped.
+  origin_x = width / 2.0
+  origin_y = 0.0
+  magnitude = 1.0 / width
+  half = 1.25
+  farthest = float(np.hypot(width / 2.0, height))
+  radii = np.arange(interval, farthest + interval, interval)
+  for y in range(height + 1):
+    for x in range(width + 1):
+      if normals[x, y, X] == 1 or normals[x, y, Y] == 1:
+        continue
+      if not _tee_touches_cloth(mask, x, y):
+        continue
+      dx = x - origin_x
+      dy = y - origin_y
+      dist = float(np.hypot(dx, dy))
+      if dist < 1e-6 or np.min(np.abs(radii - dist)) > half:
+        continue
+      forces[x, y, X] = magnitude * dx / dist
+      forces[x, y, Y] = -magnitude * dy / dist
+
+  problem = Problem(normals, forces, density, mask)
+  problem.name = f"tee_shirt_{width}x{height}"
+  return problem
+
+
 def three_decker_bridge(width=448, height=72, density=0.3):
   """Pin-roller span with uniform loads on three horizontal decks.
 
@@ -1016,6 +1145,7 @@ class StructuralParams:
             "short_cantilever_building",
             "double_decker_bridge",
             "three_decker_bridge",
+            "tee_shirt",
         ]
 
     def get_problem(self) -> 'Problem':

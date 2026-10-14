@@ -242,6 +242,33 @@ STRUCTURES = {
         control_width=32,
     ),
     # Exploratory gate only; not expanded into the main campaign manifest.
+    # Flat tee pattern. Not part of the paper campaign.
+    'tee': StructureSpec(
+        key='tee',
+        problem_name='tee_shirt',
+        width=192,
+        height=160,
+        interval=40,
+        density=0.3,
+        kind='building',
+        resize_num=2,
+        control_height=20,
+        control_width=24,
+    ),
+    # Same tee, trained at 192×160 from the first step. The coarse-to-fine
+    # ``tee`` schedule shrinks the pattern onto the 48×40 grid first.
+    'tee_full': StructureSpec(
+        key='tee_full',
+        problem_name='tee_shirt',
+        width=192,
+        height=160,
+        interval=40,
+        density=0.3,
+        kind='building',
+        resize_num=0,
+        control_height=20,
+        control_width=24,
+    ),
     'bridge3': StructureSpec(
         key='bridge3',
         problem_name='three_decker_bridge',

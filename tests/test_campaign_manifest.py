@@ -35,12 +35,15 @@ from slurm.make_manifest import (
     experiment_rows,
     extension_rows,
     fern_wording_rows,
+    joint_dial_rows,
     fixed_weight_rows,
     loose_sketch_rows,
     meaning_rows,
     meaning_seed_rows,
     prompt_hybrid_rows,
     sketch_weight_low_rows,
+    tee_full_rows,
+    tee_hybrid_rows,
     typology_rows,
 )
 
@@ -523,6 +526,62 @@ def test_diversity_hybrid_reruns_every_m_prompt_as_a_tall_hybrid():
         assert argv[argv.index('--experiment') + 1] == 'Mh'
         assert argv[argv.index('--physics-beta-max') + 1] == '8'
         assert '--coadapt' not in argv
+
+
+def test_joint_dial_moves_both_clip_mixers_together():
+    from recipe.campaign_spec import BLEND_RHOS
+    campaign = experiment_rows(include_s1b=False)
+    assert all(not row['run_id'].startswith('S2j/') for row in campaign)
+    rows = joint_dial_rows()
+    assert len(rows) == len(PROMPTS) * len(BLEND_RHOS)
+    seen = []
+    for row in rows:
+        argv = row['argv']
+        rho = float(argv[argv.index('--blend-rho') + 1])
+        assert argv[argv.index('--blend-rho-z') + 1] == str(rho)
+        assert argv[argv.index('--mode') + 1] == 'semantic'
+        assert argv[argv.index('--structure') + 1] == 'tall'
+        assert argv[argv.index('--experiment') + 1] == 'S2j'
+        assert argv[argv.index('--physics-beta-max') + 1] == '8'
+        preset = preset_from_args(build_parser().parse_args(argv))
+        assert (preset.blend_rho, preset.blend_rho_z) == (rho, rho)
+        seen.append((argv[argv.index('--clip') + 1], rho))
+    assert seen == [
+        (prompt, rho) for prompt in PROMPTS for rho in BLEND_RHOS]
+
+
+def test_tee_hybrid_is_one_spiral_galaxy_row_off_the_campaign():
+    campaign = experiment_rows(include_s1b=False)
+    assert all(not row['run_id'].startswith('tee/') for row in campaign)
+    rows = tee_hybrid_rows()
+    assert len(rows) == 1
+    argv = rows[0]['argv']
+    assert rows[0]['run_id'] == 'tee/spiral_galaxy/hybrid'
+    assert argv[argv.index('--mode') + 1] == 'hybrid'
+    assert argv[argv.index('--structure') + 1] == 'tee'
+    assert argv[argv.index('--clip') + 1] == 'spiral galaxy'
+    assert argv[argv.index('--experiment') + 1] == 'tee'
+    assert argv[argv.index('--physics-beta-max') + 1] == '8'
+    assert '--coadapt' not in argv
+
+
+def test_tee_full_is_the_same_pattern_at_full_grid_size_and_three_seeds():
+    from recipe.campaign_spec import REPLICATE_SEEDS, STRUCTURES
+    assert STRUCTURES['tee'].resize_num == 2
+    assert STRUCTURES['tee_full'].resize_num == 0
+    assert STRUCTURES['tee_full'].width == STRUCTURES['tee'].width
+    rows = tee_full_rows()
+    assert len(rows) == 3
+    seeds = []
+    for seed, row in zip(REPLICATE_SEEDS[:3], rows):
+        argv = row['argv']
+        assert row['run_id'] == f'tee/spiral_galaxy/seed-{seed}/hybrid'
+        assert argv[argv.index('--structure') + 1] == 'tee_full'
+        assert argv[argv.index('--seed') + 1] == str(seed)
+        assert argv[argv.index('--clip') + 1] == 'spiral galaxy'
+        assert argv[argv.index('--mode') + 1] == 'hybrid'
+        seeds.append(seed)
+    assert seeds == [101, 202, 303]
 
 
 def test_prompt_hybrid_reruns_every_p_prompt_as_a_tall_hybrid():

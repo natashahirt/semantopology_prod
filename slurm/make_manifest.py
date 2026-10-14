@@ -396,6 +396,54 @@ def diversity_hybrid_rows() -> list[dict]:
     return rows
 
 
+def joint_dial_rows() -> list[dict]:
+    """S2 again, with density CLIP and raw-z CLIP on the same dial.
+
+    The original S2 moves ``blend_rho`` through 0, 0.25, 0.5, 0.75, and 1
+    and leaves ``blend_rho_z`` at 0.75. Here both mixers take the dial value,
+    so the two channels turn on together. Same three prompts, tall building,
+    and semantic recipe. Off the campaign table.
+    """
+    rows = []
+    for prompt in PROMPTS:
+        for rho in BLEND_RHOS:
+            rows.append(_semantic(
+                f'S2j/tall/{prompt_token(prompt)}/{rho_token(rho)}',
+                'S2j', 'tall', prompt,
+                '--blend-rho', str(rho), '--blend-rho-z', str(rho),
+            ))
+    return rows
+
+
+def tee_hybrid_rows() -> list[dict]:
+    """One tee-shaped hybrid: spiral galaxy, sleeves on, narrow hem footing.
+
+    The domain and the supports live on the ``tee`` structure. This row is
+    only the prompt and the hybrid recipe. It stays off the campaign table.
+    """
+    prompt = 'spiral galaxy'
+    return [_row(
+        f'tee/{prompt_token(prompt)}/hybrid', 'tee', 'hybrid',
+        ['--mode', 'hybrid', *_structure_args('tee'), '--clip', prompt],
+    )]
+
+
+def tee_full_rows() -> list[dict]:
+    """The tee hybrid at full grid size, one row per replicate seed.
+
+    ``tee_full`` sets ``resize_num`` to 0, so the 192×160 pattern is the
+    grid for the whole solve. Seeds are the first three replicate seeds,
+    beside the campaign seed already queued on the coarse-to-fine tee.
+    """
+    prompt = 'spiral galaxy'
+    return [_row(
+        f'tee/{prompt_token(prompt)}/{seed_token(seed)}/hybrid',
+        'tee', 'hybrid',
+        ['--mode', 'hybrid', *_structure_args('tee_full'),
+         '--clip', prompt, '--seed', str(seed)],
+    ) for seed in REPLICATE_SEEDS[:3]]
+
+
 def prompt_hybrid_rows() -> list[dict]:
     """The P prompt list as hybrids: a CLIP dream initializes and occupies.
 
@@ -540,6 +588,9 @@ OFF_TABLE_PANELS = {
     'sketch_weight_low': ('sketch_weight_low.tsv', sketch_weight_low_rows),
     'diversity_hybrid': ('diversity_hybrid.tsv', diversity_hybrid_rows),
     'prompt_hybrid': ('prompt_hybrid.tsv', prompt_hybrid_rows),
+    'tee_hybrid': ('tee_hybrid.tsv', tee_hybrid_rows),
+    'tee_full': ('tee_full.tsv', tee_full_rows),
+    'joint_dial': ('joint_dial.tsv', joint_dial_rows),
 }
 
 
@@ -598,6 +649,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         '--prompt-hybrid', action='store_true',
         help='Write only the P prompts as tall hybrids, never the campaign TSV.')
+    parser.add_argument(
+        '--tee-hybrid', action='store_true',
+        help='Write only the tee-shaped spiral-galaxy hybrid, never the campaign TSV.')
+    parser.add_argument(
+        '--tee-full', action='store_true',
+        help='Write the full-grid tee hybrid at the replicate seeds, never the campaign TSV.')
+    parser.add_argument(
+        '--joint-dial', action='store_true',
+        help='Write the S2 dial with both CLIP mixers tied together, never the campaign TSV.')
     parser.add_argument(
         '--out', default=None)
     args = parser.parse_args(argv)

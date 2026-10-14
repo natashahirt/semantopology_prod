@@ -1,0 +1,2 @@
+run_id	argv_json
+tee/spiral_galaxy/hybrid	["--run-id", "tee/spiral_galaxy/hybrid", "--experiment", "tee", "--group", "hybrid", "--mode", "hybrid", "--structure", "tee", "--clip", "spiral galaxy", "--physics-beta-max", "8"]

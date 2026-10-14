@@ -1,0 +1,42 @@
+{
+  "prompt": "spiral galaxy",
+  "problem": "tee_shirt",
+  "slug": "spiral_galaxy",
+  "steps": 200,
+  "converged": false,
+  "progress_gif_frames": 200,
+  "compliance": 100.90868377685547,
+  "physics_projection_beta_max": 8.0,
+  "physics_projection_beta_final": 8.0,
+  "clip_loss": 70.53831481933594,
+  "clip_loss_raw": 0.38567477464675903,
+  "dream_clip_loss": 0.3936765193939209,
+  "volume_actual": 0.27639973958333336,
+  "mean_physical_density": 0.17308592796325684,
+  "mass_on_scaffold": 0.7400407113470193,
+  "validity": {
+    "component_count": 14.0,
+    "top_to_bottom_connected": 1.0,
+    "support_to_load_connected": 1.0,
+    "floating_mass_fraction": 0.05316537873142619,
+    "spanning_mass_fraction": 0.9461445832665298,
+    "mean_physical_density": 0.17308592796325684
+  },
+  "load_on_solid_fraction": 0.9244851258581236,
+  "thresholded_compliance": 6684060.527400022,
+  "scaffold_source": "soft_rank",
+  "scaffold_mean": 0.3057188391685486,
+  "control_grid": [
+    20,
+    24
+  ],
+  "blend_rho": 1.0,
+  "blend_rho_z": 0.75,
+  "device": "cpu",
+  "seed": 202,
+  "dream_seconds": 209.63898508436978,
+  "physics_seconds": 4634.091137322597,
+  "total_seconds": 4852.473653788678,
+  "git_commit": "a392a3fdfeb8a5d2e21169c60cb5791baa67af15-dirty",
+  "gate": null
+}

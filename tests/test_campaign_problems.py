@@ -14,6 +14,7 @@ from problem.problems import (
     double_decker_bridge,
     short_cantilever_building,
     tall_building,
+    tee_shirt,
     three_decker_bridge,
 )
 
@@ -117,6 +118,69 @@ class ThreeDeckerBridgeTest(absltest.TestCase):
         np.testing.assert_array_equal(loaded, [0, 4, 7])
         self.assertEqual(problem.normals[-1, 4, Y], 1)
         _factors(problem)
+
+
+class TeeShirtTest(absltest.TestCase):
+
+    def test_cloth_is_a_sleeved_front_with_a_neck_hole(self):
+        problem = tee_shirt()
+        self.assertEqual((problem.width, problem.height), (192, 160))
+        mask = problem.mask
+        self.assertEqual(mask.shape, (160, 192))
+        self.assertEqual(mask[-1, 0], 0.0)
+        self.assertEqual(mask[-1, -1], 0.0)
+        self.assertEqual(mask[0, 96], 0.0)
+        self.assertEqual(mask[100, 96], 1.0)
+        self.assertEqual(mask[10, 10], 1.0)
+        self.assertEqual(mask[10, 180], 1.0)
+
+    def test_hem_footing_is_the_middle_quarter(self):
+        problem = tee_shirt()
+        # Body occupies elements x=48..143. Middle 25% is 24 elements, x=84..107.
+        self.assertTrue(np.all(problem.normals[84:109, -1, :] == 1))
+        self.assertTrue(np.all(problem.normals[48:84, -1, :] == 0))
+        self.assertTrue(np.all(problem.normals[109:145, -1, :] == 0))
+
+    def test_cuffs_are_supported_and_the_undersides_are_not(self):
+        problem = tee_shirt()
+        self.assertTrue(np.all(problem.normals[0, :49, :] == 1))
+        self.assertTrue(np.all(problem.normals[-1, :49, :] == 1))
+        self.assertEqual(problem.normals[10, 48, Y], 0)
+        self.assertEqual(problem.normals[182, 48, Y], 0)
+
+    def test_loads_ripple_out_from_the_collar(self):
+        problem = tee_shirt()
+        # Centerline of the second arc points at the hem.
+        self.assertAlmostEqual(problem.forces[96, 80, X], 0.0)
+        self.assertAlmostEqual(problem.forces[96, 80, Y], -1.0 / 192)
+        # A node on the left sleeve's arc points outward, toward the cuff.
+        self.assertLess(problem.forces[20, 24, X], 0.0)
+        self.assertGreater(
+            abs(problem.forces[20, 24, X]), abs(problem.forces[20, 24, Y]))
+        # The right side mirrors it.
+        self.assertGreater(problem.forces[172, 24, X], 0.0)
+        # Four arcs, and nothing inside the neck or on the footing.
+        loaded = np.hypot(problem.forces[..., X], problem.forces[..., Y]) > 0
+        distances = np.hypot(
+            np.nonzero(loaded)[0] - 96, np.nonzero(loaded)[1])
+        stories = np.unique(np.round(distances / 40.0))
+        np.testing.assert_array_equal(stories, [1, 2, 3, 4])
+        self.assertEqual(problem.forces[96, 0, X], 0.0)
+        self.assertEqual(problem.forces[96, 0, Y], 0.0)
+        self.assertEqual(problem.forces[96, -1, Y], 0.0)
+
+    def test_coarse_stage_scales_the_pattern(self):
+        # AdaptivePixel's first stage is the 192x160 tee divided by 4.
+        problem = tee_shirt(width=48, height=40, interval=10)
+        self.assertEqual(problem.mask.shape, (40, 48))
+        self.assertEqual(problem.mask[30, 0], 0.0)
+        self.assertEqual(problem.mask[30, 24], 1.0)
+        self.assertGreater(int(problem.normals[..., X].sum()), 0)
+        self.assertGreater(int(np.count_nonzero(problem.forces)), 0)
+        _factors(problem)
+
+    def test_factors(self):
+        _factors(tee_shirt())
 
 
 if __name__ == '__main__':

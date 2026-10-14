@@ -1,0 +1,4 @@
+run_id	argv_json
+tee/spiral_galaxy/seed-101/hybrid	["--run-id", "tee/spiral_galaxy/seed-101/hybrid", "--experiment", "tee", "--group", "hybrid", "--mode", "hybrid", "--structure", "tee_full", "--clip", "spiral galaxy", "--seed", "101", "--physics-beta-max", "8"]
+tee/spiral_galaxy/seed-202/hybrid	["--run-id", "tee/spiral_galaxy/seed-202/hybrid", "--experiment", "tee", "--group", "hybrid", "--mode", "hybrid", "--structure", "tee_full", "--clip", "spiral galaxy", "--seed", "202", "--physics-beta-max", "8"]
+tee/spiral_galaxy/seed-303/hybrid	["--run-id", "tee/spiral_galaxy/seed-303/hybrid", "--experiment", "tee", "--group", "hybrid", "--mode", "hybrid", "--structure", "tee_full", "--clip", "spiral galaxy", "--seed", "303", "--physics-beta-max", "8"]

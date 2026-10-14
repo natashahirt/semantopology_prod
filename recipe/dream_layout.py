@@ -295,17 +295,26 @@ def run_dream_layout(preset: DreamLayoutPreset, output_dir: Path) -> dict:
     upsampled, scaffold = extract_soft_scaffold(dream_coarse, preset)
     np.save(output_dir / 'dream_coarse.npy', dream_coarse)
     np.save(output_dir / 'dream_upsampled.npy', upsampled)
-    np.save(output_dir / 'scaffold.npy', scaffold)
     save_field_png(
         output_dir / 'dream_coarse.png', rank_ink_from_raw(dream_coarse))
     save_field_png(
         output_dir / 'dream_upsampled.png', rank_ink_from_raw(upsampled))
-    save_field_png(output_dir / 'scaffold.png', scaffold)
 
     seed_everything(preset.seed)
     physics_clip = build_clip_loss(preset)
     seed_everything(preset.seed)
     physics_model = build_model(preset, physics_clip)
+    # A shaped domain (the tee) is void outside the cloth. The dream is a
+    # rectangle, so drop it there before it becomes the occupancy prior.
+    design = physics_model.env.args.get('mask', 1)
+    if not np.isscalar(design):
+        design = np.asarray(design, dtype=np.float32)
+        if design.shape != scaffold.shape:
+            raise ValueError(
+                f'design mask {design.shape} does not match scaffold {scaffold.shape}')
+        scaffold = scaffold * (design > 0.0)
+    np.save(output_dir / 'scaffold.npy', scaffold)
+    save_field_png(output_dir / 'scaffold.png', scaffold)
     apply_scaffold_as_occupancy_prior(
         physics_model,
         scaffold,
